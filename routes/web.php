@@ -2,22 +2,31 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminLogin;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\PurchaseController;
 
 
-Route::get('/', function () {
-    return view('product.welcome');
-});
+
+//Login
+Route::get('/', function () {return view('product.welcome');});
 Route::post('/admin/login', [AdminLogin::class, 'login'])->name('admin.login.submit');
 
-
-
+//Index
 Route::get('/dashboard', function () {
     return view('product.dashboard');
 })->name('dashboard');
 
-Route::get('/add_product', function () {
-    return view('product.add_new_product');
-})->name('add_product');
+//add_new_Product
+Route::get('/add_product', [SupplierController::class, 'add_product'])->name('add_product');
+Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
+//purchase
+Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase');
+Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
+Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->name('purchases.destroy');
+Route::get('/purchase_detail', [PurchaseController::class, 'purchase_detail'])->name('purchase_detail');
+
+
+
 
 Route::get('/billing-list', function () {
     return view('billing.billing_list');
@@ -35,13 +44,9 @@ Route::get('/supplier_list', function () {
     return view('list.supplier_list');
 })->name('supplier_list');
 
-Route::get('/purchase_detail', function () {
-    return view('purchase.purchase_detail');
-});
 
-Route::get('/purchase', function () {
-    return view('purchase.purchase');
-})->name('purchase');
+
+
 
 Route::get('/sales', function () {
     return view('sales.sales');
