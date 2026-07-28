@@ -11,7 +11,7 @@
                                     <h5 class="card-header">ખરીદીની યાદી</h5>
                                 </div>
                                 <div class="text-center justify-content-center">
-                                    <a href="add_new_product.html" class="btn btn-outline-primary mt-3">
+                                    <a href="{{ route('add_product') }}" class="btn btn-outline-primary mt-3">
                                         નવી ખરીદી ઉમેરો
                                     </a>
                                 </div>

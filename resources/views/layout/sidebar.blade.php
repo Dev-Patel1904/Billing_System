@@ -119,33 +119,33 @@
         <ul class="menu-inner py-1">
           <!-- Dashboards -->
           <li class="menu-item active">
-            <a href="index.html" class="menu-link">
+            <a href="{{ route('dashboard') }}" class="menu-link">
               <i class="menu-icon tf-icons bx bx-home-smile"></i>
               <div class="text-truncate" data-i18n="Boxicons">નિયંત્રણ પેનલ</div>
             </a>
           </li>
 
           <li class="menu-item">
-            <a href="purchase.html" class="menu-link">
+            <a href="{{ route('purchase') }}" class="menu-link">
               <i class="menu-icon tf-icons bx bx-cart"></i>
               <div class="text-truncate" data-i18n="Boxicons">ખરીદી</div>
             </a>
           </li>
 
           <li class="menu-item">
-            <a href="sales.html" class="menu-link">
+            <a href="{{ route('sales') }}" class="menu-link">
               <i class="menu-icon tf-icons bx bx-dollar-circle"></i>
               <div class="text-truncate" data-i18n="Boxicons">વેચાણ</div>
             </a>
           </li>
           <li class="menu-item ">
-            <a href="billing.html" class="menu-link">
+            <a href="{{ route('new-billing') }}" class="menu-link">
               <i class="menu-icon tf-icons bx bx-receipt"></i>
               <div class="text-truncate" data-i18n="Boxicons">બિલિંગ</div>
             </a>
           </li>
           <li class="menu-item">
-            <a href="billing_list.html" class="menu-link">
+            <a href="{{ route('billing-list') }}" class="menu-link">
               <i class="menu-icon tf-icons bx bx-detail"></i>
               <div class="text-truncate">
                 બિલની યાદી
@@ -153,13 +153,13 @@
             </a>
           </li>
           <li class="menu-item">
-            <a href="customer_list.html" class="menu-link">
+            <a href="{{ route('customer_list') }}" class="menu-link">
               <i class="menu-icon tf-icons bx bx-group"></i>
               <div class="text-truncate" data-i18n="Boxicons">ગ્રાહકોની યાદી</div>
             </a>
           </li>
           <li class="menu-item">
-            <a href="supplier_list.html" class="menu-link">
+            <a href="{{ route('supplier_list') }}" class="menu-link">
               <i class="menu-icon tf-icons bx bx-package"></i>
               <div class="text-truncate" data-i18n="Boxicons">સપ્લાયરની યાદી</div>
             </a>
