@@ -270,7 +270,49 @@
                </tbody>
 
             </table>
+            <!-- Footer -->
+         <div class="card-footer bg-white">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+               <small class="text-muted">
+                  250 ગ્રાહકોમાંથી 1 થી 10 દર્શાવવામાં આવ્યા છે
+               </small>
+
+               <nav>
+
+                  <ul class="pagination pagination-sm mb-0">
+
+                     <li class="page-item disabled">
+                        <a class="page-link" href="#">પાછળ</a>
+                     </li>
+
+                     <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                     </li>
+
+                     <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                     </li>
+
+                     <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                     </li>
+
+                     <li class="page-item">
+                        <a class="page-link" href="#">આગળ</a>
+                     </li>
+
+                  </ul>
+
+               </nav>
+
+            </div>
 
          </div>
+
+
+         </div>
+
 
          @include('layout.footer')

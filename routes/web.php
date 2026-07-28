@@ -44,4 +44,4 @@ Route::get('/sales', function () {
 
 Route::get('/show_sales', function () {
     return view('sales.show_sales');
-});
+})->name('show_sales');

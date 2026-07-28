@@ -45,7 +45,7 @@
                                                     </button>
 
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="show_sales.html">
+                                                        <a class="dropdown-item" href="{{ route('show_sales') }}">
                                                             <i class="icon-base bx bx-edit-alt me-1"></i> સંપાદિત કરો
                                                         </a>
 
