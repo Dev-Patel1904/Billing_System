@@ -153,6 +153,10 @@ pieOptions
 
 <!-- Place this tag before closing body tag for github widget button. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+<!-- STEP 3: GlassToast JS -->
+<script src="https://cdn.jsdelivr.net/gh/Vijayparmar03/GlassToast@main/vijay.js"></script>
 </body>
 
 </html>

@@ -38,6 +38,13 @@
 
   <link rel="stylesheet" href="assets/vendor/libs/apex-charts/apex-charts.css" />
 
+    {{-- Message --}}
+   <!-- STEP 1: Font Awesome CDN (Required for icons) -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+   <!-- STEP 2: GlassToast CSS -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Vijayparmar03/GlassToast@main/vijay.css">
+
   <!-- Page CSS -->
 
   <!-- Helpers -->

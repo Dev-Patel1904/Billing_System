@@ -12,6 +12,12 @@
     <!-- Boxicons -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
+     <!-- STEP 1: Font Awesome CDN (Required for icons) -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+     <!-- STEP 2: GlassToast CSS -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Vijayparmar03/GlassToast@main/vijay.css">
+
     <style>
         body {
             background: #f4f6f9;
@@ -135,7 +141,9 @@
 
                                 </div>
 
-                                <form>
+                                <form id="adminLoginForm">
+
+                                    @csrf
 
                                     <!-- Mobile -->
 
@@ -155,8 +163,16 @@
                                                 +91
                                             </span>
 
-                                            <input type="tel" class="form-control" placeholder="9876543210"
-                                                maxlength="10">
+                                            <input
+                                                type="tel"
+                                                class="form-control"
+                                                id="mobile"
+                                                name="mobile"
+                                                placeholder="9876543210"
+                                                maxlength="10"
+                                                inputmode="numeric"
+                                                autocomplete="tel"
+                                            >
 
                                         </div>
 
@@ -176,11 +192,22 @@
                                                 <i class="bx bx-lock"></i>
                                             </span>
 
-                                            <input type="password" class="form-control" id="pin" maxlength="6"
-                                                placeholder="******">
+                                            <input
+                                                type="password"
+                                                class="form-control"
+                                                id="pin"
+                                                name="pin"
+                                                maxlength="6"
+                                                placeholder="******"
+                                                inputmode="numeric"
+                                                autocomplete="current-password"
+                                            >
 
-                                            <button class="btn btn-outline-secondary" type="button"
-                                                onclick="togglePin()">
+                                            <button
+                                                class="btn btn-outline-secondary"
+                                                type="button"
+                                                onclick="togglePin()"
+                                            >
 
                                                 <i class="bx bx-show" id="eyeIcon"></i>
 
@@ -194,7 +221,12 @@
 
                                         <div class="form-check">
 
-                                            <input class="form-check-input" type="checkbox" id="remember">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                id="remember"
+                                                name="remember"
+                                            >
 
                                             <label class="form-check-label" for="remember">
                                                 મને યાદ રાખો
@@ -208,11 +240,15 @@
 
                                     </div>
 
-                                    <button class="btn btn-primary w-100 btn-login">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary w-100 btn-login"
+                                        id="loginBtn"
+                                    >
 
                                         <i class="bx bx-log-in-circle me-2"></i>
 
-                                        લોગિન કરો
+                                        <span id="loginBtnText">લોગિન કરો</span>
 
                                     </button>
 
@@ -274,7 +310,201 @@
         }
 
     </script>
+    <!-- STEP 3: GlassToast JS -->
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const form = document.getElementById('adminLoginForm');
+            const mobile = document.getElementById('mobile');
+            const pin = document.getElementById('pin');
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+
+            // Allow only numbers in mobile
+            mobile.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').slice(0, 10);
+            });
+
+            // Allow only numbers in PIN
+            pin.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+            });
+
+            form.addEventListener('submit', function (e) {
+
+                e.preventDefault();
+
+                const mobileValue = mobile.value.trim();
+                const pinValue = pin.value.trim();
+
+                // Mobile validation
+                if (mobileValue === '') {
+                    GlassToast.warning(
+                        "ચેતવણી",
+                        "મોબાઇલ નંબર દાખલ કરો."
+                    );
+
+                    mobile.focus();
+                    return;
+                }
+
+                if (!/^[6-9][0-9]{9}$/.test(mobileValue)) {
+                    GlassToast.error(
+                        "ભૂલ",
+                        "માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો."
+                    );
+
+                    mobile.focus();
+                    return;
+                }
+
+                // PIN validation
+                if (pinValue === '') {
+                    GlassToast.warning(
+                        "ચેતવણી",
+                        "6 અંકનો PIN દાખલ કરો."
+                    );
+
+                    pin.focus();
+                    return;
+                }
+
+                if (!/^[0-9]{6}$/.test(pinValue)) {
+                    GlassToast.error(
+                        "ભૂલ",
+                        "PIN ચોક્કસ 6 અંકનો હોવો જોઈએ."
+                    );
+
+                    pin.focus();
+                    return;
+                }
+
+                // Disable button
+                loginBtn.disabled = true;
+                loginBtnText.innerText = "લોગિન થઈ રહ્યું છે...";
+
+                const formData = new FormData(form);
+
+                fetch("{{ route('admin.login.submit') }}", {
+
+                    method: "POST",
+
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector(
+                            'input[name="_token"]'
+                        ).value,
+
+                        "Accept": "application/json"
+                    },
+
+                    body: formData
+
+                })
+
+                .then(async response => {
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw {
+                            status: response.status,
+                            data: data
+                        };
+                    }
+
+                    return data;
+                })
+
+                .then(data => {
+
+                    if (data.status) {
+
+                        GlassToast.success(
+                            "સફળતા",
+                            data.message
+                        );
+
+                        setTimeout(function () {
+                            window.location.href = data.redirect;
+                        }, 1000);
+
+                    } else {
+
+                        GlassToast.error(
+                            "લોગિન નિષ્ફળ",
+                            data.message
+                        );
+
+                        loginBtn.disabled = false;
+                        loginBtnText.innerText = "લોગિન કરો";
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.log(error);
+
+                    // Laravel validation errors
+                    if (
+                        error.status === 422 &&
+                        error.data &&
+                        error.data.errors
+                    ) {
+
+                        const errors = error.data.errors;
+
+                        if (errors.mobile) {
+
+                            GlassToast.error(
+                                "મોબાઇલ નંબર",
+                                errors.mobile[0]
+                            );
+
+                        } else if (errors.pin) {
+
+                            GlassToast.error(
+                                "PIN",
+                                errors.pin[0]
+                            );
+
+                        }
+
+                    }
+
+                    // Wrong login
+                    else if (
+                        error.status === 401 &&
+                        error.data
+                    ) {
+
+                        GlassToast.error(
+                            "લોગિન નિષ્ફળ",
+                            error.data.message
+                        );
+
+                    }
+
+                    // Other error
+                    else {
+
+                        GlassToast.error(
+                            "ભૂલ",
+                            "કંઈક ખોટું થયું. કૃપા કરીને ફરી પ્રયાસ કરો."
+                        );
+                    }
+
+                    loginBtn.disabled = false;
+                    loginBtnText.innerText = "લોગિન કરો";
+
+                });
+
+            });
+
+        });
+        </script>
+<script src="https://cdn.jsdelivr.net/gh/Vijayparmar03/GlassToast@main/vijay.js"></script>
 </body>
 
 </html>

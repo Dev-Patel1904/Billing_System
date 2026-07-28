@@ -1,10 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminLogin;
+
 
 Route::get('/', function () {
     return view('product.welcome');
 });
+Route::post('/admin/login', [AdminLogin::class, 'login'])->name('admin.login.submit');
+
+
 
 Route::get('/dashboard', function () {
     return view('product.dashboard');
