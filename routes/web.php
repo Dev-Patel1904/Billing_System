@@ -23,7 +23,8 @@ Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('sup
 Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase');
 Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
 Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->name('purchases.destroy');
-Route::get('/purchase_detail', [PurchaseController::class, 'purchase_detail'])->name('purchase_detail');
+Route::get('/purchase_detail/{purchase}', [PurchaseController::class, 'purchase_detail'])->name('purchase_detail');
+Route::put('/purchases/{purchase}/update-payment', [PurchaseController::class, 'updatePayment'])->name('purchases.update_payment');
 
 
 

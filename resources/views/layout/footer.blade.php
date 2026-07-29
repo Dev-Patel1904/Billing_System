@@ -79,10 +79,12 @@ y: {
 
 };
 
-new ApexCharts(
-document.querySelector("#monthlySalesChart"),
-monthlyOptions
-).render();
+if (document.querySelector("#monthlySalesChart")) {
+  new ApexCharts(
+  document.querySelector("#monthlySalesChart"),
+  monthlyOptions
+  ).render();
+}
 
 
 
@@ -118,10 +120,12 @@ enabled: true
 
 };
 
-new ApexCharts(
-document.querySelector("#billTypeChart"),
-pieOptions
-).render();
+if (document.querySelector("#billTypeChart")) {
+  new ApexCharts(
+  document.querySelector("#billTypeChart"),
+  pieOptions
+  ).render();
+}
 
 </script>
 
@@ -130,26 +134,26 @@ pieOptions
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <!-- Core JS -->
 
-<script src="assets/vendor/libs/jquery/jquery.js"></script>
+<script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
 
-<script src="assets/vendor/libs/popper/popper.js"></script>
-<script src="assets/vendor/js/bootstrap.js"></script>
+<script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
+<script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
 
-<script src="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+<script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
 
-<script src="assets/vendor/js/menu.js"></script>
+<script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
 
 <!-- endbuild -->
 
 <!-- Vendors JS -->
-<script src="assets/vendor/libs/apex-charts/apexcharts.js"></script>
+<script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
 
 <!-- Main JS -->
 
-<script src="assets/js/main.js"></script>
+<script src="{{ asset('assets/js/main.js') }}"></script>
 
 <!-- Page JS -->
-<script src="assets/js/dashboards-analytics.js"></script>
+<script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
 
 <!-- Place this tag before closing body tag for github widget button. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>

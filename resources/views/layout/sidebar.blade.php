@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html lang="en" class="layout-menu-fixed layout-compact" data-assets-path="../assets/"
+<html lang="en" class="layout-menu-fixed layout-compact" data-assets-path="{{ asset('assets') }}/"
   data-template="vertical-menu-template-free">
 
 <head>
@@ -14,7 +14,7 @@
   <meta name="description" content="" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+  <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,22 +23,22 @@
     href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="assets/vendor/fonts/iconify-icons.css" />
+  <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/iconify-icons.css') }}" />
 
 
   <!-- Core CSS -->
   <!-- build:css assets/vendor/css/theme.css  -->
 
-  <link rel="stylesheet" href="assets/vendor/css/core.css" />
-  <link rel="stylesheet" href="assets/css/demo.css" />
+  <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
 
   <!-- Vendors CSS -->
 
-  <link rel="stylesheet" href="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
 
   <!-- endbuild -->
 
-  <link rel="stylesheet" href="assets/vendor/libs/apex-charts/apex-charts.css" />
+  <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
     {{-- Message --}}
    <!-- STEP 1: Font Awesome CDN (Required for icons) -->
@@ -50,12 +50,12 @@
   <!-- Page CSS -->
 
   <!-- Helpers -->
-  <script src="assets/vendor/js/helpers.js"></script>
+  <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
   <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 
   <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 
-  <script src="assets/js/config.js"></script>
+  <script src="{{ asset('assets/js/config.js') }}"></script>
 </head>
 
 <body>
@@ -66,7 +66,7 @@
 
       <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
         <div class="app-brand demo">
-          <a href="index.html" class="app-brand-link">
+          <a href="{{ route('dashboard') }}" class="app-brand-link">
             <span class="app-brand-logo demo">
               <span class="text-primary">
                 <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -215,7 +215,7 @@
               <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                   <div class="avatar avatar-online">
-                    <img src="assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                    <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
                   </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -224,7 +224,7 @@
                       <div class="d-flex">
                         <div class="flex-shrink-0 me-3">
                           <div class="avatar avatar-online">
-                            <img src="assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                            <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
                           </div>
                         </div>
                         <div class="flex-grow-1">

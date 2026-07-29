@@ -19,8 +19,56 @@ class PurchaseController extends Controller
         return view('purchase.purchase', compact('purchases'));
     }
 
-    public function purchase_detail(){
-        return view('purchase.purchase_detail');
+
+    // Purchase Detail Page
+    public function purchase_detail(Purchase $purchase)
+    {
+        $purchase->load('items', 'supplier');
+
+        return view('purchase.purchase_detail', compact('purchase'));
+    }
+
+
+    // Update Payment -> add "amount" to paid_amount, subtract from balance_amount
+    public function updatePayment(Request $request, Purchase $purchase)
+    {
+        $validated = $request->validate([
+            'amount' => [
+                'required',
+                'numeric',
+                'min:0.01',
+                'max:' . $purchase->balance_amount,
+            ],
+        ], [
+            'amount.required' => 'રકમ દાખલ કરો.',
+            'amount.numeric'  => 'રકમ યોગ્ય નંબર હોવી જોઈએ.',
+            'amount.max'      => 'બાકી રકમ કરતાં વધુ ચૂકવી શકાય નહીં.',
+        ]);
+
+        try {
+
+            $amount  = $validated['amount'];
+            $paid    = $purchase->paid_amount + $amount;
+            $balance = max($purchase->total_amount - $paid, 0);
+
+            $purchase->update([
+                'paid_amount'    => $paid,
+                'balance_amount' => $balance,
+            ]);
+
+            return response()->json([
+                'status'         => true,
+                'message'        => 'ચુકવણી સફળતાપૂર્વક અપડેટ થઈ.',
+                'paid_amount'    => $paid,
+                'balance_amount' => $balance,
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'ચુકવણી અપડેટ કરવામાં ભૂલ આવી.',
+            ], 500);
+        }
     }
 
 
@@ -35,14 +83,12 @@ class PurchaseController extends Controller
                 'status'  => true,
                 'message' => 'ખરીદી સફળતાપૂર્વક કાઢી નાખવામાં આવી.',
             ]);
-
         } catch (\Exception $e) {
 
             return response()->json([
                 'status'  => false,
                 'message' => 'ખરીદી કાઢી નાખવામાં ભૂલ આવી.',
             ], 500);
-
         }
     }
 
@@ -103,7 +149,6 @@ class PurchaseController extends Controller
                 'message'  => 'ખરીદી સફળતાપૂર્વક સચવાઈ.',
                 'purchase' => $purchase->load('items', 'supplier'),
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status'  => false,
