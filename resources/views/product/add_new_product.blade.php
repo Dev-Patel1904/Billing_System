@@ -303,7 +303,6 @@
    <script async defer src="https://buttons.github.io/buttons.js"></script>
    <script>
       const tableBody = document.getElementById("billTableBody");
-      let editingRow = null;
       document.getElementById("paid_amount").addEventListener("input", updateSummary);
       document.getElementById("saveBtn").addEventListener("click", function() {
 
@@ -327,66 +326,26 @@
          }
 
          const total = qty * rate;
+         const rowNo = tableBody.rows.length + 1;
 
-            if (editingRow) {
 
-                editingRow.dataset.name = productName;
-                editingRow.dataset.qty = qty;
-                editingRow.dataset.rate = rate;
-                editingRow.dataset.total = total;
 
-                editingRow.cells[1].textContent = productName;
-                editingRow.cells[2].textContent = qty;
-                editingRow.cells[3].textContent = "₹" + rate;
-                editingRow.cells[4].textContent = "₹" + total;
+         const row = `
+            <tr data-name="${productName}" data-qty="${qty}" data-rate="${rate}" data-total="${total}">
+                <td>${rowNo}</td>
+                <td>${productName}</td>
+                <td>${qty}</td>
+                <td>₹${rate}</td>
+                <td>₹${total}</td>
+                <td>
+                    <a class="dropdown-item delete-btn" href="javascript:void(0);">
+                        <i class="bx bx-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            `;
 
-                editingRow = null;
-
-                document.getElementById("saveBtn").innerText = "સાચવો";
-
-            }
-            else{
-
-                const rowNo = tableBody.rows.length + 1;
-
-                const row = `
-                    <tr
-                        data-name="${productName}"
-                        data-qty="${qty}"
-                        data-rate="${rate}"
-                        data-total="${total}"
-                    >
-
-                        <td>${rowNo}</td>
-                        <td>${productName}</td>
-                        <td>${qty}</td>
-                        <td>₹${rate}</td>
-                        <td>₹${total}</td>
-
-                        <td>
-
-                            <a href="javascript:void(0)" class="dropdown-item edit-btn">
-                                <i class="bx bx-edit text-primary"></i>
-                            </a>
-
-                            <a href="javascript:void(0)" class="dropdown-item delete-btn">
-                                <i class="bx bx-trash text-danger"></i>
-                            </a>
-
-                        </td>
-
-                    </tr>
-                `;
-
-                tableBody.insertAdjacentHTML("beforeend", row);
-
-            }
-
-            updateSummary();
-
-            document.getElementById("product_name").value="";
-            document.getElementById("qty").value="";
-            document.getElementById("rate").value="";
+         tableBody.insertAdjacentHTML("beforeend", row);
          updateSummary();
 
          // Clear input fields
@@ -415,41 +374,23 @@
          document.getElementById("total_qty").value = totalQty;
          document.getElementById("total_amount").value = totalAmount;
 
-         const paid = Number(document.getElementById("paid_amount").value) || 0;
+         const paidInput = document.getElementById("paid_amount");
+         let paid = Number(paidInput.value) || 0;
+
+         if (paid > totalAmount) {
+
+            GlassToast.warning(
+               'ચેતવણી',
+               'આજે ચૂકવેલ રકમ કુલ રકમ કરતાં વધુ ન હોઈ શકે.'
+            );
+
+            paid = totalAmount;
+            paidInput.value = totalAmount;
+
+         }
 
          document.getElementById("balance_amount").value = Math.max(totalAmount - paid, 0);
       }
-
-        // =========================
-        // EDIT ROW
-        // =========================
-
-        document.addEventListener("click",function(e){
-
-            if(e.target.closest(".edit-btn")){
-
-                editingRow = e.target.closest("tr");
-
-                document.getElementById("product_name").value =
-                    editingRow.dataset.name;
-
-                document.getElementById("qty").value =
-                    editingRow.dataset.qty;
-
-                document.getElementById("rate").value =
-                    editingRow.dataset.rate;
-
-                document.getElementById("saveBtn").innerText =
-                    "Update";
-
-                window.scrollTo({
-                    top:0,
-                    behavior:"smooth"
-                });
-
-            }
-
-        });
 
       // Delete Row
       document.addEventListener("click", function(e) {
@@ -457,14 +398,6 @@
          if (e.target.closest(".delete-btn")) {
 
             e.target.closest("tr").remove();
-
-            if(editingRow && !document.body.contains(editingRow)){
-
-                editingRow = null;
-
-                document.getElementById("saveBtn").innerText="સાચવો";
-
-            }
 
             // Re-number rows
             [...tableBody.rows].forEach((row, index) => {
@@ -803,6 +736,17 @@
             GlassToast.warning(
                 'ચેતવણી',
                 'કૃપા કરીને ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.'
+            );
+            return;
+        }
+
+        const totalAmount = Number(document.getElementById("total_amount").value) || 0;
+        const paidAmountCheck = Number(document.getElementById("paid_amount").value) || 0;
+
+        if (paidAmountCheck > totalAmount) {
+            GlassToast.warning(
+                'ચેતવણી',
+                'આજે ચૂકવેલ રકમ કુલ રકમ કરતાં વધુ ન હોઈ શકે.'
             );
             return;
         }
