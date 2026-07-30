@@ -161,6 +161,25 @@ if (document.querySelector("#billTypeChart")) {
 
 <!-- STEP 3: GlassToast JS -->
 <script src="https://cdn.jsdelivr.net/gh/Vijayparmar03/GlassToast@main/vijay.js"></script>
+
+{{-- LOGOUT CONFIRM --}}
+<script>
+    document.getElementById('logoutBtn').addEventListener('click', function (e) {
+
+        e.preventDefault();
+
+        const logoutUrl = this.href;
+
+        GlassToast.confirm(
+            'લોગ આઉટ કરો',
+            'શું તમે ખરેખર લોગ આઉટ કરવા માંગો છો?',
+            function () {
+                window.location.href = logoutUrl;
+            }
+        );
+
+    });
+</script>
 </body>
 
 </html>
