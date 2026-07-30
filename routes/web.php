@@ -38,6 +38,12 @@ Route::middleware('admin.auth')->group(function () {
    Route::delete('/suppliers/{supplier}', [SpllierlistController::class, 'destroy'])->name('suppliers.destroy');
    Route::get('/supplier/{supplier}/purchases', [SpllierlistController::class, 'supplierPurchases'])->name('supplier.purchases');
 
+
+    //setting
+    Route::get('/settings', [AdminLogin::class, 'settings'])->name('settings');
+    Route::put('/settings/update-password', [AdminLogin::class, 'updatePassword'])->name('settings.update_password');
+
+
     Route::get('/billing-list', function () {
         return view('billing.billing_list');
     })->name('billing-list');
