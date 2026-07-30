@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminLogin;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SpllierlistController;
 
 
 
@@ -31,6 +32,12 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/purchase_detail/{purchase}', [PurchaseController::class, 'purchase_detail'])->name('purchase_detail');
     Route::put('/purchases/{purchase}/update-payment', [PurchaseController::class, 'updatePayment'])->name('purchases.update_payment');
 
+   //supplier-list
+   Route::get('/supplier_list', [SpllierlistController::class, 'supplier_list'])->name('supplier_list');
+   Route::put('/suppliers/{supplier}', [SpllierlistController::class, 'update'])->name('suppliers.update');
+   Route::delete('/suppliers/{supplier}', [SpllierlistController::class, 'destroy'])->name('suppliers.destroy');
+   Route::get('/supplier/{supplier}/purchases', [SpllierlistController::class, 'supplierPurchases'])->name('supplier.purchases');
+
     Route::get('/billing-list', function () {
         return view('billing.billing_list');
     })->name('billing-list');
@@ -42,10 +49,6 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/customer_list', function () {
         return view('list.customer_list');
     })->name('customer_list');
-
-    Route::get('/supplier_list', function () {
-        return view('list.supplier_list');
-    })->name('supplier_list');
 
     Route::get('/sales', function () {
         return view('sales.sales');
