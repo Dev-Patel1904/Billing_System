@@ -42,6 +42,7 @@ class PurchaseController extends Controller
         ], [
             'amount.required' => 'રકમ દાખલ કરો.',
             'amount.numeric'  => 'રકમ યોગ્ય નંબર હોવી જોઈએ.',
+            'amount.min'      => 'રકમ 0 કરતાં વધુ હોવી જોઈએ.',
             'amount.max'      => 'બાકી રકમ કરતાં વધુ ચૂકવી શકાય નહીં.',
         ]);
 
@@ -123,6 +124,7 @@ class PurchaseController extends Controller
             $purchase = DB::transaction(function () use ($validated, $totalQty, $totalAmount, $paid, $balance) {
 
                 $purchase = Purchase::create([
+                    'billing_no'     => 'B' . now()->format('ymdHis') . rand(100, 999),
                     'supplier_id'    => $validated['supplier_id'],
                     'total_qty'      => $totalQty,
                     'total_amount'   => $totalAmount,
