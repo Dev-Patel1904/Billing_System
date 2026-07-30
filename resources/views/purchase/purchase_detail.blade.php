@@ -26,7 +26,7 @@
 
                <div class="text-lg-end">
                   <span class="badge bg-warning text-dark px-3 py-2 fs-6">
-                     બિલ નં. #{{ $purchase->id }}
+                     બિલ નં. {{ $purchase->billing_no }}
                   </span>
 
                   <div class="mt-2">
@@ -284,79 +284,83 @@
    <!-- / Content -->
 
    {{-- UPDATE PAYMENT --}}
-   <script>
-      document.getElementById('updatePaymentBtn').addEventListener('click', async function() {
+<script>
+    document.getElementById('updatePaymentBtn').addEventListener('click', function() {
 
-         const btn = this;
-         const purchaseId = btn.dataset.id;
-         const amountInput = document.getElementById('edit_paid_amount');
-         const amount = amountInput.value;
+       const btn = this;
+       const purchaseId = btn.dataset.id;
+       const amountInput = document.getElementById('edit_paid_amount');
+       const amount = amountInput.value;
 
-         btn.disabled = true;
+       GlassToast.confirm('ખાતરી કરો', 'શું તમે ખરેખર ₹' + amount + ' ચુકવણી અપડેટ કરવા માંગો છો?', async function() {
 
-         try {
+          btn.disabled = true;
 
-            const response = await fetch(`/purchases/${purchaseId}/update-payment`, {
+          try {
 
-               method: 'PUT',
+             const response = await fetch(`/purchases/${purchaseId}/update-payment`, {
 
-               headers: {
-                  'Content-Type': 'application/json'
-                  , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                  , 'Accept': 'application/json'
-               , },
+                method: 'PUT',
 
-               body: JSON.stringify({
-                  amount: amount
-               , }),
+                headers: {
+                   'Content-Type': 'application/json'
+                   , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                   , 'Accept': 'application/json'
+                , },
 
-            });
+                body: JSON.stringify({
+                   amount: amount
+                , }),
 
-            const data = await response.json();
+             });
 
-            if (response.ok && data.status === true) {
+             const data = await response.json();
 
-               GlassToast.success('સફળતા', data.message);
+             if (response.ok && data.status === true) {
 
-               document.getElementById('display_balance_amount').innerText = '₹' + data.balance_amount;
-               document.getElementById('display_paid_amount').innerText = '₹' + data.paid_amount;
+                GlassToast.success('સફળતા', data.message);
 
-               // Refresh the input + its max to show the NEW remaining balance
-               amountInput.value = data.balance_amount;
-               amountInput.max = data.balance_amount;
+                document.getElementById('display_balance_amount').innerText = '₹' + data.balance_amount;
+                document.getElementById('display_paid_amount').innerText = '₹' + data.paid_amount;
 
-               if (Number(data.balance_amount) <= 0) {
-                  btn.disabled = true;
-               }
+                // Refresh the input + its max to show the NEW remaining balance
+                amountInput.value = data.balance_amount;
+                amountInput.max = data.balance_amount;
 
-            } else if (response.status === 422 && data.errors) {
+                if (Number(data.balance_amount) <= 0) {
+                   btn.disabled = true;
+                }
 
-               const firstErrorKey = Object.keys(data.errors)[0];
+             } else if (response.status === 422 && data.errors) {
 
-               GlassToast.error('ભૂલ', data.errors[firstErrorKey][0]);
+                const firstErrorKey = Object.keys(data.errors)[0];
 
-               btn.disabled = false;
+                GlassToast.error('ભૂલ', data.errors[firstErrorKey][0]);
 
-            } else {
+                btn.disabled = false;
 
-               GlassToast.error('ભૂલ', data.message || 'કંઈક ખોટું થયું.');
+             } else {
 
-               btn.disabled = false;
+                GlassToast.error('ભૂલ', data.message || 'કંઈક ખોટું થયું.');
 
-            }
+                btn.disabled = false;
 
-         } catch (error) {
+             }
 
-            console.error('Update Payment Error:', error);
+          } catch (error) {
 
-            GlassToast.error('ભૂલ', 'સર્વર સાથે કનેક્શન કરવામાં સમસ્યા આવી.');
+             console.error('Update Payment Error:', error);
 
-            btn.disabled = false;
+             GlassToast.error('ભૂલ', 'સર્વર સાથે કનેક્શન કરવામાં સમસ્યા આવી.');
 
-         }
+             btn.disabled = false;
 
-      });
+          }
 
-   </script>
+       });
+
+    });
+
+ </script>
 
    @include('layout.footer')
