@@ -234,7 +234,7 @@
 
                                         </div>
 
-                                        <a href="#" class="text-decoration-none">
+                                        <a href="{{ route('forgot.password.form') }}" class="text-decoration-none">
                                             PIN ભૂલી ગયા?
                                         </a>
 

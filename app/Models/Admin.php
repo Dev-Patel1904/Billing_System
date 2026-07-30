@@ -6,14 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Admin extends Model
 {
-    protected $table = 'admins';
-
     protected $fillable = [
         'mobile',
         'pin',
+        'otp',
+        'otp_expires_at',
     ];
 
     protected $hidden = [
         'pin',
+        'otp',
+    ];
+
+    protected $casts = [
+        'otp_expires_at' => 'datetime',
     ];
 }

@@ -180,6 +180,8 @@ if (document.querySelector("#billTypeChart")) {
 
     });
 </script>
+
+
 </body>
 
 </html>

@@ -5,13 +5,22 @@ use App\Http\Controllers\AdminLogin;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SpllierlistController;
-
+use App\Http\Controllers\ForgotPassController;
 
 
 //Login
 Route::get('/', function () {return view('product.welcome');})->name('admin.login');
 Route::post('/admin/login', [AdminLogin::class, 'login'])->name('admin.login.submit');
 Route::get('/admin/logout', [AdminLogin::class, 'logout'])->name('admin.logout');
+
+// Forgot / Reset Password
+Route::get('/forgot-password', [ForgotPassController::class, 'showForgotPasswordForm'])->name('forgot.password.form');
+Route::post('/forgot-password/send-otp', [ForgotPassController::class, 'sendOtp'])->name('forgot.password.send-otp');
+
+Route::get('/reset-password', [ForgotPassController::class, 'showResetPasswordForm'])->name('reset.password.form');
+Route::post('/reset-password/verify', [ForgotPassController::class, 'resetPassword'])->name('reset.password.verify');
+Route::post('/reset-password/resend-otp', [ForgotPassController::class, 'resendOtp'])->name('reset.password.resend-otp');
+
 
 
 Route::middleware('admin.auth')->group(function () {
