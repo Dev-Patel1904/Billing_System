@@ -117,12 +117,21 @@
             border-radius: 10px;
         }
 
+        .otp-group input.is-valid {
+            border-color: #198754;
+        }
+
         .resend-text {
             font-size: 14px;
         }
 
         .resend-text a {
             font-weight: 600;
+        }
+
+        .resend-text a.disabled {
+            pointer-events: none;
+            opacity: .6;
         }
 
         .pin-strength {
@@ -138,6 +147,16 @@
             width: 0%;
             background: #dc3545;
             transition: width .3s, background-color .3s;
+        }
+
+        .otp-verified-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #198754;
+            font-weight: 600;
+            font-size: 15px;
         }
 
         @media(max-width:991px) {
@@ -199,11 +218,11 @@
 
                                     <i class="bx bx-lock-alt text-primary" style="font-size:60px;"></i>
 
-                                    <h2 class="login-title mt-3">
+                                    <h2 class="login-title mt-3" id="pageTitle">
                                         PIN રીસેટ કરો
                                     </h2>
 
-                                    <p class="text-muted">
+                                    <p class="text-muted" id="pageSubtitle">
                                         +91 {{ $maskedMobile }} પર મોકલેલ OTP દાખલ કરો
                                     </p>
 
@@ -212,12 +231,14 @@
                                 <div class="step-indicator">
                                     <div class="step-dot active"></div>
                                     <div class="step-dot active"></div>
-                                    <div class="step-dot"></div>
+                                    <div class="step-dot" id="stepDot3"></div>
                                 </div>
 
-                                <form id="resetPasswordForm">
+                                <!-- ===================== -->
+                                <!-- STEP A: OTP SECTION -->
+                                <!-- ===================== -->
 
-                                    <!-- OTP -->
+                                <form id="otpForm">
 
                                     <div class="mb-3">
 
@@ -226,8 +247,6 @@
                                         </label>
 
                                         <div class="otp-group mb-2">
-                                            <input type="text" class="form-control otp-box" maxlength="1" inputmode="numeric">
-                                            <input type="text" class="form-control otp-box" maxlength="1" inputmode="numeric">
                                             <input type="text" class="form-control otp-box" maxlength="1" inputmode="numeric">
                                             <input type="text" class="form-control otp-box" maxlength="1" inputmode="numeric">
                                             <input type="text" class="form-control otp-box" maxlength="1" inputmode="numeric">
@@ -242,7 +261,30 @@
 
                                     </div>
 
-                                    <hr class="my-4">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary w-100 btn-login"
+                                        id="verifyOtpBtn"
+                                    >
+
+                                        <i class="bx bx-check-circle me-2"></i>
+
+                                        <span id="verifyOtpBtnText">OTP ચકાસો</span>
+
+                                    </button>
+
+                                </form>
+
+                                <!-- ===================== -->
+                                <!-- STEP B: PIN SECTION (hidden initially) -->
+                                <!-- ===================== -->
+
+                                <form id="pinForm" style="display:none;">
+
+                                    <div class="otp-verified-badge mb-4">
+                                        <i class="bx bx-check-shield fs-4"></i>
+                                        OTP સફળતાપૂર્વક ચકાસાયો
+                                    </div>
 
                                     <!-- New PIN -->
 
@@ -379,264 +421,390 @@
 
         }
 
+        document.addEventListener('DOMContentLoaded', function () {
 
-    </script>
-    <script>
+            const otpBoxes = document.querySelectorAll('.otp-box');
+            const otpForm = document.getElementById('otpForm');
+            const pinForm = document.getElementById('pinForm');
+            const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+            const verifyOtpBtnText = document.getElementById('verifyOtpBtnText');
 
-    function togglePin(inputId, iconId) {
-        const pin = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
+            const newPin = document.getElementById('newPin');
+            const confirmPin = document.getElementById('confirmPin');
+            const resetBtn = document.getElementById('resetBtn');
+            const resetBtnText = document.getElementById('resetBtnText');
 
-        if (pin.type === "password") {
-            pin.type = "text";
-            icon.classList.remove("bx-show");
-            icon.classList.add("bx-hide");
-        } else {
-            pin.type = "password";
-            icon.classList.remove("bx-hide");
-            icon.classList.add("bx-show");
-        }
-    }
+            const resendLink = document.getElementById('resendOtpLink');
+            const timerText = document.getElementById('otpTimer');
 
-    document.addEventListener('DOMContentLoaded', function () {
+            const pageTitle = document.getElementById('pageTitle');
+            const pageSubtitle = document.getElementById('pageSubtitle');
+            const stepDot3 = document.getElementById('stepDot3');
 
-        const otpBoxes = document.querySelectorAll('.otp-box');
-        const form = document.getElementById('resetPasswordForm');
-        const newPin = document.getElementById('newPin');
-        const confirmPin = document.getElementById('confirmPin');
-        const resetBtn = document.getElementById('resetBtn');
-        const resetBtnText = document.getElementById('resetBtnText');
-        const resendLink = document.getElementById('resendOtpLink');
-        const timerText = document.getElementById('otpTimer');
+            // ==========================================
+            // OTP BOX BEHAVIOR (type, backspace, paste)
+            // ==========================================
 
-        // OTP auto move
-        otpBoxes.forEach((box, index) => {
+            otpBoxes.forEach((box, index) => {
 
-            box.addEventListener('input', function () {
-                this.value = this.value.replace(/[^0-9]/g, '');
-                if (this.value.length === 1 && otpBoxes[index + 1]) {
-                    otpBoxes[index + 1].focus();
-                }
+                box.addEventListener('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);
+                    if (this.value.length === 1 && otpBoxes[index + 1]) {
+                        otpBoxes[index + 1].focus();
+                    }
+                });
+
+                box.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && this.value === '' && otpBoxes[index - 1]) {
+                        otpBoxes[index - 1].focus();
+                    }
+                });
+
+                // Allow pasting the whole OTP into any box
+                box.addEventListener('paste', function (e) {
+
+                    e.preventDefault();
+
+                    const pasted = (e.clipboardData || window.clipboardData)
+                        .getData('text')
+                        .replace(/[^0-9]/g, '')
+                        .slice(0, otpBoxes.length);
+
+                    if (pasted.length === 0) return;
+
+                    pasted.split('').forEach((digit, i) => {
+                        if (otpBoxes[i]) {
+                            otpBoxes[i].value = digit;
+                        }
+                    });
+
+                    const nextIndex = Math.min(pasted.length, otpBoxes.length - 1);
+                    otpBoxes[nextIndex].focus();
+
+                });
+
             });
 
-            box.addEventListener('keydown', function (e) {
-                if (e.key === 'Backspace' && this.value === '' && otpBoxes[index - 1]) {
-                    otpBoxes[index - 1].focus();
-                }
+            // ==========================================
+            // PIN inputs -> digits only
+            // ==========================================
+
+            [newPin, confirmPin].forEach(input => {
+                input.addEventListener('input', function () {
+                    this.value = this.value.replace(/\D/g, '').slice(0, 6);
+                });
             });
 
-        });
+            // PIN strength bar
+            newPin.addEventListener('input', function () {
 
-        // PIN inputs -> digits only
-        [newPin, confirmPin].forEach(input => {
-            input.addEventListener('input', function () {
-                this.value = this.value.replace(/\D/g, '').slice(0, 6);
-            });
-        });
+                const bar = document.querySelector('.pin-strength-bar');
+                const len = this.value.length;
+                const pct = Math.min((len / 6) * 100, 100);
 
-        // PIN strength bar
-        newPin.addEventListener('input', function () {
+                bar.style.width = pct + '%';
 
-            const bar = document.querySelector('.pin-strength-bar');
-            const len = this.value.length;
-            const pct = Math.min((len / 6) * 100, 100);
-
-            bar.style.width = pct + '%';
-
-            if (len < 4) {
-                bar.style.background = '#dc3545';
-            } else if (len < 6) {
-                bar.style.background = '#fd7e14';
-            } else {
-                bar.style.background = '#198754';
-            }
-
-        });
-
-        // Resend countdown timer
-        let interval;
-
-        function startTimer() {
-
-            let timeLeft = 60;
-
-            resendLink.classList.add('disabled', 'text-muted');
-            resendLink.style.pointerEvents = 'none';
-
-            clearInterval(interval);
-
-            interval = setInterval(function () {
-
-                timeLeft--;
-
-                const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-                const s = String(timeLeft % 60).padStart(2, '0');
-                timerText.innerText = `${m}:${s}`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    resendLink.classList.remove('disabled', 'text-muted');
-                    resendLink.style.pointerEvents = 'auto';
-                    timerText.innerText = '';
-                }
-
-            }, 1000);
-
-        }
-
-        startTimer();
-
-        // Resend OTP click
-        resendLink.addEventListener('click', function (e) {
-
-            e.preventDefault();
-
-            if (this.classList.contains('disabled')) return;
-
-            fetch("{{ route('reset.password.resend-otp') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                },
-            })
-
-            .then(async response => {
-                const data = await response.json();
-                if (!response.ok) throw { status: response.status, data };
-                return data;
-            })
-
-            .then(data => {
-
-                if (data.status) {
-                    GlassToast.success('સફળતા', data.message);
-                    otpBoxes.forEach(box => box.value = '');
-                    otpBoxes[0].focus();
-                    startTimer();
+                if (len < 4) {
+                    bar.style.background = '#dc3545';
+                } else if (len < 6) {
+                    bar.style.background = '#fd7e14';
                 } else {
-                    GlassToast.error('ભૂલ', data.message);
+                    bar.style.background = '#198754';
                 }
 
-            })
-
-            .catch(error => {
-                console.log(error);
-                GlassToast.error('ભૂલ', 'કંઈક ખોટું થયું. કૃપા કરીને ફરી પ્રયાસ કરો.');
             });
 
-        });
+            // ==========================================
+            // Resend countdown timer
+            // ==========================================
 
-        // Final submit -> verify OTP + set new PIN
-        form.addEventListener('submit', function (e) {
+            let interval;
 
-            e.preventDefault();
+            function startTimer() {
 
-            const otp = Array.from(otpBoxes).map(b => b.value).join('');
-            const newPinValue = newPin.value.trim();
-            const confirmPinValue = confirmPin.value.trim();
+                let timeLeft = 60;
 
-            if (otp.length !== 6) {
-                GlassToast.warning('ચેતવણી', 'સંપૂર્ણ 6 અંકનો OTP દાખલ કરો.');
-                otpBoxes[0].focus();
-                return;
-            }
+                resendLink.classList.add('disabled', 'text-muted');
 
-            if (newPinValue.length !== 6) {
-                GlassToast.warning('ચેતવણી', 'નવો 6 અંકનો PIN દાખલ કરો.');
-                newPin.focus();
-                return;
-            }
+                clearInterval(interval);
 
-            if (confirmPinValue.length !== 6) {
-                GlassToast.warning('ચેતવણી', 'PIN ફરીથી દાખલ કરો.');
-                confirmPin.focus();
-                return;
-            }
+                interval = setInterval(function () {
 
-            if (newPinValue !== confirmPinValue) {
-                GlassToast.error('ભૂલ', 'બંને PIN સરખા હોવા જોઈએ.');
-                confirmPin.focus();
-                return;
-            }
+                    timeLeft--;
 
-            resetBtn.disabled = true;
-            resetBtnText.innerText = 'સાચવી રહ્યું છે...';
+                    const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+                    const s = String(timeLeft % 60).padStart(2, '0');
+                    timerText.innerText = `${m}:${s}`;
 
-            fetch("{{ route('reset.password.verify') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    otp: otp,
-                    new_pin: newPinValue,
-                    confirm_pin: confirmPinValue,
-                }),
-            })
-
-            .then(async response => {
-                const data = await response.json();
-                if (!response.ok) throw { status: response.status, data };
-                return data;
-            })
-
-            .then(data => {
-
-                if (data.status) {
-
-                    GlassToast.success('સફળતા', data.message);
-
-                    setTimeout(function () {
-                        window.location.href = data.redirect;
-                    }, 1200);
-
-                } else {
-                    GlassToast.error('ભૂલ', data.message);
-                    resetBtn.disabled = false;
-                    resetBtnText.innerText = 'PIN રીસેટ કરો';
-                }
-
-            })
-
-            .catch(error => {
-
-                console.log(error);
-
-                if (error.status === 422 && error.data) {
-
-                    if (error.data.errors) {
-                        const firstErrorKey = Object.keys(error.data.errors)[0];
-                        GlassToast.error('ભૂલ', error.data.errors[firstErrorKey][0]);
-                    } else if (error.data.message) {
-                        GlassToast.error('ભૂલ', error.data.message);
+                    if (timeLeft <= 0) {
+                        clearInterval(interval);
+                        resendLink.classList.remove('disabled', 'text-muted');
+                        timerText.innerText = '';
                     }
 
-                } else if (error.status === 440 && error.data) {
+                }, 1000);
 
-                    GlassToast.error('ભૂલ', error.data.message);
+            }
 
-                    setTimeout(function () {
-                        window.location.href = "{{ route('forgot.password.form') }}";
-                    }, 1500);
+            startTimer();
 
-                } else {
+            // Resend OTP click (with loading state)
+            resendLink.addEventListener('click', function (e) {
+
+                e.preventDefault();
+
+                if (this.classList.contains('disabled')) return;
+
+                const originalText = resendLink.innerText;
+                resendLink.innerText = 'મોકલી રહ્યું છે...';
+                resendLink.classList.add('disabled', 'text-muted');
+
+                fetch("{{ route('reset.password.resend-otp') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                })
+
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) throw { status: response.status, data };
+                    return data;
+                })
+
+                .then(data => {
+
+                    resendLink.innerText = originalText;
+
+                    if (data.status) {
+                        GlassToast.success('સફળતા', data.message);
+                        otpBoxes.forEach(box => {
+                            box.value = '';
+                            box.classList.remove('is-valid');
+                        });
+                        otpBoxes[0].focus();
+                        startTimer();
+                    } else {
+                        GlassToast.error('ભૂલ', data.message);
+                        resendLink.classList.remove('disabled', 'text-muted');
+                    }
+
+                })
+
+                .catch(error => {
+                    console.log(error);
+                    resendLink.innerText = originalText;
+                    resendLink.classList.remove('disabled', 'text-muted');
                     GlassToast.error('ભૂલ', 'કંઈક ખોટું થયું. કૃપા કરીને ફરી પ્રયાસ કરો.');
+                });
+
+            });
+
+            // ==========================================
+            // STEP A: Verify OTP
+            // ==========================================
+
+            otpForm.addEventListener('submit', function (e) {
+
+                e.preventDefault();
+
+                const otp = Array.from(otpBoxes).map(b => b.value).join('');
+
+                if (otp.length !== 4) {
+                    GlassToast.warning('ચેતવણી', 'સંપૂર્ણ 4 અંકનો OTP દાખલ કરો.');
+                    otpBoxes[0].focus();
+                    return;
                 }
 
-                resetBtn.disabled = false;
-                resetBtnText.innerText = 'PIN રીસેટ કરો';
+                verifyOtpBtn.disabled = true;
+                verifyOtpBtnText.innerText = 'ચકાસી રહ્યું છે...';
+
+                fetch("{{ route('reset.password.verify-otp') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ otp: otp }),
+                })
+
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) throw { status: response.status, data };
+                    return data;
+                })
+
+                .then(data => {
+
+                    if (data.status) {
+
+                        GlassToast.success('સફળતા', data.message);
+
+                        otpBoxes.forEach(box => box.classList.add('is-valid'));
+                        clearInterval(interval);
+
+                        setTimeout(function () {
+
+                            otpForm.style.display = 'none';
+                            pinForm.style.display = 'block';
+
+                            pageTitle.innerText = 'નવો PIN સેટ કરો';
+                            pageSubtitle.innerText = 'તમારો નવો 6 અંકનો PIN દાખલ કરો';
+                            stepDot3.classList.add('active');
+
+                            newPin.focus();
+
+                        }, 600);
+
+                    } else {
+
+                        GlassToast.error('ભૂલ', data.message);
+                        verifyOtpBtn.disabled = false;
+                        verifyOtpBtnText.innerText = 'OTP ચકાસો';
+
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.log(error);
+
+                    if (error.status === 422 && error.data) {
+
+                        if (error.data.errors) {
+                            const firstErrorKey = Object.keys(error.data.errors)[0];
+                            GlassToast.error('ભૂલ', error.data.errors[firstErrorKey][0]);
+                        } else if (error.data.message) {
+                            GlassToast.error('ભૂલ', error.data.message);
+                        }
+
+                    } else if (error.status === 440 && error.data) {
+
+                        GlassToast.error('ભૂલ', error.data.message);
+
+                        setTimeout(function () {
+                            window.location.href = "{{ route('forgot.password.form') }}";
+                        }, 1500);
+
+                    } else {
+                        GlassToast.error('ભૂલ', 'કંઈક ખોટું થયું. કૃપા કરીને ફરી પ્રયાસ કરો.');
+                    }
+
+                    verifyOtpBtn.disabled = false;
+                    verifyOtpBtnText.innerText = 'OTP ચકાસો';
+
+                });
+
+            });
+
+            // ==========================================
+            // STEP B: Set new PIN
+            // ==========================================
+
+            pinForm.addEventListener('submit', function (e) {
+
+                e.preventDefault();
+
+                const newPinValue = newPin.value.trim();
+                const confirmPinValue = confirmPin.value.trim();
+
+                if (newPinValue.length !== 6) {
+                    GlassToast.warning('ચેતવણી', 'નવો 6 અંકનો PIN દાખલ કરો.');
+                    newPin.focus();
+                    return;
+                }
+
+                if (confirmPinValue.length !== 6) {
+                    GlassToast.warning('ચેતવણી', 'PIN ફરીથી દાખલ કરો.');
+                    confirmPin.focus();
+                    return;
+                }
+
+                if (newPinValue !== confirmPinValue) {
+                    GlassToast.error('ભૂલ', 'બંને PIN સરખા હોવા જોઈએ.');
+                    confirmPin.focus();
+                    return;
+                }
+
+                resetBtn.disabled = true;
+                resetBtnText.innerText = 'સાચવી રહ્યું છે...';
+
+                fetch("{{ route('reset.password.verify') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        new_pin: newPinValue,
+                        confirm_pin: confirmPinValue,
+                    }),
+                })
+
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) throw { status: response.status, data };
+                    return data;
+                })
+
+                .then(data => {
+
+                    if (data.status) {
+
+                        GlassToast.success('સફળતા', data.message);
+
+                        setTimeout(function () {
+                            window.location.href = data.redirect;
+                        }, 1200);
+
+                    } else {
+                        GlassToast.error('ભૂલ', data.message);
+                        resetBtn.disabled = false;
+                        resetBtnText.innerText = 'PIN રીસેટ કરો';
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.log(error);
+
+                    if (error.status === 422 && error.data) {
+
+                        if (error.data.errors) {
+                            const firstErrorKey = Object.keys(error.data.errors)[0];
+                            GlassToast.error('ભૂલ', error.data.errors[firstErrorKey][0]);
+                        } else if (error.data.message) {
+                            GlassToast.error('ભૂલ', error.data.message);
+                        }
+
+                    } else if (error.status === 440 && error.data) {
+
+                        GlassToast.error('ભૂલ', error.data.message);
+
+                        setTimeout(function () {
+                            window.location.href = "{{ route('forgot.password.form') }}";
+                        }, 1500);
+
+                    } else {
+                        GlassToast.error('ભૂલ', 'કંઈક ખોટું થયું. કૃપા કરીને ફરી પ્રયાસ કરો.');
+                    }
+
+                    resetBtn.disabled = false;
+                    resetBtnText.innerText = 'PIN રીસેટ કરો';
+
+                });
 
             });
 
         });
 
-    });
-
-</script>
+    </script>
 
     <script src="https://cdn.jsdelivr.net/gh/Vijayparmar03/GlassToast@main/vijay.js"></script>
 
