@@ -8,6 +8,7 @@ class Admin extends Model
 {
     protected $fillable = [
         'mobile',
+        'email',
         'pin',
         'otp',
         'otp_expires_at',

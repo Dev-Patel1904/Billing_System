@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use Illuminate\Http\Request;
+use App\Mail\OtpMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 
 class ForgotPassController extends Controller
 {
@@ -34,6 +35,13 @@ class ForgotPassController extends Controller
             ], 404);
         }
 
+        if (!$admin->email) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'આ એકાઉન્ટ પર ઇમેઇલ સેટ નથી. કૃપા કરીને એડમિનનો સંપર્ક કરો.',
+            ], 422);
+        }
+
         $otp = rand(100000, 999999);
 
         $admin->update([
@@ -41,9 +49,7 @@ class ForgotPassController extends Controller
             'otp_expires_at' => now()->addMinutes(5),
         ]);
 
-        // TODO: Here integrate a real SMS gateway (MSG91 / Fast2SMS / Twilio etc.)
-        // Abhi mate OTP log file ma save thay che, testing mate:
-        Log::info("OTP for {$admin->mobile}: {$otp}");
+        Mail::to($admin->email)->send(new OtpMail($otp));
 
         session([
             'reset_mobile'   => $admin->mobile,
@@ -52,7 +58,7 @@ class ForgotPassController extends Controller
 
         return response()->json([
             'status'   => true,
-            'message'  => 'OTP સફળતાપૂર્વક મોકલવામાં આવ્યો છે.',
+            'message'  => 'OTP તમારા રજિસ્ટર્ડ ઇમેઇલ પર મોકલવામાં આવ્યો છે.',
             'redirect' => route('reset.password.form'),
         ]);
     }
@@ -76,6 +82,13 @@ class ForgotPassController extends Controller
             ], 404);
         }
 
+        if (!$admin->email) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'આ એકાઉન્ટ પર ઇમેઇલ સેટ નથી. કૃપા કરીને એડમિનનો સંપર્ક કરો.',
+            ], 422);
+        }
+
         $otp = rand(100000, 999999);
 
         $admin->update([
@@ -83,11 +96,11 @@ class ForgotPassController extends Controller
             'otp_expires_at' => now()->addMinutes(5),
         ]);
 
-        Log::info("OTP (resend) for {$admin->mobile}: {$otp}");
+        Mail::to($admin->email)->send(new OtpMail($otp));
 
         return response()->json([
             'status'  => true,
-            'message' => 'OTP ફરીથી મોકલવામાં આવ્યો છે.',
+            'message' => 'OTP ફરીથી તમારા ઇમેઇલ પર મોકલવામાં આવ્યો છે.',
         ]);
     }
 
@@ -165,5 +178,3 @@ class ForgotPassController extends Controller
         ]);
     }
 }
-
-

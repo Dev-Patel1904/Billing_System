@@ -151,7 +151,7 @@
 
                             <div class="p-5">
 
-                                <a href="login.html" class="back-link text-decoration-none text-muted d-inline-flex align-items-center mb-3">
+                                <a href="{{ route('admin.login') }}" class="back-link text-decoration-none text-muted d-inline-flex align-items-center mb-3">
                                     <i class="bx bx-arrow-back me-1"></i>
                                     લોગિન પર પાછા જાઓ
                                 </a>

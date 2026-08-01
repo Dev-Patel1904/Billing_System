@@ -190,7 +190,7 @@
 
                             <div class="p-5">
 
-                                <a href="forgot_password.html" class="back-link text-decoration-none text-muted d-inline-flex align-items-center mb-3">
+                                <a href="{{ route('forgot.password.form') }}" class="back-link text-decoration-none text-muted d-inline-flex align-items-center mb-3">
                                     <i class="bx bx-arrow-back me-1"></i>
                                     પાછા જાઓ
                                 </a>
