@@ -453,7 +453,7 @@
                     editingRow.dataset.rate;
 
                 document.getElementById("saveBtn").innerText =
-                    "Update";
+                    "સુધારો કરો";
 
                 window.scrollTo({
                     top:0,
