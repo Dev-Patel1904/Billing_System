@@ -6,6 +6,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SpllierlistController;
 use App\Http\Controllers\ForgotPassController;
+use App\Http\Controllers\BillingController;
 
 
 //Login
@@ -57,6 +58,11 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/billing-list', function () {
         return view('billing.billing_list');
     })->name('billing-list');
+
+        Route::get('/billing/new', [BillingController::class, 'create'])->name('billing.create');
+        Route::post('/billing/pay-due', [BillingController::class, 'payDue'])->name('billing.pay-due');
+        Route::post('/billing/check-customer', [BillingController::class, 'checkCustomer'])->name('billing.check-customer');
+        Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
 
     Route::get('/new-billing', function () {
         return view('billing.new-billing');
