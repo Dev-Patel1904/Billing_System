@@ -124,7 +124,11 @@ class BillingController extends Controller
 
             $customer->save();
 
+            // Generate unique bill number, e.g. B260807164512384
+            $billNo = 'B' . now()->format('ymdHis') . rand(100, 999);
+
             $bill = Bill::create([
+                'bill_no'      => $billNo,
                 'customer_id'  => $customer->id,
                 'total_qty'    => $totalQty,
                 'total_amount' => $totalAmount,
@@ -153,7 +157,7 @@ class BillingController extends Controller
         $mpdf = new Mpdf(config('mpdf'));
         $mpdf->WriteHTML($html);
 
-        return response($mpdf->Output('bill-' . $bill->id . '.pdf', \Mpdf\Output\Destination::INLINE))
+        return response($mpdf->Output($bill->bill_no . '.pdf', \Mpdf\Output\Destination::INLINE))
             ->header('Content-Type', 'application/pdf');
     }
 }

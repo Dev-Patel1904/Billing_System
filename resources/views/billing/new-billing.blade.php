@@ -96,12 +96,13 @@
 
                                     <thead class="table-light">
                                         <tr>
-                                            <th width="10%">NO</th>
-                                            <th>Product Name</th>
-                                            <th>QTY</th>
-                                            <th>Rate (₹)</th>
-                                            <th>Amount (₹)</th>
-                                            <th width="8%">Action</th>
+                                            <th width="10%">ક્રમ</th>
+                                            <th>પ્રોડક્ટનું નામ</th>
+                                            <th>જથ્થો</th>
+                                            <th>ભાવ (₹)</th>
+                                            <th>કુલ રકમ (₹)</th>
+                                            <th width="8%">એક્શન</th>
+
                                         </tr>
                                     </thead>
 
@@ -253,7 +254,7 @@
                     </button>
 
                     <button class="btn btn-success" id="saveDuePayment">
-                        સેવ કરો
+                        ₹ જમા કરો
                     </button>
 
                 </div>
@@ -270,9 +271,9 @@
         $(document).ready(function() {
 
             let customerHasDue = false;
-            let previousDueTotal = 0; // full original due for THIS customer
-            let duePaidNow = 0; // amount already paid off via modal (for record only)
-            let duePaymentSaved = false; // tracks whether Save was actually clicked
+            let previousDueTotal = 0;
+            let duePaidNow = 0;
+            let duePaymentSaved = false;
 
             // ==========================================
             // CUSTOMER MOBILE -> AUTOFILL + SHOW/HIDE DUE
@@ -304,6 +305,9 @@
 
                             $("#customerName").val(res.name);
 
+                            // Old customer -> lock mobile number after name loads
+                            $("#customerMobile").prop("readonly", true);
+
                             if (res.due_amount > 0) {
 
                                 customerHasDue = true;
@@ -326,9 +330,11 @@
 
                         } else {
 
+                            // New customer -> keep mobile editable
                             customerHasDue = false;
                             previousDueTotal = 0;
 
+                            $("#customerMobile").prop("readonly", false);
                             $("#customerName").val('');
                             $("#previous_due").val(0);
                             $("#previousDueRow").addClass("d-none");
@@ -397,30 +403,30 @@
                 let rowNo = $("#productTable tbody tr").length + 1;
 
                 let row = `
-    <tr>
-        <td class="row-no">${rowNo}</td>
-        <td>
-            <input type="hidden" name="product_name[]" value="${product}">
-            ${product}
-        </td>
-        <td>
-            <input type="hidden" class="qty" name="qty[]" value="${qty}">
-            ${qty}
-        </td>
-        <td>
-            <input type="hidden" class="rate" name="rate[]" value="${rate}">
-            ₹ ${rate.toFixed(2)}
-        </td>
-        <td>
-            <input type="hidden" class="amount" name="amount[]" value="${amount}">
-            ₹ ${amount.toFixed(2)}
-        </td>
-        <td>
-            <button type="button" class="btn btn-danger btn-sm removeRow">
-                <i class="bx bx-trash"></i>
-            </button>
-        </td>
-    </tr>`;
+        <tr>
+            <td class="row-no">${rowNo}</td>
+            <td>
+                <input type="hidden" name="product_name[]" value="${product}">
+                ${product}
+            </td>
+            <td>
+                <input type="hidden" class="qty" name="qty[]" value="${qty}">
+                ${qty}
+            </td>
+            <td>
+                <input type="hidden" class="rate" name="rate[]" value="${rate}">
+                ₹ ${rate.toFixed(2)}
+            </td>
+            <td>
+                <input type="hidden" class="amount" name="amount[]" value="${amount}">
+                ₹ ${amount.toFixed(2)}
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm removeRow">
+                    <i class="bx bx-trash"></i>
+                </button>
+            </td>
+        </tr>`;
 
                 $("#productTable tbody").append(row);
 
@@ -457,9 +463,6 @@
                     totalAmount += parseFloat($(this).val()) || 0;
                 });
 
-                // ચૂકવવાની કુલ રકમ = ONLY current bill's product total.
-                // Due payments (paid via modal) are settled separately in the
-                // database immediately and never affect this number.
                 let grandTotal = totalAmount;
 
                 $("#total_qty").val(totalQty);
@@ -499,11 +502,13 @@
 
                 syncHiddenFields('due');
 
-                GlassToast.success("સફળ", "બિલ સફળતાપૂર્વક સેવ થયું.");
+                $("#billForm").submit();
 
+                // Give the browser a moment to open the PDF in the new tab,
+                // then reset this page completely.
                 setTimeout(function() {
-                    $("#billForm").submit();
-                }, 1500);
+                    window.location.reload();
+                }, 800);
 
             });
 
@@ -525,11 +530,11 @@
 
                 syncHiddenFields('cash');
 
-                GlassToast.success("સફળ", "બિલ સફળતાપૂર્વક સેવ થયું.");
+                $("#billForm").submit();
 
                 setTimeout(function() {
-                    $("#billForm").submit();
-                }, 1500);
+                    window.location.reload();
+                }, 800);
 
             });
 
@@ -537,7 +542,6 @@
             // BAKI CHUKAVANI RAKAM (modal)
             // ==========================================
 
-            // Radio Change
             $('input[name="pay_due"]').change(function() {
 
                 if ($(this).val() == 'yes') {
@@ -559,7 +563,6 @@
 
             });
 
-            // If modal is closed WITHOUT clicking "સેવ કરો" -> auto revert to "ના"
             $('#duePaymentModal').on('hidden.bs.modal', function() {
 
                 if (!duePaymentSaved) {
@@ -570,19 +573,18 @@
 
             });
 
-            // Save Button -> AJAX call to settle due immediately
             $("#saveDuePayment").click(function() {
 
                 let paidAmount = parseFloat($("#paid_due_amount").val()) || 0;
                 let mobile = $("#customerMobile").val().trim();
 
                 if (paidAmount <= 0) {
-                    GlassToast.warning("ચૂકવણી રકમ દાખલ કરો.");
+                    GlassToast.warning("રકમ","ચૂકવણી રકમ દાખલ કરો.");
                     return;
                 }
 
                 if (paidAmount > previousDueTotal) {
-                    GlassToast.warning("ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.");
+                    GlassToast.warning("રકમ","ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.");
                     return;
                 }
 
@@ -640,8 +642,6 @@
                         });
 
                     }
-
-
 
                 );
 
