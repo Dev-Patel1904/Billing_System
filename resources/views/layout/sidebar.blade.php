@@ -134,8 +134,8 @@
                   </a>
                </li>
 
-               <li class="menu-item {{ request()->routeIs('new-billing') ? 'active' : '' }}">
-                  <a href="{{ route('new-billing') }}" class="menu-link">
+               <li class="menu-item {{ request()->routeIs('billing.create') ? 'active' : '' }}">
+                  <a href="{{ route('billing.create') }}" class="menu-link">
                      <i class="menu-icon tf-icons bx bx-receipt"></i>
                      <div class="text-truncate">બિલિંગ</div>
                   </a>

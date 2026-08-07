@@ -7,7 +7,8 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SpllierlistController;
 use App\Http\Controllers\ForgotPassController;
 use App\Http\Controllers\BillingController;
-
+use App\Http\Controllers\Customer_listController;
+use App\Http\Controllers\SaleController;
 
 //Login
 Route::get('/', function () {return view('product.welcome');})->name('admin.login');
@@ -43,11 +44,11 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/purchase_detail/{purchase}', [PurchaseController::class, 'purchase_detail'])->name('purchase_detail');
     Route::put('/purchases/{purchase}/update-payment', [PurchaseController::class, 'updatePayment'])->name('purchases.update_payment');
 
-   //supplier-list
-   Route::get('/supplier_list', [SpllierlistController::class, 'supplier_list'])->name('supplier_list');
-   Route::put('/suppliers/{supplier}', [SpllierlistController::class, 'update'])->name('suppliers.update');
-   Route::delete('/suppliers/{supplier}', [SpllierlistController::class, 'destroy'])->name('suppliers.destroy');
-   Route::get('/supplier/{supplier}/purchases', [SpllierlistController::class, 'supplierPurchases'])->name('supplier.purchases');
+    //supplier-list
+    Route::get('/supplier_list', [SpllierlistController::class, 'supplier_list'])->name('supplier_list');
+    Route::put('/suppliers/{supplier}', [SpllierlistController::class, 'update'])->name('suppliers.update');
+    Route::delete('/suppliers/{supplier}', [SpllierlistController::class, 'destroy'])->name('suppliers.destroy');
+    Route::get('/supplier/{supplier}/purchases', [SpllierlistController::class, 'supplierPurchases'])->name('supplier.purchases');
 
 
     //setting
@@ -59,25 +60,21 @@ Route::middleware('admin.auth')->group(function () {
         return view('billing.billing_list');
     })->name('billing-list');
 
-        Route::get('/billing/new', [BillingController::class, 'create'])->name('billing.create');
-        Route::post('/billing/pay-due', [BillingController::class, 'payDue'])->name('billing.pay-due');
-        Route::post('/billing/check-customer', [BillingController::class, 'checkCustomer'])->name('billing.check-customer');
-        Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
+    //New Billing
+    Route::get('/billing/new', [BillingController::class, 'create'])->name('billing.create');
+    Route::post('/billing/pay-due', [BillingController::class, 'payDue'])->name('billing.pay-due');
+    Route::post('/billing/check-customer', [BillingController::class, 'checkCustomer'])->name('billing.check-customer');
+    Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
 
-    Route::get('/new-billing', function () {
-        return view('billing.new-billing');
-    })->name('new-billing');
+    //Sales
+    Route::get('/sales', [SaleController::class, 'sales'])->name('sales');
+    Route::get('/show_sales/{bill}', function ($bill) { return view('sales.show_sales'); })->name('show_sales');
+    Route::get('/show_sales/{bill}', [SaleController::class, 'show_sales'])->name('show_sales');
 
-    Route::get('/customer_list', function () {
-        return view('list.customer_list');
-    })->name('customer_list');
 
-    Route::get('/sales', function () {
-        return view('sales.sales');
-    })->name('sales');
-
-    Route::get('/show_sales', function () {
-        return view('sales.show_sales');
-    })->name('show_sales');
+    //Customer_list
+    Route::get('/customer_list', [Customer_listController::class, 'customer_list'])->name('customer_list');
+    Route::post('/customers/store', [Customer_listController::class, 'store'])->name('customers.store');
+    Route::put('/customers/{customer}', [Customer_listController::class, 'update'])->name('customers.update');
 
 });

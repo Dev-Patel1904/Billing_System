@@ -19,7 +19,7 @@
                      તમામ વેચાણ બિલનું સંચાલન કરો
                   </small>
                </div>
-               <a href="{{ route('new-billing') }}">
+               <a href="{{ route('billing.create') }}">
                   <button class="btn btn-primary">
                      <i class="bx bx-plus-circle me-1"></i>
 
@@ -56,14 +56,7 @@
                   </select>
                </div>
 
-               <div class="col-lg-2">
-                  <select class="form-select">
-                     <option>બધી સ્થિતિ</option>
-                     <option>ચૂકવેલ</option>
-                     <option>આંશિક</option>
-                     <option>બાકી</option>
-                  </select>
-               </div>
+
 
                <div class="col-lg-1">
                   <button class="btn btn-outline-primary w-100">
@@ -98,7 +91,7 @@
                      <th>કુલ વસ્તુઓ</th>
                      <th>કુલ રકમ</th>
                      <th>ચુકવણી</th>
-                     <th>સ્થિતિ</th>
+
                      <th class="text-center">ક્રિયા</th>
 
                   </tr>
@@ -159,11 +152,7 @@
                         </span>
                      </td>
 
-                     <td>
-                        <span class="badge bg-success">
-                           ચૂકવેલ
-                        </span>
-                     </td>
+
 
                      <td class="text-center">
 
@@ -175,13 +164,7 @@
                            <i class="bx bx-printer"></i>
                         </button>
 
-                        <button class="btn btn-sm btn-outline-warning">
-                           <i class="bx bx-edit"></i>
-                        </button>
 
-                        <button class="btn btn-sm btn-outline-danger">
-                           <i class="bx bx-trash"></i>
-                        </button>
 
                      </td>
 
@@ -239,11 +222,7 @@
                         </span>
                      </td>
 
-                     <td>
-                        <span class="badge bg-danger">
-                           બાકી
-                        </span>
-                     </td>
+
 
                      <td class="text-center">
 
@@ -255,13 +234,7 @@
                            <i class="bx bx-printer"></i>
                         </button>
 
-                        <button class="btn btn-sm btn-outline-warning">
-                           <i class="bx bx-edit"></i>
-                        </button>
 
-                        <button class="btn btn-sm btn-outline-danger">
-                           <i class="bx bx-trash"></i>
-                        </button>
 
                      </td>
 

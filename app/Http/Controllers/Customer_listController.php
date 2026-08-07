@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Customer;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+class Customer_listController extends Controller
+{
+    // Show customer_list page
+    public function customer_list(Request $request)
+    {
+        $search = $request->query('search');
+
+        $customers = Customer::withCount('bills')
+            ->withSum('bills', 'total_amount')
+            ->with(['bills' => function ($query) {
+                $query->latest()->limit(1);
+            }])
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('mobile', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('list.customer_list', compact('customers', 'search'));
+    }
+
+
+    // Add New Customer (modal)
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'mobile' => [
+                'required',
+                'digits:10',
+                'unique:customers,mobile',
+            ],
+        ], [
+            'name.required' => 'ગ્રાહકનું નામ દાખલ કરો.',
+            'name.max' => 'ગ્રાહકનું નામ ખૂબ લાંબું છે.',
+
+            'mobile.required' => 'મોબાઇલ નંબર દાખલ કરો.',
+            'mobile.digits' => 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.',
+            'mobile.unique' => 'આ મોબાઇલ નંબર પહેલેથી નોંધાયેલ છે.',
+        ]);
+
+        try {
+
+            $customer = Customer::create([
+                'name' => $validated['name'],
+                'mobile' => $validated['mobile'],
+                'balance_due' => 0,
+            ]);
+
+            return response()->json([
+                'status'   => true,
+                'message'  => 'ગ્રાહક સફળતાપૂર્વક ઉમેરાયો.',
+                'customer' => $customer,
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'ગ્રાહક ઉમેરવામાં ભૂલ આવી.',
+            ], 500);
+
+        }
+    }
+
+
+    // Update Customer (Edit Modal)
+    public function update(Request $request, Customer $customer)
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'mobile' => [
+                'required',
+                'digits:10',
+                Rule::unique('customers', 'mobile')->ignore($customer->id),
+            ],
+        ], [
+            'name.required' => 'ગ્રાહકનું નામ દાખલ કરો.',
+            'name.max' => 'ગ્રાહકનું નામ ખૂબ લાંબું છે.',
+
+            'mobile.required' => 'મોબાઇલ નંબર દાખલ કરો.',
+            'mobile.digits' => 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.',
+            'mobile.unique' => 'આ મોબાઇલ નંબર પહેલેથી નોંધાયેલ છે.',
+        ]);
+
+        try {
+
+            $customer->update($validated);
+
+            return response()->json([
+                'status'   => true,
+                'message'  => 'ગ્રાહક સફળતાપૂર્વક અપડેટ થયો.',
+                'customer' => $customer,
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'ગ્રાહક અપડેટ કરવામાં ભૂલ આવી.',
+            ], 500);
+
+        }
+    }
+}

@@ -9,11 +9,11 @@
 
                             <div class="justify-content-between d-flex p-1">
                                 <div>
-                                    <h5 class="card-header">Parmar Vijay</h5>
+                                    <h5 class="card-header">{{ $bill->customer->name ?? '-' }}</h5>
                                 </div>
 
                                 <div class="text-center mt-5">
-                                    <small>12-07-2026</small>
+                                    <div>{{ $bill->created_at->format('d-m-Y') }}</div>
                                 </div>
                             </div>
 
@@ -30,21 +30,19 @@
                                     </thead>
 
                                     <tbody class="table-border-bottom-0">
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Milk</td>
-                                            <td>1</td>
-                                            <td>₹10</td>
-                                            <td>₹10</td>
-                                        </tr>
+
+                                        @foreach ($bill->items as $index => $item)
 
                                         <tr>
-                                            <td>2</td>
-                                            <td>Colgate</td>
-                                            <td>1</td>
-                                            <td>₹10</td>
-                                            <td>₹10</td>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $item->product_name }}</td>
+                                            <td>{{ $item->qty }}</td>
+                                            <td>₹{{ $item->rate }}</td>
+                                            <td>₹{{ $item->amount }}</td>
                                         </tr>
+
+                                        @endforeach
+
                                     </tbody>
                                 </table>
                             </div>
@@ -59,25 +57,30 @@
 
                                             <tr>
                                                 <td class="fw-semibold">કુલ પ્રોડક્ટ</td>
-                                                <td class="text-end">2</td>
+                                                <td class="text-end">{{ $bill->items->count() }}</td>
                                             </tr>
 
                                             <tr>
                                                 <td class="fw-semibold">કુલ જથ્થો</td>
-                                                <td class="text-end">2</td>
+                                                <td class="text-end">{{ $bill->total_qty }}</td>
                                             </tr>
 
                                             <tr>
                                                 <td class="fw-semibold">પેટા કુલ</td>
-                                                <td class="text-end">₹20</td>
+                                                <td class="text-end">₹{{ $bill->total_amount }}</td>
                                             </tr>
 
-
+                                            @if($bill->due_paid_now > 0)
+                                            <tr>
+                                                <td class="fw-semibold text-success">બાકી ચૂકવણી</td>
+                                                <td class="text-end text-success">₹{{ $bill->due_paid_now }}</td>
+                                            </tr>
+                                            @endif
 
                                             <tr class="border-top">
                                                 <td class="fw-bold fs-5">ચૂકવવાની કુલ રકમ</td>
                                                 <td class="text-end fw-bold fs-5 text-primary">
-                                                    ₹20
+                                                    ₹{{ $bill->grand_total }}
                                                 </td>
                                             </tr>
 
@@ -93,4 +96,3 @@
                     <!-- / Content -->
 
                     @include('layout.footer')
-
