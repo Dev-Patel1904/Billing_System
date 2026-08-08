@@ -1,1096 +1,673 @@
 @include('layout.sidebar')
 
-        <!-- Content wrapper -->
-        <div class="content-wrapper">
-          <!-- Content -->
-          <div class="container-xxl flex-grow-1 container-p-y">
+<!-- Content wrapper -->
+<div class="content-wrapper">
+   <!-- Content -->
+   <div class="container-xxl flex-grow-1 container-p-y">
 
 
-            <!-- Welcome Header -->
-            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4">
-              <div>
-                <h3 class="fw-bold mb-1">
-                  <i class="bx bx-home-circle text-primary me-2"></i>
-                  ડેશબોર્ડ
-                </h3>
-                <p class="text-muted mb-0">
-                  ફરીથી સ્વાગત છે 👋 આજના વ્યવસાયનો સંક્ષિપ્ત અહેવાલ અહીં દર્શાવવામાં આવ્યો છે.
-                </p>
-              </div>
+      <!-- Welcome Header -->
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4">
+         <div>
+            <h3 class="fw-bold mb-1">
+               <i class="bx bx-home-circle text-primary me-2"></i>
+               ડેશબોર્ડ
+            </h3>
+            <p class="text-muted mb-0">
+               ફરીથી સ્વાગત છે 👋 આજના વ્યવસાયનો સંક્ષિપ્ત અહેવાલ અહીં દર્શાવવામાં આવ્યો છે.
+            </p>
+         </div>
 
-              <div class="mt-3 mt-lg-0">
-                <span class="badge bg-primary fs-6 px-3 py-2">
-                  <i class="bx bx-calendar me-1"></i>
-                  17 July 2026
-                </span>
-              </div>
-            </div>
+         <div class="mt-3 mt-lg-0">
+            <span class="badge bg-primary fs-6 px-3 py-2">
+               <i class="bx bx-calendar me-1"></i>
+               {{ now()->format('d F Y') }}
+            </span>
+         </div>
+      </div>
 
 
-            <div class="row g-4">
+      <div class="row g-4">
 
-              <!-- Today's Sales -->
-              <div class="col-xl-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100">
-                  <div class="card-body">
+         <!-- Today's Sales -->
+         <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+               <div class="card-body">
 
-                    <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex justify-content-between align-items-center">
 
-                      <div>
+                     <div>
                         <small class="text-muted">
-                          આજનું વેચાણ
+                           આજનું વેચાણ
                         </small>
 
                         <h3 class="fw-bold mt-2 mb-1">
-                          ₹25,600
+                           ₹{{ number_format($todaysSales, 0) }}
                         </h3>
 
-                        <span class="badge bg-success">
-                          +12%
-                        </span>
+                     </div>
 
-                      </div>
-
-                      <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                     <div class="bg-primary bg-opacity-10 rounded-circle p-3">
                         <i class="bx bx-rupee text-primary fs-2"></i>
-                      </div>
-
-                    </div>
+                     </div>
 
                   </div>
-                </div>
-              </div>
 
-              <!-- Total Bills -->
-              <div class="col-xl-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100">
-                  <div class="card-body">
+               </div>
+            </div>
+         </div>
 
-                    <div class="d-flex justify-content-between align-items-center">
+         <!-- Total Bills -->
+         <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+               <div class="card-body">
 
-                      <div>
+                  <div class="d-flex justify-content-between align-items-center">
+
+                     <div>
 
                         <small class="text-muted">
-                          આજના બિલ
+                           આજના બિલ
                         </small>
 
                         <h3 class="fw-bold mt-2 mb-1">
-                          42
+                           {{ $todaysBillCount }}
                         </h3>
 
                         <span class="badge bg-info">
-                          બનાવ્યા
+                           બનાવ્યા
                         </span>
 
-                      </div>
+                     </div>
 
-                      <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                     <div class="bg-info bg-opacity-10 rounded-circle p-3">
                         <i class="bx bx-receipt text-info fs-2"></i>
-                      </div>
-
-                    </div>
+                     </div>
 
                   </div>
-                </div>
-              </div>
 
-              <!-- Due Amount -->
-              <div class="col-xl-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100">
-                  <div class="card-body">
+               </div>
+            </div>
+         </div>
 
-                    <div class="d-flex justify-content-between align-items-center">
+         <!-- Due Amount -->
+         <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+               <div class="card-body">
 
-                      <div>
+                  <div class="d-flex justify-content-between align-items-center">
+
+                     <div>
 
                         <small class="text-muted">
-                          બાકી લેણું
+                           બાકી લેણું
                         </small>
 
                         <h3 class="fw-bold mt-2 mb-1">
-                          ₹8,450
+                           ₹{{ number_format($totalDue, 0) }}
                         </h3>
 
                         <span class="badge bg-warning text-dark">
-                          બાકી
+                           બાકી
                         </span>
 
-                      </div>
+                     </div>
 
-                      <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                     <div class="bg-warning bg-opacity-10 rounded-circle p-3">
                         <i class="bx bx-time-five text-warning fs-2"></i>
-                      </div>
-
-                    </div>
+                     </div>
 
                   </div>
-                </div>
-              </div>
 
-              <!-- Customers -->
-              <div class="col-xl-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100">
-                  <div class="card-body">
+               </div>
+            </div>
+         </div>
 
-                    <div class="d-flex justify-content-between align-items-center">
+         <!-- Customers -->
+         <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+               <div class="card-body">
 
-                      <div>
+                  <div class="d-flex justify-content-between align-items-center">
+
+                     <div>
 
                         <small class="text-muted">
-                          ગ્રાહકો
+                           ગ્રાહકો
                         </small>
 
                         <h3 class="fw-bold mt-2 mb-1">
-                          215
+                           {{ $totalCustomers }}
                         </h3>
 
-                        <span class="badge bg-success">
-                          સક્રિય
-                        </span>
 
-                      </div>
 
-                      <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                     </div>
+
+                     <div class="bg-success bg-opacity-10 rounded-circle p-3">
                         <i class="bx bx-group text-success fs-2"></i>
-                      </div>
-
-                    </div>
+                     </div>
 
                   </div>
-                </div>
-              </div>
 
-
+               </div>
             </div>
-            <div class="row mt-4">
+         </div>
 
-              <!-- Monthly Sales Chart -->
-              <div class="col-xl-8 col-lg-7 mb-4">
 
-                <div class="card shadow-sm border-0 h-100">
+      </div>
+      <div class="row mt-4">
 
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+         <!-- Monthly Sales Chart -->
+         <div class="col-xl-8 col-lg-7 mb-4">
 
-                    <div>
-                      <h5 class="mb-0 fw-bold">
+            <div class="card shadow-sm border-0 h-100">
+
+               <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+                  <div>
+                     <h5 class="mb-0 fw-bold">
                         <i class="bx bx-line-chart text-primary me-2"></i>
                         માસિક વેચાણ
-                      </h5>
+                     </h5>
 
-                      <small class="text-muted">
-                        ચાલુ વર્ષના વેચાણનો સંક્ષિપ્ત અહેવાલ
-                      </small>
-                    </div>
-
-                    <select class="form-select w-auto">
-                      <option>2026</option>
-                      <option>2025</option>
-                    </select>
-
+                     <small class="text-muted">
+                        {{ $selectedYear }} વર્ષના વેચાણનો સંક્ષિપ્ત અહેવાલ
+                     </small>
                   </div>
 
-                  <div class="card-body">
+                  <select class="form-select w-auto" id="yearSelect">
+                     @foreach ($availableYears as $yearOption)
+                        <option value="{{ $yearOption }}" @selected($yearOption == $selectedYear)>{{ $yearOption }}</option>
+                     @endforeach
+                  </select>
 
-                    <div id="monthlySalesChart"></div>
+               </div>
 
-                  </div>
+               <div class="card-body">
 
-                </div>
+                  <div id="monthlySalesChart"></div>
 
-              </div>
-
-              <!-- Sales Summary -->
-              <div class="col-xl-4 col-lg-5 mb-4">
-
-                <div class="card shadow-sm border-0 h-100">
-
-                  <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">
-                      <i class="bx bx-pie-chart-alt-2 text-success me-2"></i>
-                      વેચાણનો સારાંશ
-                    </h5>
-                  </div>
-
-                  <div class="card-body">
-
-                    <div id="billTypeChart"></div>
-
-                    <hr>
-
-                    <div class="d-flex justify-content-between mb-3">
-                      <span>રોકડ બિલ</span>
-                      <strong class="text-success">₹18,500</strong>
-                    </div>
-
-                    <div class="progress mb-3" style="height:8px;">
-                      <div class="progress-bar bg-success" style="width:75%"></div>
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-3">
-                      <span>બાકી બિલ</span>
-                      <strong class="text-warning">₹6,250</strong>
-                    </div>
-
-                    <div class="progress mb-4" style="height:8px;">
-                      <div class="progress-bar bg-warning" style="width:25%"></div>
-                    </div>
-
-                    <div class="row text-center">
-
-                      <div class="col-6 border-end">
-
-                        <h4 class="fw-bold text-primary">
-                          ₹24,750
-                        </h4>
-
-                        <small class="text-muted">
-                          આજનું વેચાણ
-                        </small>
-
-                      </div>
-
-                      <div class="col-6">
-
-                        <h4 class="fw-bold text-danger">
-                          ₹8,450
-                        </h4>
-
-                        <small class="text-muted">
-                          બાકી લેણું
-                        </small>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
+               </div>
 
             </div>
-            <div class="row mt-4">
 
-              <div class="col-12">
+         </div>
 
-                <div class="card shadow-sm border-0">
+         <!-- Sales Summary -->
+         <div class="col-xl-4 col-lg-5 mb-4">
 
-                  <!-- Card Header -->
-                  <div class="card-header bg-white">
+            <div class="card shadow-sm border-0 h-100">
 
-                    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center">
+               <div class="card-header bg-white">
+                  <h5 class="fw-bold mb-0">
+                     <i class="bx bx-pie-chart-alt-2 text-success me-2"></i>
+                     વેચાણનો સારાંશ
+                  </h5>
+               </div>
 
-                      <div>
+               <div class="card-body">
+
+                  <div id="billTypeChart"></div>
+
+                  <hr>
+
+                  <div class="d-flex justify-content-between mb-3">
+                     <span>રોકડ બિલ</span>
+                     <strong class="text-success">₹{{ number_format($cashTotal, 0) }}</strong>
+                  </div>
+
+                  <div class="progress mb-3" style="height:8px;">
+                     <div class="progress-bar bg-success" style="width:{{ $cashPercent }}%"></div>
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-3">
+                     <span>બાકી બિલ</span>
+                     <strong class="text-warning">₹{{ number_format($dueTotal, 0) }}</strong>
+                  </div>
+
+                  <div class="progress mb-4" style="height:8px;">
+                     <div class="progress-bar bg-warning" style="width:{{ $duePercent }}%"></div>
+                  </div>
+
+                  <div class="row text-center">
+
+                     <div class="col-6 border-end">
+
+                        <h4 class="fw-bold text-primary">
+                           ₹{{ number_format($todaysSales, 0) }}
+                        </h4>
+
+                        <small class="text-muted">
+                           આજનું વેચાણ
+                        </small>
+
+                     </div>
+
+                     <div class="col-6">
+
+                        <h4 class="fw-bold text-danger">
+                           ₹{{ number_format($totalDue, 0) }}
+                        </h4>
+
+                        <small class="text-muted">
+                           બાકી લેણું
+                        </small>
+
+                     </div>
+
+                  </div>
+
+               </div>
+
+            </div>
+
+         </div>
+
+      </div>
+      <div class="row mt-4">
+
+         <div class="col-12">
+
+            <div class="card shadow-sm border-0">
+
+               <!-- Card Header -->
+               <div class="card-header bg-white">
+
+                  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center">
+
+                     <div>
                         <h5 class="fw-bold mb-1">
-                          <i class="bx bx-receipt text-primary me-2"></i>
-                          તાજેતરના બિલ
+                           <i class="bx bx-receipt text-primary me-2"></i>
+                           તાજેતરના બિલ
                         </h5>
 
                         <small class="text-muted">
-                          તાજેતરમાં બનાવેલા બિલના રેકોર્ડ
+                           તાજેતરમાં બનાવેલા બિલના રેકોર્ડ
                         </small>
-                      </div>
-
-                      <div class="mt-3 mt-lg-0">
-
-                        <div class="input-group">
-
-                          <span class="input-group-text bg-white">
-                            <i class="bx bx-search"></i>
-                          </span>
-
-                          <input type="text" class="form-control" placeholder="Search bill...">
-
-                        </div>
-
-                      </div>
-
-                    </div>
+                     </div>
 
                   </div>
 
-                  <!-- Table -->
-                  <div class="table-responsive">
+               </div>
 
-                    <table class="table table-hover align-middle mb-0">
+               <!-- Table -->
+               <div class="table-responsive">
 
-                      <thead class="table-light">
+                  <table class="table table-hover align-middle mb-0">
 
-                        <tr>
-
-                          <th>બિલ નં.</th>
-
-                          <th>ગ્રાહક</th>
-
-                          <th>મોબાઇલ</th>
-
-                          <th>તારીખ</th>
-
-                          <th>ચુકવણી</th>
-
-                          <th>કુલ રકમ</th>
-
-                          <th>સ્થિતિ</th>
-
-                          <th class="text-center">
-                            ક્રિયા
-                          </th>
-
-                        </tr>
-
-                      </thead>
-
-                      <tbody>
+                     <thead class="table-light">
 
                         <tr>
 
-                          <td>
-                            <strong>#1001</strong>
-                          </td>
+                           <th>બિલ નં.</th>
 
-                          <td>
-                            Rahul Patel
-                          </td>
+                           <th>ગ્રાહક</th>
 
-                          <td>
-                            9876543210
-                          </td>
+                           <th>મોબાઇલ</th>
 
-                          <td>
-                            17-07-2026
-                          </td>
+                           <th>તારીખ</th>
 
-                          <td>
+                           <th>ચુકવણી</th>
 
-                            <span class="badge bg-success">
-                              રોકડ
-                            </span>
+                           <th>કુલ રકમ</th>
 
-                          </td>
+                           <th>સ્થિતિ</th>
 
-                          <td>
-
-                            <strong>
-                              ₹2,450
-                            </strong>
-
-                          </td>
-
-                          <td>
-
-                            <span class="badge bg-primary">
-                              ચૂકવેલ
-                            </span>
-
-                          </td>
-
-                          <td class="text-center">
-
-                            <button class="btn btn-sm btn-outline-primary me-1">
-                              <i class="bx bx-show"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-success me-1">
-                              <i class="bx bx-printer"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-warning">
-                              <i class="bx bx-edit"></i>
-                            </button>
-
-                          </td>
+                           <th class="text-center">
+                              ક્રિયા
+                           </th>
 
                         </tr>
+
+                     </thead>
+
+                     <tbody>
+
+                        @forelse ($recentBills as $bill)
 
                         <tr>
 
-                          <td><strong>#1002</strong></td>
+                           <td>
+                              <strong>#{{ str_pad($bill->bill_no ?? $bill->id, 4, '0', STR_PAD_LEFT) }}</strong>
+                           </td>
 
-                          <td>Amit Shah</td>
+                           <td>
+                              {{ $bill->customer->name ?? '-' }}
+                           </td>
 
-                          <td>9876500000</td>
+                           <td>
+                              {{ $bill->customer->mobile ?? '-' }}
+                           </td>
 
-                          <td>17-07-2026</td>
+                           <td>
+                              {{ $bill->created_at->format('d-m-Y') }}
+                           </td>
 
-                          <td>
+                           <td>
 
-                            <span class="badge bg-warning text-dark">
-                              બાકી
-                            </span>
+                              @if($bill->payment_type === 'cash')
+                                 <span class="badge bg-success">
+                                    રોકડ
+                                 </span>
+                              @else
+                                 <span class="badge bg-warning text-dark">
+                                    બાકી
+                                 </span>
+                              @endif
 
-                          </td>
+                           </td>
 
-                          <td>
+                           <td>
 
-                            <strong>₹1,780</strong>
+                              <strong>
+                                 ₹{{ $bill->grand_total }}
+                              </strong>
 
-                          </td>
+                           </td>
 
-                          <td>
+                           <td>
 
-                            <span class="badge bg-danger">
-                              બાકી
-                            </span>
+                              @if($bill->payment_type === 'cash')
+                                 <span class="badge bg-primary">
+                                    ચૂકવેલ
+                                 </span>
+                              @else
+                                 <span class="badge bg-danger">
+                                    બાકી
+                                 </span>
+                              @endif
 
-                          </td>
+                           </td>
 
-                          <td class="text-center">
+                           <td class="text-center">
 
-                            <button class="btn btn-sm btn-outline-primary me-1">
-                              <i class="bx bx-show"></i>
-                            </button>
+                              <a href="{{ route('show_sales', $bill->id) }}" class="btn btn-sm btn-outline-primary me-1">
+                                 <i class="bx bx-show"></i>
+                              </a>
 
-                            <button class="btn btn-sm btn-outline-success me-1">
-                              <i class="bx bx-printer"></i>
-                            </button>
+                              <a href="{{ route('billing.print', $bill->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <i class="bx bx-printer"></i>
+                            </a>
 
-                            <button class="btn btn-sm btn-outline-warning">
-                              <i class="bx bx-edit"></i>
-                            </button>
-
-                          </td>
+                           </td>
 
                         </tr>
+
+                        @empty
 
                         <tr>
-
-                          <td><strong>#1003</strong></td>
-
-                          <td>Jay Parmar</td>
-
-                          <td>9898989898</td>
-
-                          <td>17-07-2026</td>
-
-                          <td>
-
-                            <span class="badge bg-success">
-                              રોકડ
-                            </span>
-
-                          </td>
-
-                          <td>
-
-                            <strong>₹3,150</strong>
-
-                          </td>
-
-                          <td>
-
-                            <span class="badge bg-primary">
-                              ચૂકવેલ
-                            </span>
-
-                          </td>
-
-                          <td class="text-center">
-
-                            <button class="btn btn-sm btn-outline-primary me-1">
-                              <i class="bx bx-show"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-success me-1">
-                              <i class="bx bx-printer"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-warning">
-                              <i class="bx bx-edit"></i>
-                            </button>
-
-                          </td>
-
+                           <td colspan="8" class="text-center">
+                              હજુ સુધી કોઈ બિલ બનાવ્યું નથી.
+                           </td>
                         </tr>
 
-                        <tr>
+                        @endforelse
 
-                          <td><strong>#1004</strong></td>
+                     </tbody>
 
-                          <td>Mehul Patel</td>
+                  </table>
 
-                          <td>9999999999</td>
+               </div>
 
-                          <td>17-07-2026</td>
+               <!-- Footer -->
 
-                          <td>
+               <div class="card-footer bg-white">
 
-                            <span class="badge bg-warning text-dark">
-                              બાકી
-                            </span>
+                  <div class="d-flex justify-content-between align-items-center">
 
-                          </td>
+                     <small class="text-muted">
 
-                          <td>
+                        કુલ {{ $totalBillsCount }} બિલમાંથી {{ $recentBills->count() }} બિલ દર્શાવવામાં આવ્યા છે
 
-                            <strong>₹980</strong>
+                     </small>
 
-                          </td>
-
-                          <td>
-
-                            <span class="badge bg-danger">
-                              બાકી
-                            </span>
-
-                          </td>
-
-                          <td class="text-center">
-
-                            <button class="btn btn-sm btn-outline-primary me-1">
-                              <i class="bx bx-show"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-success me-1">
-                              <i class="bx bx-printer"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-warning">
-                              <i class="bx bx-edit"></i>
-                            </button>
-
-                          </td>
-
-                        </tr>
-
-                      </tbody>
-
-                    </table>
-
-                  </div>
-
-                  <!-- Footer -->
-
-                  <div class="card-footer bg-white">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                      <small class="text-muted">
-
-                        કુલ 124 બિલમાંથી 4 બિલ દર્શાવવામાં આવ્યા છે
-
-                      </small>
-
-                      <button class="btn btn-primary">
+                     <a href="{{ route('sales') }}" class="btn btn-primary">
 
                         <i class="bx bx-list-ul me-1"></i>
 
                         બધા બિલ જુઓ
 
-                      </button>
-
-                    </div>
+                     </a>
 
                   </div>
 
-                </div>
-
-              </div>
-
-            </div>
-            <div class="row mt-4">
-
-              <!-- Pending Due Customers -->
-              <div class="col-xl-6 mb-4">
-
-                <div class="card border-0 shadow-sm h-100">
-
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-
-                    <div>
-                      <h5 class="fw-bold mb-0">
-                        <i class="bx bx-time-five text-warning me-2"></i>
-                        બાકી લેણાવાળા ગ્રાહકો
-                      </h5>
-                      <small class="text-muted">
-                        જેમના પાસે બાકી રકમ છે તે ગ્રાહકો
-                      </small>
-                    </div>
-
-                    <button class="btn btn-sm btn-outline-warning">
-                      બધા જુઓ
-                    </button>
-
-                  </div>
-
-                  <div class="table-responsive">
-
-                    <table class="table table-hover align-middle mb-0">
-
-                      <thead class="table-light">
-                        <tr>
-                          <th>ગ્રાહક</th>
-                          <th>મોબાઇલ</th>
-                          <th>બાકી રકમ</th>
-                          <th class="text-center">ક્રિયા</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-
-                        <tr>
-                          <td>Rahul Patel</td>
-                          <td>9876543210</td>
-                          <td>
-                            <span class="fw-bold text-danger">
-                              ₹2,350
-                            </span>
-                          </td>
-                          <td class="text-center">
-                            <button class="btn btn-sm btn-outline-primary">
-                              <i class="bx bx-show"></i>
-                            </button>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td>Amit Shah</td>
-                          <td>9898989898</td>
-                          <td>
-                            <span class="fw-bold text-danger">
-                              ₹1,450
-                            </span>
-                          </td>
-                          <td class="text-center">
-                            <button class="btn btn-sm btn-outline-primary">
-                              <i class="bx bx-show"></i>
-                            </button>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td>Jay Parmar</td>
-                          <td>9999999999</td>
-                          <td>
-                            <span class="fw-bold text-danger">
-                              ₹980
-                            </span>
-                          </td>
-                          <td class="text-center">
-                            <button class="btn btn-sm btn-outline-primary">
-                              <i class="bx bx-show"></i>
-                            </button>
-                          </td>
-                        </tr>
-
-                      </tbody>
-
-                    </table>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              <!-- Top Selling Products -->
-
-              <div class="col-xl-6 mb-4">
-
-                <div class="card border-0 shadow-sm h-100">
-
-                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
-
-                    <div>
-
-                      <h5 class="fw-bold mb-0">
-                        <i class="bx bx-trophy text-success me-2"></i>
-                        સૌથી વધુ વેચાતા ઉત્પાદનો
-                      </h5>
-
-                      <small class="text-muted">
-                        શ્રેષ્ઠ વેચાણ ધરાવતા ઉત્પાદનો
-                      </small>
-
-                    </div>
-
-                    <button class="btn btn-sm btn-outline-success">
-                      અહેવાલ જુઓ
-                    </button>
-
-                  </div>
-
-                  <div class="table-responsive">
-
-                    <table class="table table-hover align-middle mb-0">
-
-                      <thead class="table-light">
-                        <tr>
-                          <th>ઉત્પાદન</th>
-                          <th>વેચાયેલ જથ્થો</th>
-                          <th>આવક</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-
-                        <tr>
-                          <td>ચોખા</td>
-                          <td>120</td>
-                          <td class="fw-bold text-success">
-                            ₹18,500
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td>ઘઉં</td>
-                          <td>95</td>
-                          <td class="fw-bold text-success">
-                            ₹15,200
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td>તેલ</td>
-                          <td>72</td>
-                          <td class="fw-bold text-success">
-                            ₹11,750
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td>ખાંડ</td>
-                          <td>60</td>
-                          <td class="fw-bold text-success">
-                            ₹8,900
-                          </td>
-                        </tr>
-
-                      </tbody>
-
-                    </table>
-
-                  </div>
-
-                </div>
-
-              </div>
+               </div>
 
             </div>
 
-            <!-- Low Stock -->
+         </div>
 
-            <div class="row">
+      </div>
+      <div class="row mt-4">
 
-              <div class="col-12">
+         <!-- Pending Due Customers -->
+         <div class="row mt-4">
 
-                <div class="card border-0 shadow-sm">
+            <!-- Pending Customers - Left -->
+            <div class="col-xl-8 col-lg-7 mb-4">
 
-                  <div class="card-header bg-white">
+                <div class="card border-0 shadow-sm h-100">
 
-                    <h5 class="fw-bold mb-0">
-                      <i class="bx bx-error-circle text-danger me-2"></i>
-                      ઓછા સ્ટોકની ચેતવણી
-                    </h5>
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
 
-                  </div>
+                        <div>
+                            <h5 class="fw-bold mb-0">
+                                <i class="bx bx-time-five text-warning me-2"></i>
+                                બાકી લેણાવાળા ગ્રાહકો
+                            </h5>
 
-                  <div class="card-body">
-
-                    <div class="row g-3">
-
-                      <div class="col-lg-3 col-md-6">
-
-                        <div class="border rounded p-3">
-
-                          <div class="d-flex justify-content-between">
-
-                            <div>
-
-                              <h6 class="mb-1">
-                                ચોખા
-                              </h6>
-
-                              <small class="text-muted">
-                                બાકી સ્ટોક
-                              </small>
-
-                            </div>
-
-                            <span class="badge bg-danger">
-                              5 કિ.ગ્રા.
-                            </span>
-
-                          </div>
-
+                            <small class="text-muted">
+                                જેમના પાસે બાકી રકમ છે તે ગ્રાહકો
+                            </small>
                         </div>
 
-                      </div>
-
-                      <div class="col-lg-3 col-md-6">
-
-                        <div class="border rounded p-3">
-
-                          <div class="d-flex justify-content-between">
-
-                            <div>
-
-                              <h6 class="mb-1">
-                                તેલ
-                              </h6>
-
-                              <small class="text-muted">
-                                બાકી સ્ટોક
-                              </small>
-
-                            </div>
-
-                            <span class="badge bg-warning text-dark">
-                              3 બોટલ
-                            </span>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      <div class="col-lg-3 col-md-6">
-
-                        <div class="border rounded p-3">
-
-                          <div class="d-flex justify-content-between">
-
-                            <div>
-
-                              <h6 class="mb-1">
-                                ખાંડ
-                              </h6>
-
-                              <small class="text-muted">
-                                બાકી સ્ટોક
-                              </small>
-
-                            </div>
-
-                            <span class="badge bg-danger">
-                              8 કિ.ગ્રા.
-                            </span>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      <div class="col-lg-3 col-md-6">
-
-                        <div class="border rounded p-3">
-
-                          <div class="d-flex justify-content-between">
-
-                            <div>
-
-                              <h6 class="mb-1">
-                                ચા
-                              </h6>
-
-                              <small class="text-muted">
-                                બાકી સ્ટોક
-                              </small>
-
-                            </div>
-
-                            <span class="badge bg-warning text-dark">
-                              10 પેકેટ
-                            </span>
-
-                          </div>
-
-                        </div>
-
-                      </div>
+                        <a href="{{ route('customer_list') }}" class="btn btn-sm btn-outline-warning">
+                            બધા જુઓ
+                        </a>
 
                     </div>
 
-                  </div>
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle mb-0">
+
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ગ્રાહક</th>
+                                    <th>મોબાઇલ</th>
+                                    <th>બાકી રકમ</th>
+                                    <th class="text-center">ક્રિયા</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @forelse ($pendingCustomers as $customer)
+
+                                <tr>
+                                    <td>{{ $customer->name }}</td>
+                                    <td>{{ $customer->mobile }}</td>
+                                    <td>
+                                        <span class="fw-bold text-danger">
+                                            ₹{{ number_format($customer->balance_due, 0) }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{{ route('customer.bills', $customer->id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bx bx-show"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                @empty
+
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        હાલમાં કોઈ ગ્રાહકની બાકી રકમ નથી.
+                                    </td>
+                                </tr>
+
+                                @endforelse
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
 
                 </div>
-
-              </div>
 
             </div>
-            <div class="row mt-4">
 
-              <!-- Quick Actions -->
-              <div class="col-xl-4 mb-4">
 
-                <div class="card border-0 shadow-sm h-100">
-
-                  <div class="card-header bg-white">
-                    <h5 class="fw-bold mb-0">
-                      <i class="bx bx-grid-alt text-primary me-2"></i>
-                      ઝડપી ક્રિયાઓ
-                    </h5>
-                  </div>
-
-                  <div class="card-body">
-
-                    <div class="row g-3">
-
-                      <div class="col-6">
-                        <a href="#" class="btn btn-primary w-100 py-3">
-                          <i class="bx bx-receipt fs-3 d-block mb-2"></i>
-                          નવું બિલ
-                        </a>
-                      </div>
-
-                      <div class="col-6">
-                        <a href="#" class="btn btn-success w-100 py-3">
-                          <i class="bx bx-user-plus fs-3 d-block mb-2"></i>
-                          ગ્રાહક
-                        </a>
-                      </div>
-
-                      <div class="col-6">
-                        <a href="#" class="btn btn-warning w-100 py-3 text-dark">
-                          <i class="bx bx-package fs-3 d-block mb-2"></i>
-                          પ્રોડક્ટ્સ
-                        </a>
-                      </div>
-
-                      <div class="col-6">
-                        <a href="#" class="btn btn-info w-100 py-3 text-white">
-                          <i class="bx bx-cart fs-3 d-block mb-2"></i>
-                          ખરીદી
-                        </a>
-                      </div>
-
-                      <div class="col-6">
-                        <a href="#" class="btn btn-danger w-100 py-3">
-                          <i class="bx bx-wallet fs-3 d-block mb-2"></i>
-                          ખર્ચ
-                        </a>
-                      </div>
-
-                      <div class="col-6">
-                        <a href="#" class="btn btn-dark w-100 py-3">
-                          <i class="bx bx-bar-chart-alt-2 fs-3 d-block mb-2"></i>
-                          અહેવાલો
-                        </a>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              <!-- Today's Summary -->
-
-              <div class="col-xl-4 mb-4">
+            <!-- Quick Actions - Right -->
+            <div class="col-xl-4 col-lg-5 mb-4">
 
                 <div class="card border-0 shadow-sm h-100">
 
-                  <div class="card-header bg-white">
-
-                    <h5 class="fw-bold mb-0">
-                      <i class="bx bx-pie-chart-alt text-success me-2"></i>
-                      આજનો સારાંશ
-                    </h5>
-
-                  </div>
-
-                  <div class="card-body">
-
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>કુલ વેચાણ</span>
-                      <strong class="text-success">₹25,600</strong>
+                    <div class="card-header bg-white">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bx bx-grid-alt text-primary me-2"></i>
+                            ઝડપી ક્રિયાઓ
+                        </h5>
                     </div>
 
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>રોકડ વેચાણ</span>
-                      <strong class="text-primary">₹18,250</strong>
-                    </div>
+                    <div class="card-body">
 
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>બાકી વેચાણ</span>
-                      <strong class="text-warning">₹7,350</strong>
-                    </div>
+                        <div class="row g-3">
 
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>ખર્ચ</span>
-                      <strong class="text-danger">₹2,450</strong>
-                    </div>
+                            <div class="col-6">
+                                <a href="{{ route('billing.create') }}" class="btn btn-primary w-100 py-3">
+                                    <i class="bx bx-receipt fs-3 d-block mb-2"></i>
+                                    નવું બિલ
+                                </a>
+                            </div>
 
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>નફો</span>
-                      <strong class="text-success fs-5">
-                        ₹23,150
-                      </strong>
-                    </div>
+                            <div class="col-6">
+                                <a href="{{ route('customer_list') }}" class="btn btn-success w-100 py-3">
+                                    <i class="bx bx-user-plus fs-3 d-block mb-2"></i>
+                                    ગ્રાહક
+                                </a>
+                            </div>
 
-                    <div class="d-flex justify-content-between pt-3">
-                      <span>કુલ બિલ</span>
-                      <strong>42 બિલ</strong>
-                    </div>
+                            <div class="col-6">
+                                <a href="{{ route('add_product') }}" class="btn btn-warning w-100 py-3 text-dark">
+                                    <i class="bx bx-package fs-3 d-block mb-2"></i>
+                                    પ્રોડક્ટ્સ
+                                </a>
+                            </div>
 
-                  </div>
+                            <div class="col-6">
+                                <a href="{{ route('purchase') }}" class="btn btn-info w-100 py-3 text-white">
+                                    <i class="bx bx-cart fs-3 d-block mb-2"></i>
+                                    ખરીદી
+                                </a>
+                            </div>
+
+                            <div class="col-6">
+                                <a href="#" class="btn btn-danger w-100 py-3">
+                                    <i class="bx bx-wallet fs-3 d-block mb-2"></i>
+                                    ખર્ચ
+                                </a>
+                            </div>
+
+                            <div class="col-6">
+                                <a href="#" class="btn btn-dark w-100 py-3">
+                                    <i class="bx bx-bar-chart-alt-2 fs-3 d-block mb-2"></i>
+                                    અહેવાલો
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
-
-              </div>
-
-              <!-- Recent Activity -->
-
-              <div class="col-xl-4 mb-4">
-
-                <div class="card border-0 shadow-sm h-100">
-
-                  <div class="card-header bg-white">
-
-                    <h5 class="fw-bold mb-0">
-                      <i class="bx bx-pie-chart-alt text-success me-2"></i>
-                      આજનો સારાંશ
-                    </h5>
-
-                  </div>
-
-                  <div class="card-body">
-
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>કુલ વેચાણ</span>
-                      <strong class="text-success">₹25,600</strong>
-                    </div>
-
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>રોકડ વેચાણ</span>
-                      <strong class="text-primary">₹18,250</strong>
-                    </div>
-
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>બાકી વેચાણ</span>
-                      <strong class="text-warning">₹7,350</strong>
-                    </div>
-
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>ખર્ચ</span>
-                      <strong class="text-danger">₹2,450</strong>
-                    </div>
-
-                    <div class="d-flex justify-content-between py-2 border-bottom">
-                      <span>નફો</span>
-                      <strong class="text-success fs-5">
-                        ₹23,150
-                      </strong>
-                    </div>
-
-                    <div class="d-flex justify-content-between pt-3">
-                      <span>કુલ બિલ</span>
-                      <strong>42 બિલ</strong>
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
 
             </div>
-          </div>
 
-          <!-- / Content -->
+        </div>
 
-@include('layout.footer')
+      </div>
+
+      <!-- / Content -->
+
+      @include('layout.footer')
+
+      {{-- YEAR SELECTOR --}}
+      <script>
+         document.getElementById('yearSelect').addEventListener('change', function () {
+            window.location.href = "{{ route('dashboard') }}?year=" + this.value;
+         });
+      </script>
+
+      {{-- DASHBOARD CHARTS (real data) — placed AFTER footer so apexcharts.js is already loaded --}}
+      <script>
+         window.addEventListener('load', function () {
+
+            var monthlyOptions = {
+
+               series: [{
+                  name: 'Sales',
+                  data: @json($monthlyTotals)
+               }],
+
+               chart: {
+                  type: 'area',
+                  height: 350,
+                  width: '100%',
+                  toolbar: { show: false }
+               },
+
+               dataLabels: { enabled: false },
+
+               stroke: { curve: 'smooth', width: 3 },
+
+               fill: { type: 'gradient' },
+
+               xaxis: {
+                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+               },
+
+               tooltip: {
+                  y: {
+                     formatter: function (val) {
+                        return "₹ " + val;
+                     }
+                  }
+               }
+
+            };
+
+            var monthlyEl = document.querySelector("#monthlySalesChart");
+
+            if (monthlyEl) {
+               new ApexCharts(monthlyEl, monthlyOptions).render();
+            }
+
+
+            var pieOptions = {
+
+               series: [{{ $cashTotal }}, {{ $dueTotal }}],
+
+               chart: { type: 'donut', height: 300, width: '100%' },
+
+               labels: ['Cash', 'Due'],
+
+               legend: { position: 'bottom' },
+
+               colors: ['#28a745', '#ffc107'],
+
+               dataLabels: { enabled: true }
+
+            };
+
+            var pieEl = document.querySelector("#billTypeChart");
+
+            if (pieEl) {
+               new ApexCharts(pieEl, pieOptions).render();
+            }
+
+         });
+      </script>

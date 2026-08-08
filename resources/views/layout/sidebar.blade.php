@@ -99,7 +99,7 @@
                         </svg>
                      </span>
                   </span>
-                  <span class="app-brand-text demo menu-text fw-bold ms-2">Sneat</span>
+                  {{-- <span class="app-brand-text demo menu-text fw-bold ms-2">Sneat</span> --}}
                </a>
 
                <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -142,10 +142,10 @@
                </li>
 
                {{-- <li class="menu-item {{ request()->routeIs('billing-list') ? 'active' : '' }}">
-                  <a href="{{ route('billing-list') }}" class="menu-link">
-                     <i class="menu-icon tf-icons bx bx-detail"></i>
-                     <div class="text-truncate">બિલની યાદી</div>
-                  </a>
+               <a href="{{ route('billing-list') }}" class="menu-link">
+                  <i class="menu-icon tf-icons bx bx-detail"></i>
+                  <div class="text-truncate">બિલની યાદી</div>
+               </a>
                </li> --}}
 
                <li class="menu-item {{ request()->routeIs('customer_list') ? 'active' : '' }}">
@@ -177,20 +177,44 @@
                </div>
 
                <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
-                  <!-- Search -->
-                  <div class="navbar-nav align-items-center me-auto">
-                     <div class="nav-item d-flex align-items-center">
-                        <span class="w-px-22 h-px-22"><i class="icon-base bx bx-search icon-md"></i></span>
-                        <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2 d-md-block d-none" placeholder="Search..." aria-label="Search..." />
-                     </div>
-                  </div>
-                  <!-- /Search -->
+                <div class="navbar-nav align-items-center me-auto">
+                    <div class="nav-item d-flex align-items-center">
+                        <span class="w-px-22 h-px-22">
+                            <i class="icon-base bx bx-calendar icon-md" style="color: #696cff;"></i>
+                        </span>
+
+                        <span id="currentDateTime" class="fw-medium ms-2" style="color: #696cff;"></span>
+                    </div>
+                </div>
+                <!-- /Current Date & Time -->
+
+                <script>
+                    function updateDateTime() {
+                        const now = new Date();
+
+                        const options = {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: true
+                        };
+
+                        document.getElementById('currentDateTime').textContent =
+                            now.toLocaleString('en-IN', options);
+                    }
+
+                    updateDateTime();
+                    setInterval(updateDateTime, 1000);
+                </script>
 
                   <ul class="navbar-nav flex-row align-items-center ms-md-auto">
                      <!-- Place this tag where you want the button to render. -->
-                     <li class="nav-item lh-1 me-4">
+                     {{-- <li class="nav-item lh-1 me-4">
                         <a class="github-button" href="#" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
-                     </li>
+                     </li> --}}
 
                      <!-- User -->
                      <li class="nav-item navbar-dropdown dropdown-user dropdown">

@@ -8,6 +8,7 @@ use App\Http\Controllers\SpllierlistController;
 use App\Http\Controllers\ForgotPassController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Customer_listController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleController;
 
 //Login
@@ -29,9 +30,7 @@ Route::post('/reset-password/resend-otp', [ForgotPassController::class, 'resendO
 Route::middleware('admin.auth')->group(function () {
 
     //Index
-    Route::get('/dashboard', function () {
-        return view('product.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     //add_new_Product
     Route::get('/add_product', [SupplierController::class, 'add_product'])->name('add_product');
@@ -55,11 +54,6 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/settings', [AdminLogin::class, 'settings'])->name('settings');
     Route::put('/settings/update-password', [AdminLogin::class, 'updatePassword'])->name('settings.update_password');
 
-
-    Route::get('/billing-list', function () {
-        return view('billing.billing_list');
-    })->name('billing-list');
-
     //New Billing
     Route::get('/billing/new', [BillingController::class, 'create'])->name('billing.create');
     Route::post('/billing/pay-due', [BillingController::class, 'payDue'])->name('billing.pay-due');
@@ -77,6 +71,6 @@ Route::middleware('admin.auth')->group(function () {
     Route::post('/customers/store', [Customer_listController::class, 'store'])->name('customers.store');
     Route::put('/customers/{customer}', [Customer_listController::class, 'update'])->name('customers.update');
     Route::get('/customer/{customer}/bills', [Customer_listController::class, 'customerBills'])->name('customer.bills');
-
+    //customer-particular bill show print
     Route::get('/billing/{bill}/print', [BillingController::class, 'printBill'])->name('billing.print');
 });

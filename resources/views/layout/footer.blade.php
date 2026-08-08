@@ -29,109 +29,7 @@
 <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script>
 
-// Monthly Sales Chart
-
-var monthlyOptions = {
-
-series: [{
-name: 'Sales',
-data: [12000, 18000, 15000, 24000, 21000, 27000, 25000, 31000, 28000, 35000, 39000, 45000]
-}],
-
-chart: {
-type: 'area',
-height: 350,
-toolbar: {
-  show: false
-}
-},
-
-dataLabels: {
-enabled: false
-},
-
-stroke: {
-curve: 'smooth',
-width: 3
-},
-
-fill: {
-type: 'gradient'
-},
-
-xaxis: {
-categories: [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-]
-},
-
-tooltip: {
-y: {
-  formatter: function (val) {
-    return "₹ " + val;
-  }
-}
-}
-
-};
-
-if (document.querySelector("#monthlySalesChart")) {
-  new ApexCharts(
-  document.querySelector("#monthlySalesChart"),
-  monthlyOptions
-  ).render();
-}
-
-
-
-
-// Cash vs Due Chart
-
-var pieOptions = {
-
-series: [75, 25],
-
-chart: {
-type: 'donut',
-height: 300
-},
-
-labels: [
-'Cash',
-'Due'
-],
-
-legend: {
-position: 'bottom'
-},
-
-colors: [
-'#28a745',
-'#ffc107'
-],
-
-dataLabels: {
-enabled: true
-}
-
-};
-
-if (document.querySelector("#billTypeChart")) {
-  new ApexCharts(
-  document.querySelector("#billTypeChart"),
-  pieOptions
-  ).render();
-}
-
-</script>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <!-- Core JS -->
 
 <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
@@ -146,7 +44,7 @@ if (document.querySelector("#billTypeChart")) {
 <!-- endbuild -->
 
 <!-- Vendors JS -->
-<script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <!-- Main JS -->
 
