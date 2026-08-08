@@ -76,5 +76,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/customer_list', [Customer_listController::class, 'customer_list'])->name('customer_list');
     Route::post('/customers/store', [Customer_listController::class, 'store'])->name('customers.store');
     Route::put('/customers/{customer}', [Customer_listController::class, 'update'])->name('customers.update');
+    Route::get('/customer/{customer}/bills', [Customer_listController::class, 'customerBills'])->name('customer.bills');
 
+    Route::get('/billing/{bill}/print', [BillingController::class, 'printBill'])->name('billing.print');
 });

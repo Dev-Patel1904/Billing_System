@@ -158,9 +158,9 @@
 
                      <td class="text-center">
 
-                        <button class="btn btn-sm btn-outline-primary">
+                        <a href="{{ route('customer.bills', $customer->id) }}" class="btn btn-sm btn-outline-primary">
                            <i class="bx bx-show"></i>
-                        </button>
+                        </a>
 
                         <button class="btn btn-sm btn-outline-warning edit-customer-btn"
                            data-id="{{ $customer->id }}"

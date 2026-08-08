@@ -122,4 +122,41 @@ class Customer_listController extends Controller
 
         }
     }
+
+
+    // View one customer's bills (with search / date / payment-type filter + pagination)
+    public function customerBills(Request $request, Customer $customer)
+    {
+        $search = $request->query('search');
+        $date = $request->query('date');
+        $paymentType = $request->query('payment_type');
+
+        $bills = $customer->bills()
+            ->withCount('items')
+            ->when($search, function ($query) use ($search) {
+
+                // Allow searching "1001" or "BILL-1001" — strip prefix/zeros either way
+                $cleanSearch = preg_replace('/[^0-9]/', '', $search);
+
+                $query->where(function ($q) use ($search, $cleanSearch) {
+                    $q->where('bill_no', 'like', "%{$search}%");
+
+                    if ($cleanSearch !== '') {
+                        $q->orWhere('bill_no', 'like', "%{$cleanSearch}%");
+                    }
+                });
+
+            })
+            ->when($date, function ($query) use ($date) {
+                $query->whereDate('created_at', $date);
+            })
+            ->when($paymentType, function ($query) use ($paymentType) {
+                $query->where('payment_type', $paymentType);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('billing.customer_bills', compact('customer', 'bills', 'search', 'date', 'paymentType'));
+    }
 }

@@ -141,12 +141,12 @@
                   </a>
                </li>
 
-               <li class="menu-item {{ request()->routeIs('billing-list') ? 'active' : '' }}">
+               {{-- <li class="menu-item {{ request()->routeIs('billing-list') ? 'active' : '' }}">
                   <a href="{{ route('billing-list') }}" class="menu-link">
                      <i class="menu-icon tf-icons bx bx-detail"></i>
                      <div class="text-truncate">બિલની યાદી</div>
                   </a>
-               </li>
+               </li> --}}
 
                <li class="menu-item {{ request()->routeIs('customer_list') ? 'active' : '' }}">
                   <a href="{{ route('customer_list') }}" class="menu-link">

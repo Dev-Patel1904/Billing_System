@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Bill;
@@ -108,7 +109,12 @@ class BillingController extends Controller
         $grandTotal = $totalAmount;
 
         $bill = DB::transaction(function () use (
-            $validated, $totalQty, $totalAmount, $previousDue, $duePaidNow, $grandTotal
+            $validated,
+            $totalQty,
+            $totalAmount,
+            $previousDue,
+            $duePaidNow,
+            $grandTotal
         ) {
             $customer = Customer::firstOrCreate(
                 ['mobile' => $validated['customer_mobile']],
@@ -151,6 +157,22 @@ class BillingController extends Controller
 
             return $bill->load('items', 'customer');
         });
+
+        $html = view('billing.pdf', ['bill' => $bill])->render();
+
+        $mpdf = new Mpdf(config('mpdf'));
+        $mpdf->WriteHTML($html);
+
+        return response($mpdf->Output($bill->bill_no . '.pdf', \Mpdf\Output\Destination::INLINE))
+            ->header('Content-Type', 'application/pdf');
+    }
+
+    // ==========================================
+    // NEW: Reprint an existing bill's PDF
+    // ==========================================
+    public function printBill(Bill $bill)
+    {
+        $bill->load('items', 'customer');
 
         $html = view('billing.pdf', ['bill' => $bill])->render();
 
