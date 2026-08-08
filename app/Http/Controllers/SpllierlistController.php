@@ -45,6 +45,7 @@ class SpllierlistController extends Controller
                 'required',
                 'string',
                 'max:255',
+                'regex:/^[\p{L}\s]+$/u',
             ],
 
             'mobile' => [
@@ -66,6 +67,7 @@ class SpllierlistController extends Controller
         ], [
             'name.required' => 'સપ્લાયરનું નામ દાખલ કરો.',
             'name.max' => 'સપ્લાયરનું નામ ખૂબ લાંબું છે.',
+            'name.regex' => 'સપ્લાયરનું નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
 
             'mobile.required' => 'મોબાઇલ નંબર દાખલ કરો.',
             'mobile.digits' => 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.',

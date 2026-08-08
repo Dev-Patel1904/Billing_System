@@ -276,6 +276,17 @@
             let duePaymentSaved = false;
 
             // ==========================================
+            // CUSTOMER NAME -> BLOCK NUMBERS WHILE TYPING
+            // ==========================================
+            $("#customerName").on("input", function() {
+                let value = $(this).val();
+                let cleaned = value.replace(/[0-9]/g, '');
+                if (value !== cleaned) {
+                    $(this).val(cleaned);
+                }
+            });
+
+            // ==========================================
             // CUSTOMER MOBILE -> AUTOFILL + SHOW/HIDE DUE
             // ==========================================
 
@@ -377,6 +388,12 @@
 
                 if (customer == "") {
                     GlassToast.warning("ગ્રાહકનું નામ", "કૃપા કરીને ગ્રાહકનું નામ દાખલ કરો.");
+                    $("#customerName").focus();
+                    return;
+                }
+
+                if (/[0-9]/.test(customer)) {
+                    GlassToast.warning("ગ્રાહકનું નામ", "ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
                     $("#customerName").focus();
                     return;
                 }
@@ -492,6 +509,12 @@
                     return;
                 }
 
+                if (/[0-9]/.test($("#customerName").val().trim())) {
+                    e.preventDefault();
+                    alert("ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
+                    return;
+                }
+
                 if ($("#productTable tbody tr").length === 0) {
                     e.preventDefault();
                     alert("ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.");
@@ -517,6 +540,12 @@
                 if ($("#customerMobile").val().trim().length !== 10) {
                     e.preventDefault();
                     alert("માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો.");
+                    return;
+                }
+
+                if (/[0-9]/.test($("#customerName").val().trim())) {
+                    e.preventDefault();
+                    alert("ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
                     return;
                 }
 
@@ -579,12 +608,12 @@
                 let mobile = $("#customerMobile").val().trim();
 
                 if (paidAmount <= 0) {
-                    GlassToast.warning("રકમ","ચૂકવણી રકમ દાખલ કરો.");
+                    GlassToast.warning("રકમ", "ચૂકવણી રકમ દાખલ કરો.");
                     return;
                 }
 
                 if (paidAmount > previousDueTotal) {
-                    GlassToast.warning("રકમ","ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.");
+                    GlassToast.warning("રકમ", "ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.");
                     return;
                 }
 

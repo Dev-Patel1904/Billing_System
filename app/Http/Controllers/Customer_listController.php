@@ -40,6 +40,7 @@ class Customer_listController extends Controller
                 'required',
                 'string',
                 'max:255',
+                'regex:/^[\p{L}\s]+$/u',
             ],
             'mobile' => [
                 'required',
@@ -49,6 +50,7 @@ class Customer_listController extends Controller
         ], [
             'name.required' => 'ગ્રાહકનું નામ દાખલ કરો.',
             'name.max' => 'ગ્રાહકનું નામ ખૂબ લાંબું છે.',
+            'name.regex' => 'ગ્રાહકના નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
 
             'mobile.required' => 'મોબાઇલ નંબર દાખલ કરો.',
             'mobile.digits' => 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.',
@@ -88,6 +90,7 @@ class Customer_listController extends Controller
                 'required',
                 'string',
                 'max:255',
+                'regex:/^[\p{L}\s]+$/u',
             ],
             'mobile' => [
                 'required',
@@ -97,6 +100,7 @@ class Customer_listController extends Controller
         ], [
             'name.required' => 'ગ્રાહકનું નામ દાખલ કરો.',
             'name.max' => 'ગ્રાહકનું નામ ખૂબ લાંબું છે.',
+            'name.regex' => 'ગ્રાહકના નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
 
             'mobile.required' => 'મોબાઇલ નંબર દાખલ કરો.',
             'mobile.digits' => 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.',
