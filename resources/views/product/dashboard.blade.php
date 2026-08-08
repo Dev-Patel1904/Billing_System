@@ -565,7 +565,7 @@
                                 </a>
                             </div>
 
-                            <div class="col-6">
+                            {{-- <div class="col-6">
                                 <a href="#" class="btn btn-danger w-100 py-3">
                                     <i class="bx bx-wallet fs-3 d-block mb-2"></i>
                                     ખર્ચ
@@ -577,7 +577,7 @@
                                     <i class="bx bx-bar-chart-alt-2 fs-3 d-block mb-2"></i>
                                     અહેવાલો
                                 </a>
-                            </div>
+                            </div> --}}
 
                         </div>
 

@@ -169,7 +169,7 @@
          <table style="width:100%; border-collapse:collapse; margin-bottom:8px;">
             <tr>
                <td style="text-align:left; font-size:12px;">
-                  <strong>બિલ નં. :</strong>
+
                   <div><strong>બિલ નં. :</strong> {{ $bill->bill_no }}</div>
                </td>
                <td style="text-align:right;">
@@ -185,7 +185,7 @@
          </table>
 
          <div><strong>તારીખ :</strong> {{ $bill->created_at->format('d-m-Y') }}</div>
-         <div><strong>ગ્રાહક :</strong> {{ $bill->customer->name }}</div>
+         <div><strong>નામ :</strong> {{ $bill->customer->name }}</div>
          <div><strong>મોબાઇલ :</strong> {{ $bill->customer->mobile }}</div>
       </div>
 
@@ -194,9 +194,9 @@
       <table>
          <thead>
             <tr>
-               <th>વસ્તુ</th>
-               <th class="right">જથ્થો</th>
-               <th class="right">રકમ</th>
+               <th>Items</th>
+               <th class="right">QTY</th>
+               <th class="right">Amout</th>
             </tr>
          </thead>
          <tbody>
@@ -212,7 +212,7 @@
 
       <div class="total">
          <div>
-            <span>કુલ જથ્થો :</span>
+            <span>કુલ નંગ :</span>
             <span>{{ $bill->total_qty }}</span>
          </div>
          <div>
@@ -225,15 +225,15 @@
 
 
          <div class="grand">
-            <span>ચૂકવવાની કુલ રકમ</span>
-            <span>₹{{ number_format($bill->grand_total, 2) }}</span>
+            <span>ચૂકવવાની કુલ રકમ :</span>
+            <span style="color: #139732">₹{{ number_format($bill->grand_total, 2) }}</span>
          </div>
 
          <hr>
          @if ($bill->due_paid_now > 0)
          <div>
             <span>આજે ચૂકવેલ બાકી રકમ :</span>
-            <span style="color: #139732">₹{{ number_format($bill->due_paid_now, 2) }}</span>
+            <span>₹{{ number_format($bill->due_paid_now, 2) }}</span>
          </div>
          @endif
 
