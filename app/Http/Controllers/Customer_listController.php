@@ -26,9 +26,7 @@ class Customer_listController extends Controller
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10)
-            ->withQueryString();
-
-        return view('list.customer_list', compact('customers', 'search'));
+            
     }
 
 
