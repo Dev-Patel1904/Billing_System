@@ -33,5 +33,8 @@ jobs:
       - name: Generate Application Key
         run: cp .env.example .env && php artisan key:generate
 
+      - name: Check PHP Syntax
+        run: find app routes config database -type f -name "*.php" -print0 | xargs -0 -n1 php -l
+
       - name: Run Tests
         run: php artisan test
