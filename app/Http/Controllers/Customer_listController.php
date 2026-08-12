@@ -9,36 +9,7 @@ use Illuminate\Validation\Rule;
 class Customer_listController extends Controller
 {
     // Show customer_list page
-    public function customer_list(Request $request)
-    {
-        $search = $request->query('search');
-        $sort = $request->query('sort', 'desc');
-
-        $customers = Customer::withCount('bills')
-            ->withSum('bills', 'total_amount')
-            ->with(['bills' => function ($query) {
-                $query->latest()->limit(1);
-            }])
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('mobile', 'like', "%{$search}%");
-                });
-            })
-            ->when($sort === 'due', function ($query) {
-                $query->where('balance_due', '!=', 0);
-            })
-            ->when($sort === 'asc', function ($query) {
-                $query->orderBy('created_at', 'asc');
-            })
-            ->when($sort !== 'asc', function ($query) {
-                $query->orderBy('created_at', 'desc');
-            })
-            ->paginate(10)
-            ->withQueryString();
-
-        return view('list.customer_list', compact('customers', 'search', 'sort'));
-    }
+    
 
 
     // Add New Customer (modal)
