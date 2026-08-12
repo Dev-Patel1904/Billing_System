@@ -29,7 +29,7 @@ class Customer_listController extends Controller
             ->withQueryString();
 
         return view('list.customer_list', compact('customers', 'search'));
-   
+    }
 
 
     // Add New Customer (modal)
