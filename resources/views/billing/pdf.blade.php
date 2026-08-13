@@ -880,7 +880,7 @@
 
 
         <button type="button" class="print-btn" onclick="printBill()">
-            🖨️ Bill બનાવો
+            🖨️ બિલ બનાવો
         </button>
 
     </div>
