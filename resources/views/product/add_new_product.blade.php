@@ -1,396 +1,360 @@
 @include('layout.sidebar')
 <style>
- /* ========================================
+    /* ========================================
    Premium Supplier Field
 ======================================== */
 
-.supplier-field {
-    position: relative;
-}
+    .supplier-field {
+        position: relative;
+    }
 
-/* ========================================
+    /* ========================================
    Label
 ======================================== */
 
-.supplier-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 5px;
-    font-size: 14px;
-    
-   
-}
+    .supplier-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+        font-size: 14px;
 
-.supplier-label small {
-    display: block;
-    margin-top: 2px;
-    font-size: 11px;
-    font-weight: 400;
-    color: #9ca3af;
-}
 
-/* ========================================
+    }
+
+    .supplier-label small {
+        display: block;
+        margin-top: 2px;
+        font-size: 11px;
+        font-weight: 400;
+        color: #9ca3af;
+    }
+
+    /* ========================================
    Label Icon
 ======================================== */
 
-.supplier-label-icon {
-    width: 36px;
-    height: 36px;
+    .supplier-label-icon {
+        width: 36px;
+        height: 36px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-    border-radius: 10px;
+        border-radius: 10px;
 
-    background: #f3f4f6;
-    color: #4f46e5;
+        background: #f3f4f6;
+        color: #4f46e5;
 
-    font-size: 17px;
-}
+        font-size: 17px;
+    }
 
-/* ========================================
+    /* ========================================
    Select Wrapper
 ======================================== */
 
-.supplier-select-wrapper {
-    position: relative;
-}
+    .supplier-select-wrapper {
+        position: relative;
+    }
 
-/* ========================================
+    /* ========================================
    Left Icon
 ======================================== */
 
-.supplier-select-icon {
-    position: absolute;
+    .supplier-select-icon {
+        position: absolute;
 
-    left: 15px;
-    top: 50%;
+        left: 15px;
+        top: 50%;
 
-    transform: translateY(-50%);
+        transform: translateY(-50%);
 
-    z-index: 2;
+        z-index: 2;
 
-    color: #6b7280;
+        color: #6b7280;
 
-    pointer-events: none;
+        pointer-events: none;
 
-    font-size: 14px;
-}
+        font-size: 14px;
+    }
 
-/* ========================================
+    /* ========================================
    Select2 Container
 ======================================== */
 
-.supplier-select-wrapper .select2-container {
-    width: 100% !important;
-}
+    .supplier-select-wrapper .select2-container {
+        width: 100% !important;
+    }
 
-/* ========================================
+    /* ========================================
    Select2 Main Field
 ======================================== */
 
-.supplier-select-wrapper
-.select2-container--default
-.select2-selection--single {
+    .supplier-select-wrapper .select2-container--default .select2-selection--single {
 
-    height: 40px;
+        height: 40px;
 
-    border: 1px solid #e5e7eb;
+        border: 1px solid #e5e7eb;
 
-    border-radius: 8px;
+        border-radius: 8px;
 
-    background: #fff;
+        background: #fff;
 
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
 
-/* ========================================
+    /* ========================================
    Selected Text
 ======================================== */
 
-.supplier-select-wrapper
-.select2-container--default
-.select2-selection--single
-.select2-selection__rendered {
-
-    line-height: 40px;
-
-    padding-left: 45px;
-    padding-right: 45px;
-
-    color: #111827;
-
-    font-size: 14px;
-}
-
-/* ========================================
-   Select2 Arrow
-======================================== */
-
-.supplier-select-wrapper
-.select2-container--default
-.select2-selection--single
-.select2-selection__arrow {
-
-    height: 40px;
-
-    right: 12px;
-}
-
-/* ========================================
-   Focus / Open
-======================================== */
-
-.supplier-select-wrapper
-.select2-container--default.select2-container--open
-.select2-selection--single,
-
-.supplier-select-wrapper
-.select2-container--default
-.select2-selection--single:focus {
-
-    border-color: #6366f1;
-
-    box-shadow:
-        0 0 0 4px rgba(99, 102, 241, 0.10);
-}
-
-/* ========================================
-   Search Dropdown
-======================================== */
-
-.select2-container--default
-.select2-dropdown {
-
-    margin-top: 6px;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 12px;
-
-    overflow: hidden;
-
-    background: #fff;
-
-    box-shadow:
-        0 12px 30px rgba(15, 23, 42, 0.12);
-}
-
-/* ========================================
-   Search Area
-======================================== */
-
-.select2-container--default
-.select2-search--dropdown {
-
-    padding: 10px;
-
-    background: #fff;
-}
-
-/* ========================================
-   Search Input
-======================================== */
-
-.select2-container--default
-.select2-search--dropdown
-.select2-search__field {
-
-    width: 100%;
-
-    height: 40px;
-
-    padding: 8px 12px;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 8px;
-
-    outline: none;
-
-    background: #fff;
-
-    color: #111827;
-
-    font-size: 14px;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-/* Search Focus */
-
-.select2-container--default
-.select2-search--dropdown
-.select2-search__field:focus {
-
-    border-color: #6366f1;
-
-    box-shadow:
-        0 0 0 3px rgba(99, 102, 241, 0.08);
-}
-
-/* ========================================
-   Dropdown Options
-======================================== */
-
-.select2-container--default
-.select2-results__option {
-
-    padding: 10px 14px;
-
-    font-size: 14px;
-
-    color: #374151;
-
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
-}
-
-/* Hover / Highlight */
-
-.select2-container--default
-.select2-results__option--highlighted[aria-selected] {
-
-    background: #f3f4ff;
-
-    color: #4f46e5;
-}
-
-/* ========================================
-   Selected Option
-======================================== */
-
-.select2-container--default
-.select2-results__option[aria-selected="true"] {
-
-    background: #f8f8ff;
-
-    color: #4f46e5;
-
-    font-weight: 500;
-}
-
-/* ========================================
-   No Results
-======================================== */
-
-.select2-container--default
-.select2-results__option.select2-results__message {
-
-    padding: 12px 14px;
-
-    color: #9ca3af;
-
-    font-size: 13px;
-
-    text-align: center;
-}
-
-/* ========================================
-   Hint
-======================================== */
-
-.supplier-hint {
-
-    margin-top: 7px;
-
-    color: #9ca3af;
-
-    font-size: 11px;
-}
-
-/* Hint Icon */
-
-.supplier-hint i {
-
-    margin-right: 4px;
-
-    color: #6366f1;
-}
-
-/* ========================================
-   Clear Button
-======================================== */
-
-.supplier-select-wrapper
-.select2-container--default
-.select2-selection--single
-.select2-selection__clear {
-
-    height: 40px;
-
-    margin-right: 5px;
-
-    color: #9ca3af;
-
-    font-size: 18px;
-
-    line-height: 38px;
-}
-
-/* Clear Hover */
-
-.supplier-select-wrapper
-.select2-container--default
-.select2-selection--single
-.select2-selection__clear:hover {
-
-    color: #ef4444;
-}
-
-/* ========================================
-   Responsive
-======================================== */
-
-@media (max-width: 767px) {
-
-    .supplier-label {
-        font-size: 13px;
-    }
-
-    .supplier-label-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 15px;
-    }
-
-    .supplier-select-wrapper
-    .select2-container--default
-    .select2-selection--single {
-
-        height: 40px;
-    }
-
-    .supplier-select-wrapper
-    .select2-container--default
-    .select2-selection--single
-    .select2-selection__rendered {
+    .supplier-select-wrapper .select2-container--default .select2-selection--single .select2-selection__rendered {
 
         line-height: 40px;
 
-        padding-left: 42px;
-        padding-right: 40px;
+        padding-left: 45px;
+        padding-right: 45px;
 
-        font-size: 13px;
+        color: #111827;
+
+        font-size: 14px;
     }
 
-    .supplier-select-wrapper
-    .select2-container--default
-    .select2-selection--single
-    .select2-selection__arrow {
+    /* ========================================
+   Select2 Arrow
+======================================== */
+
+    .supplier-select-wrapper .select2-container--default .select2-selection--single .select2-selection__arrow {
 
         height: 40px;
+
+        right: 12px;
     }
-}
+
+    /* ========================================
+   Focus / Open
+======================================== */
+
+    .supplier-select-wrapper .select2-container--default.select2-container--open .select2-selection--single,
+
+    .supplier-select-wrapper .select2-container--default .select2-selection--single:focus {
+
+        border-color: #6366f1;
+
+        box-shadow:
+            0 0 0 4px rgba(99, 102, 241, 0.10);
+    }
+
+    /* ========================================
+   Search Dropdown
+======================================== */
+
+    .select2-container--default .select2-dropdown {
+
+        margin-top: 6px;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 12px;
+
+        overflow: hidden;
+
+        background: #fff;
+
+        box-shadow:
+            0 12px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    /* ========================================
+   Search Area
+======================================== */
+
+    .select2-container--default .select2-search--dropdown {
+
+        padding: 10px;
+
+        background: #fff;
+    }
+
+    /* ========================================
+   Search Input
+======================================== */
+
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+
+        width: 100%;
+
+        height: 40px;
+
+        padding: 8px 12px;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 8px;
+
+        outline: none;
+
+        background: #fff;
+
+        color: #111827;
+
+        font-size: 14px;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    /* Search Focus */
+
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+
+        border-color: #6366f1;
+
+        box-shadow:
+            0 0 0 3px rgba(99, 102, 241, 0.08);
+    }
+
+    /* ========================================
+   Dropdown Options
+======================================== */
+
+    .select2-container--default .select2-results__option {
+
+        padding: 10px 14px;
+
+        font-size: 14px;
+
+        color: #374151;
+
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease;
+    }
+
+    /* Hover / Highlight */
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+
+        background: #f3f4ff;
+
+        color: #4f46e5;
+    }
+
+    /* ========================================
+   Selected Option
+======================================== */
+
+    .select2-container--default .select2-results__option[aria-selected="true"] {
+
+        background: #f8f8ff;
+
+        color: #4f46e5;
+
+        font-weight: 500;
+    }
+
+    /* ========================================
+   No Results
+======================================== */
+
+    .select2-container--default .select2-results__option.select2-results__message {
+
+        padding: 12px 14px;
+
+        color: #9ca3af;
+
+        font-size: 13px;
+
+        text-align: center;
+    }
+
+    /* ========================================
+   Hint
+======================================== */
+
+    .supplier-hint {
+
+        margin-top: 7px;
+
+        color: #9ca3af;
+
+        font-size: 11px;
+    }
+
+    /* Hint Icon */
+
+    .supplier-hint i {
+
+        margin-right: 4px;
+
+        color: #6366f1;
+    }
+
+    /* ========================================
+   Clear Button
+======================================== */
+
+    .supplier-select-wrapper .select2-container--default .select2-selection--single .select2-selection__clear {
+
+        height: 40px;
+
+        margin-right: 5px;
+
+        color: #9ca3af;
+
+        font-size: 18px;
+
+        line-height: 38px;
+    }
+
+    /* Clear Hover */
+
+    .supplier-select-wrapper .select2-container--default .select2-selection--single .select2-selection__clear:hover {
+
+        color: #ef4444;
+    }
+
+    /* ========================================
+   Responsive
+======================================== */
+
+    @media (max-width: 767px) {
+
+        .supplier-label {
+            font-size: 13px;
+        }
+
+        .supplier-label-icon {
+            width: 32px;
+            height: 32px;
+            font-size: 15px;
+        }
+
+        .supplier-select-wrapper .select2-container--default .select2-selection--single {
+
+            height: 40px;
+        }
+
+        .supplier-select-wrapper .select2-container--default .select2-selection--single .select2-selection__rendered {
+
+            line-height: 40px;
+
+            padding-left: 42px;
+            padding-right: 40px;
+
+            font-size: 13px;
+        }
+
+        .supplier-select-wrapper .select2-container--default .select2-selection--single .select2-selection__arrow {
+
+            height: 40px;
+        }
+    }
 </style>
 
 <!-- Content wrapper -->
@@ -405,7 +369,7 @@
                         <h5 class="mb-0">ખરીદીની માહિતી</h5>
 
                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#largeModal">
-                            નવો સપ્લાયર ઉમેરો
+                            સપ્લાયર ઉમેરો
                         </button>
                     </div>
 
@@ -413,59 +377,44 @@
                         <form>
 
                             <div class="row">
-                                
-                                <div class="col-md-6">
+
+                                <div class="col-md-12">
                                     <div class="mb-8">
-                                    <div class="supplier-field">
+                                        <div class="supplier-field">
 
-                                        <label for="supplier_id" class="supplier-label">
-                                           
+                                            <label for="supplier_id" class="supplier-label">
 
-                                            <span>
-                                                સપ્લાયરનું નામ
-                                              
-                                            </span>
-                                        </label>
 
-                                        <div class="supplier-select-wrapper">
-                                            <span class="supplier-select-icon">
-                                                <i class="bi bi-person-lines-fill"></i>
-                                            </span>
+                                                <span>
+                                                    સપ્લાયરનું નામ
 
-                                            <select class="form-control premium-supplier-select" id="supplier_id"
-                                                name="supplier_id">
-                                                <option value=""></option>
+                                                </span>
+                                            </label>
 
-                                                @foreach ($suppliers as $supplier)
-                                                    <option value="{{ $supplier->id }}"
-                                                        data-mobile="{{ $supplier->mobile }}"
-                                                        data-address="{{ $supplier->address }}">
-                                                        {{ $supplier->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <div class="supplier-select-wrapper">
+                                                <span class="supplier-select-icon">
+                                                    <i class="bi bi-person-lines-fill"></i>
+                                                </span>
+
+                                                <select class="form-control premium-supplier-select" id="supplier_id"
+                                                    name="supplier_id">
+                                                    <option value=""></option>
+
+                                                    @foreach ($suppliers as $supplier)
+                                                        <option value="{{ $supplier->id }}"
+                                                            data-mobile="{{ $supplier->mobile }}"
+                                                            data-address="{{ $supplier->address }}">
+                                                            {{ $supplier->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+
+
                                         </div>
-
-                                        
-
-                                    </div>
-                                     </div>
-                                </div>
-
-
-                                <div class="col-md-6">
-                                    <div class="mb-6">
-
-                                        <label class="form-label">
-                                            સપ્લાયરનો મોબાઇલ નંબર
-                                        </label>
-
-                                        <input type="text" class="form-control" id="supplier_mobile"
-                                            name="supplier_mobile" placeholder="સપ્લાયરનો મોબાઇલ નંબર" readonly>
-
                                     </div>
                                 </div>
-
 
                                 <div class="col-md-12">
                                     <div class="mb-6">
@@ -496,15 +445,41 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">જથ્થો</label>
+                                        <label class="form-label">Qty(જથ્થો/નંગ)</label>
                                         <input type="number" id="qty" class="form-control" placeholder="જથ્થો"
                                             min="1">
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="prakar" class="form-label">પ્રકાર</label>
 
-                                <div class="col-md-3">
+                                        <select name="prakar" id="prakar" class="form-select">
+                                            <option value="">પ્રકાર પસંદ કરો</option>
+
+                                            <option value="quantity">જથ્થો</option>
+                                            <option value="box">પેટી</option>
+                                            <option value="piece">નંગ</option>
+                                            <option value="kg">કિલો</option>
+                                            <option value="gram">ગ્રામ</option>
+                                            <option value="liter">લિટર</option>
+                                            <option value="ml">મિલી લિટર</option>
+                                            <option value="meter">મીટર</option>
+                                            <option value="packet">પેકેટ</option>
+                                            <option value="bottle">બોટલ</option>
+                                            <option value="dozen">ડઝન</option>
+                                            <option value="pair">જોડી</option>
+                                            <option value="bundle">બંડલ</option>
+                                            <option value="bag">થેલી</option>
+                                            <option value="roll">રોલ</option>
+                                            <option value="set">સેટ</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">ભાવ</label>
                                         <input type="number" id="rate" class="form-control" placeholder="ભાવ"
@@ -551,7 +526,7 @@
                         <div class="row">
 
                             <!-- Supplier Name -->
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
 
                                 <label class="form-label">
                                     સપ્લાયરનું નામ
@@ -563,17 +538,6 @@
                             </div>
 
 
-                            <!-- Mobile -->
-                            <div class="col-md-6 mb-3">
-
-                                <label class="form-label">
-                                    સપ્લાયરનો મોબાઇલ નંબર
-                                </label>
-
-                                <input type="tel" class="form-control" id="new_supplier_mobile" name="mobile"
-                                    placeholder="9876543210" maxlength="10" inputmode="numeric">
-
-                            </div>
 
 
                             <!-- Address -->
@@ -696,190 +660,464 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
         const tableBody = document.getElementById("billTableBody");
+
         let editingRow = null;
+
+        // ========================================
+        // PAID AMOUNT
+        // ========================================
+
         document.getElementById("paid_amount").addEventListener("input", updateSummary);
+
+
+        // ========================================
+        // SAVE / UPDATE PRODUCT
+        // ========================================
+
         document.getElementById("saveBtn").addEventListener("click", function() {
 
-            const productName = document.getElementById("product_name").value.trim();
-            const qty = parseFloat(document.getElementById("qty").value) || 0;
-            const rate = parseFloat(document.getElementById("rate").value) || 0;
+            const productName =
+                document.getElementById("product_name").value.trim();
+
+            const qty =
+                parseFloat(document.getElementById("qty").value) || 0;
+
+            const rate =
+                parseFloat(document.getElementById("rate").value) || 0;
+
+
+            // ========================================
+            // PRAKAR
+            // ========================================
+
+            const prakarSelect =
+                document.getElementById("prakar");
+
+            const prakarValue =
+                prakarSelect.value;
+
+            const prakarText =
+                prakarSelect.options[prakarSelect.selectedIndex].text;
+
+
+            // ========================================
+            // VALIDATION
+            // ========================================
 
             if (productName === "") {
+
                 alert("કૃપા કરીને પ્રોડક્ટનું નામ દાખલ કરો.");
                 return;
             }
 
+
+            if (prakarValue === "") {
+
+                alert("કૃપા કરીને પ્રકાર પસંદ કરો.");
+                return;
+            }
+
+
             if (qty < 1) {
+
                 alert("જથ્થો ઓછામાં ઓછો 1 હોવો જોઈએ.");
                 return;
             }
 
+
             if (rate < 1) {
+
                 alert("ભાવ ઓછામાં ઓછો 1 હોવો જોઈએ.");
                 return;
             }
 
+
+            // ========================================
+            // TOTAL
+            // ========================================
+
             const total = qty * rate;
+
+
+            // ========================================
+            // EDIT EXISTING ROW
+            // ========================================
 
             if (editingRow) {
 
+                // Store data
                 editingRow.dataset.name = productName;
                 editingRow.dataset.qty = qty;
+                editingRow.dataset.prakar = prakarValue;
+                editingRow.dataset.prakarText = prakarText;
                 editingRow.dataset.rate = rate;
                 editingRow.dataset.total = total;
 
-                editingRow.cells[1].textContent = productName;
-                editingRow.cells[2].textContent = qty;
-                editingRow.cells[3].textContent = "₹" + rate;
-                editingRow.cells[4].textContent = "₹" + total;
 
+                // Update table
+                editingRow.cells[1].textContent =
+                    productName;
+
+                editingRow.cells[2].textContent =
+                    `${qty} ${prakarText}`;
+
+                editingRow.cells[3].textContent =
+                    "₹" + rate;
+
+                editingRow.cells[4].textContent =
+                    "₹" + total;
+
+
+                // Reset editing
                 editingRow = null;
 
-                document.getElementById("saveBtn").innerText = "સાચવો";
-
-            } else {
-
-                const rowNo = tableBody.rows.length + 1;
-
-                const row = `
-                    <tr
-                        data-name="${productName}"
-                        data-qty="${qty}"
-                        data-rate="${rate}"
-                        data-total="${total}"
-                    >
-
-                        <td>${rowNo}</td>
-                        <td>${productName}</td>
-                        <td>${qty}</td>
-                        <td>₹${rate}</td>
-                        <td>₹${total}</td>
-
-                        <td>
-
-                            <a href="javascript:void(0)" class="dropdown-item edit-btn">
-                                <i class="bx bx-edit text-primary"></i>
-                            </a>
-
-                            <a href="javascript:void(0)" class="dropdown-item delete-btn">
-                                <i class="bx bx-trash text-danger"></i>
-                            </a>
-
-                        </td>
-
-                    </tr>
-                `;
-
-                tableBody.insertAdjacentHTML("beforeend", row);
+                document.getElementById("saveBtn").innerText =
+                    "સાચવો";
 
             }
 
+
+            // ========================================
+            // ADD NEW ROW
+            // ========================================
+            else {
+
+                const rowNo =
+                    tableBody.rows.length + 1;
+
+
+                const row = `
+            <tr
+                data-name="${escapeHtml(productName)}"
+                data-qty="${qty}"
+                data-prakar="${prakarValue}"
+                data-prakar-text="${escapeHtml(prakarText)}"
+                data-rate="${rate}"
+                data-total="${total}"
+            >
+
+                <td>
+                    ${rowNo}
+                </td>
+
+                <td>
+                    ${escapeHtml(productName)}
+                </td>
+
+                <td>
+                    ${qty} ${escapeHtml(prakarText)}
+                </td>
+
+                <td>
+                    ₹${rate}
+                </td>
+
+                <td>
+                    ₹${total}
+                </td>
+
+                <td>
+
+                    <a href="javascript:void(0)"
+                       class="dropdown-item edit-btn">
+
+                        <i class="bx bx-edit text-primary"></i>
+
+                    </a>
+
+
+                    <a href="javascript:void(0)"
+                       class="dropdown-item delete-btn">
+
+                        <i class="bx bx-trash text-danger"></i>
+
+                    </a>
+
+                </td>
+
+            </tr>
+        `;
+
+
+                tableBody.insertAdjacentHTML(
+                    "afterbegin",
+                    row
+                );
+            }
+
+
+            // ========================================
+            // UPDATE SUMMARY
+            // ========================================
+
             updateSummary();
 
-            document.getElementById("product_name").value = "";
-            document.getElementById("qty").value = "";
-            document.getElementById("rate").value = "";
-            updateSummary();
 
-            // Clear input fields
+            // ========================================
+            // CLEAR FORM
+            // ========================================
+
             document.getElementById("product_name").value = "";
+
             document.getElementById("qty").value = "";
+
+            document.getElementById("prakar").value = "";
+
             document.getElementById("rate").value = "";
+
         });
+
+
+        // ========================================
+        // UPDATE SUMMARY
+        // ========================================
 
         function updateSummary() {
 
             let totalQty = 0;
+
             let totalAmount = 0;
+
+
+            // ========================================
+            // CALCULATE TABLE TOTAL
+            // ========================================
 
             [...tableBody.rows].forEach(row => {
 
-                // Qty column
-                totalQty += Number(row.cells[2].textContent);
+                // Quantity
+                totalQty +=
+                    Number(row.dataset.qty) || 0;
 
-                // Total column
-                totalAmount += Number(
-                    row.cells[4].textContent.replace("₹", "")
-                );
+
+                // Amount
+                totalAmount +=
+                    Number(row.dataset.total) || 0;
 
             });
 
-            document.getElementById("total_qty").value = totalQty;
-            document.getElementById("total_amount").value = totalAmount;
 
-            const paidInput = document.getElementById("paid_amount");
-            let paid = Number(paidInput.value) || 0;
+            // ========================================
+            // SET TOTAL QTY
+            // ========================================
+
+            document.getElementById("total_qty").value =
+                totalQty;
+
+
+            // ========================================
+            // SET TOTAL AMOUNT
+            // ========================================
+
+            document.getElementById("total_amount").value =
+                totalAmount;
+
+
+            // ========================================
+            // PAID AMOUNT
+            // ========================================
+
+            const paidInput =
+                document.getElementById("paid_amount");
+
+            let paid =
+                Number(paidInput.value) || 0;
+
+
+            // ========================================
+            // PAID > TOTAL
+            // ========================================
 
             if (paid > totalAmount) {
 
-                GlassToast.warning(
-                    'ચેતવણી',
-                    'આજે ચૂકવેલ રકમ કુલ રકમ કરતાં વધુ ન હોઈ શકે.'
-                );
+                if (typeof GlassToast !== "undefined") {
 
-                paid = totalAmount;
-                paidInput.value = totalAmount;
+                    GlassToast.warning(
+                        "ચેતવણી",
+                        "આજે ચૂકવેલ રકમ કુલ રકમ કરતાં વધુ ન હોઈ શકે."
+                    );
 
-            }
+                } else {
 
-            document.getElementById("balance_amount").value = Math.max(totalAmount - paid, 0);
-        }
-
-        // =========================
-        // EDIT ROW
-        // =========================
-
-        document.addEventListener("click", function(e) {
-
-            if (e.target.closest(".edit-btn")) {
-
-                editingRow = e.target.closest("tr");
-
-                document.getElementById("product_name").value =
-                    editingRow.dataset.name;
-
-                document.getElementById("qty").value =
-                    editingRow.dataset.qty;
-
-                document.getElementById("rate").value =
-                    editingRow.dataset.rate;
-
-                document.getElementById("saveBtn").innerText =
-                    "સુધારો કરો";
-
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
-
-            }
-
-        });
-
-        // Delete Row
-        document.addEventListener("click", function(e) {
-
-            if (e.target.closest(".delete-btn")) {
-
-                e.target.closest("tr").remove();
-
-                if (editingRow && !document.body.contains(editingRow)) {
-
-                    editingRow = null;
-
-                    document.getElementById("saveBtn").innerText = "સાચવો";
-
+                    alert(
+                        "આજે ચૂકવેલ રકમ કુલ રકમ કરતાં વધુ ન હોઈ શકે."
+                    );
                 }
 
-                // Re-number rows
-                [...tableBody.rows].forEach((row, index) => {
-                    row.cells[0].textContent = index + 1;
-                });
-                updateSummary();
 
+                paid = totalAmount;
+
+                paidInput.value =
+                    totalAmount;
             }
 
+
+            // ========================================
+            // BALANCE
+            // ========================================
+
+            const balance =
+                Math.max(
+                    totalAmount - paid,
+                    0
+                );
+
+
+            document.getElementById("balance_amount").value =
+                balance;
+        }
+
+
+        // ========================================
+        // EDIT ROW
+        // ========================================
+
+        document.addEventListener("click", function(e) {
+
+            const editButton =
+                e.target.closest(".edit-btn");
+
+
+            if (!editButton) {
+                return;
+            }
+
+
+            // Get row
+            editingRow =
+                editButton.closest("tr");
+
+
+            // ========================================
+            // SET PRODUCT NAME
+            // ========================================
+
+            document.getElementById("product_name").value =
+                editingRow.dataset.name;
+
+
+            // ========================================
+            // SET QTY
+            // ========================================
+
+            document.getElementById("qty").value =
+                editingRow.dataset.qty;
+
+
+            // ========================================
+            // SET PRAKAR
+            // ========================================
+
+            document.getElementById("prakar").value =
+                editingRow.dataset.prakar;
+
+
+            // ========================================
+            // SET RATE
+            // ========================================
+
+            document.getElementById("rate").value =
+                editingRow.dataset.rate;
+
+
+            // ========================================
+            // CHANGE BUTTON TEXT
+            // ========================================
+
+            document.getElementById("saveBtn").innerText =
+                "સુધારો કરો";
+
+
+            // ========================================
+            // SCROLL TO FORM
+            // ========================================
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
         });
+
+
+        // ========================================
+        // DELETE ROW
+        // ========================================
+
+        document.addEventListener("click", function(e) {
+
+            const deleteButton =
+                e.target.closest(".delete-btn");
+
+
+            if (!deleteButton) {
+                return;
+            }
+
+
+            const row =
+                deleteButton.closest("tr");
+
+
+            // ========================================
+            // DELETE
+            // ========================================
+
+            row.remove();
+
+
+            // ========================================
+            // RESET EDITING
+            // ========================================
+
+            if (
+                editingRow &&
+                !document.body.contains(editingRow)
+            ) {
+
+                editingRow = null;
+
+                document.getElementById("saveBtn").innerText =
+                    "સાચવો";
+            }
+
+
+            // ========================================
+            // RE-NUMBER ROWS
+            // ========================================
+
+            [...tableBody.rows].forEach(
+                (row, index) => {
+
+                    row.cells[0].textContent =
+                        index + 1;
+
+                }
+            );
+
+
+            // ========================================
+            // UPDATE SUMMARY
+            // ========================================
+
+            updateSummary();
+
+        });
+
+
+        // ========================================
+        // HTML ESCAPE FUNCTION
+        // ========================================
+
+        function escapeHtml(value) {
+
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
     </script>
     {{-- ADD NEW SUPLIER  --}}
     <script>
@@ -1296,17 +1534,14 @@
                 const selectedOption = this.options[this.selectedIndex];
 
                 if (!this.value) {
-                    $('#supplier_mobile').val('');
                     $('#supplier_address').val('');
                     return;
                 }
 
                 // Get data from selected option
-                const mobile = selectedOption.getAttribute('data-mobile') || '';
                 const address = selectedOption.getAttribute('data-address') || '';
 
                 // Fill mobile and address
-                $('#supplier_mobile').val(mobile);
                 $('#supplier_address').val(address);
             });
 

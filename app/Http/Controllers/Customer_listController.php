@@ -12,6 +12,7 @@ class Customer_listController extends Controller
     public function customer_list(Request $request)
     {
         $search = $request->query('search');
+        $sort = $request->query('sort', 'desc');
 
         $customers = Customer::withCount('bills')
             ->withSum('bills', 'total_amount')
@@ -24,11 +25,19 @@ class Customer_listController extends Controller
                       ->orWhere('mobile', 'like', "%{$search}%");
                 });
             })
-            ->orderBy('created_at', 'desc')
+            ->when($sort === 'due', function ($query) {
+                $query->where('balance_due', '!=', 0);
+            })
+            ->when($sort === 'asc', function ($query) {
+                $query->orderBy('created_at', 'asc');
+            })
+            ->when($sort !== 'asc', function ($query) {
+                $query->orderBy('created_at', 'desc');
+            })
             ->paginate(10)
             ->withQueryString();
 
-        return view('list.customer_list', compact('customers', 'search'));
+        return view('list.customer_list', compact('customers', 'search', 'sort'));
     }
 
 
