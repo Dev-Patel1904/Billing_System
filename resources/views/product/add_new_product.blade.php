@@ -709,8 +709,8 @@
 
             } else {
 
-                // આંશિક ચુકવણી
-                finalSaveBtn.textContent = 'આંશિક ચુકવણી';
+                // અડધી ચુકવણી
+                finalSaveBtn.textContent = 'અડધી ચુકવણી';
                 finalSaveBtn.classList.add('btn-outline-warning');
             }
         }
