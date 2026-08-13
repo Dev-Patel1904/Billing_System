@@ -157,14 +157,18 @@ class BillingController extends Controller
 
             return $bill->load('items', 'customer');
         });
+       return redirect()->route('billing.pdf', ['bill' => $bill->id]);
 
-        $html = view('billing.pdf', ['bill' => $bill])->render();
+        
+    }
+    public function pdf($id)
+    {
+        $bill = Bill::with([
+            'items',
+            'customer'
+        ])->findOrFail($id);
 
-        $mpdf = new Mpdf(config('mpdf'));
-        $mpdf->WriteHTML($html);
-
-        return response($mpdf->Output($bill->bill_no . '.pdf', \Mpdf\Output\Destination::INLINE))
-            ->header('Content-Type', 'application/pdf');
+        return view('billing.pdf', compact('bill'));
     }
 
     // ==========================================
