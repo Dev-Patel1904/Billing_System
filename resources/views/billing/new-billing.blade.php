@@ -59,6 +59,33 @@
                                  </div>
                               </div>
 
+                              <div class="col-md-12">
+                                    
+                                        <label for="prakar" class="form-label">પ્રકાર</label>
+
+                                        <select name="prakar" id="prakar" class="form-select">
+                                            <option value="">પ્રકાર પસંદ કરો</option>
+
+                                            <option value="quantity">જથ્થો</option>
+                                            <option value="box">પેટી</option>
+                                            <option value="piece">નંગ</option>
+                                            <option value="kg">કિલો</option>
+                                            <option value="gram">ગ્રામ</option>
+                                            <option value="liter">લિટર</option>
+                                            <option value="ml">મિલી લિટર</option>
+                                            <option value="meter">મીટર</option>
+                                            <option value="packet">પેકેટ</option>
+                                            <option value="bottle">બોટલ</option>
+                                            <option value="dozen">ડઝન</option>
+                                            <option value="pair">જોડી</option>
+                                            <option value="bundle">બંડલ</option>
+                                            <option value="bag">થેલી</option>
+                                            <option value="roll">રોલ</option>
+                                            <option value="set">સેટ</option>
+                                        </select>
+                                        
+                                </div>
+
                               <div class="col-md-6">
                                  <label class="form-label">નંગ / જથ્થો</label>
                                  <input type="number" id="qty" class="form-control" placeholder="0">
@@ -392,6 +419,9 @@
             let qty = parseFloat($("#qty").val()) || 0;
             let rate = parseFloat($("#rate").val()) || 0;
 
+            let prakarValue = $("#prakar").val();
+            let prakarText = $("#prakar option:selected").text();
+
             if (mobile == "") {
                GlassToast.warning("મોબાઈલ નંબર", "કૃપા કરીને ગ્રાહકનો મોબાઇલ નંબર દાખલ કરો.");
                $("#customerMobile").focus();
@@ -433,6 +463,11 @@
                $("#rate").focus();
                return;
             }
+            if (prakarValue == "") {
+               GlassToast.warning("પ્રકાર", "કૃપા કરીને પ્રકાર પસંદ કરો.");
+               $("#prakar").focus();
+               return;
+            }
 
             let amount = qty * rate;
             let rowNo = $("#productTable tbody tr").length + 1;
@@ -446,7 +481,8 @@
             </td>
             <td>
                 <input type="hidden" class="qty" name="qty[]" value="${qty}">
-                ${qty}
+                <input type="hidden" class="prakar" name="prakar[]" value="${prakarValue}">
+                ${qty} ${prakarText}
             </td>
             <td>
                 <input type="hidden" class="rate" name="rate[]" value="${rate}">
@@ -468,6 +504,7 @@
             $("#productName").val("");
             $("#qty").val("");
             $("#rate").val("");
+            $("#prakar").val("");
 
             updateTotals();
          });
