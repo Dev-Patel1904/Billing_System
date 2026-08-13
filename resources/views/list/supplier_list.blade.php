@@ -83,11 +83,8 @@
                      <th>ક્રમાંક</th>
                      <th>સપ્લાયર</th>
                      <th>સરનામૂ</th>
-                     <th>કુલ બિલ</th>
-                     <th>કુલ ખરીદી</th>
                      <th>બાકી રકમ</th>
-                     <th>છેલ્લી ખરીદી</th>
-                     <th>સ્થિતિ</th>
+                     
                      <th class="text-center">ક્રિયા</th>
                   </tr>
                </thead>
@@ -124,30 +121,6 @@
                         <span class="badge bg-primary">
                            {{ $supplier->purchases_count }} બિલ
                         </span>
-                     </td>
-
-                     <td class="fw-bold text-success">
-                        ₹{{ $supplier->purchases_sum_total_amount ?? 0 }}
-                     </td>
-
-                     <td class="fw-bold text-danger">
-                        ₹{{ $supplier->purchases_sum_balance_amount ?? 0 }}
-                     </td>
-
-                     <td>
-                        {{ optional($supplier->purchases->first())->created_at?->format('d-m-Y') ?? '-' }}
-                     </td>
-
-                     <td>
-                        @if($supplier->status === 'active')
-                        <span class="badge bg-success">
-                           સક્રિય
-                        </span>
-                        @else
-                        <span class="badge bg-secondary">
-                           નિષ્ક્રિય
-                        </span>
-                        @endif
                      </td>
 
                      <td class="text-center">
