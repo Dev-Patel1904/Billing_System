@@ -10,7 +10,7 @@ class SupplierController extends Controller
     // Add Product Page
     public function add_product()
     {
-        $suppliers = Suppliers::orderBy('name', 'asc')->get();
+        $suppliers = Suppliers::orderBy('id', 'DESC')->get();
 
         return view('product.add_new_product', compact('suppliers'));
     }
