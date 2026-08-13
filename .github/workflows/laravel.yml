@@ -14,9 +14,16 @@ jobs:
 
     steps:
 
+      # --------------------------------------------------
+      # 1. Get project code
+      # --------------------------------------------------
       - name: Checkout Code
         uses: actions/checkout@v5
 
+
+      # --------------------------------------------------
+      # 2. Setup PHP
+      # --------------------------------------------------
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -24,17 +31,68 @@ jobs:
           extensions: mbstring, pdo, pdo_mysql, fileinfo
           coverage: none
 
+
+      # --------------------------------------------------
+      # 3. Check PHP Version
+      # --------------------------------------------------
       - name: Check PHP Version
         run: php -v
 
+
+      # --------------------------------------------------
+      # 4. Validate Composer
+      # --------------------------------------------------
+      - name: Validate Composer
+        run: composer validate --strict
+
+
+      # --------------------------------------------------
+      # 5. Install Composer Dependencies
+      # --------------------------------------------------
       - name: Install Dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+
+      # --------------------------------------------------
+      # 6. Create Laravel Environment
+      # --------------------------------------------------
       - name: Generate Application Key
-        run: cp .env.example .env && php artisan key:generate
+        run: |
+          cp .env.example .env
+          php artisan key:generate
 
+
+      # --------------------------------------------------
+      # 7. Check PHP Syntax
+      # --------------------------------------------------
       - name: Check PHP Syntax
-        run: find app routes config database -type f -name "*.php" -print0 | xargs -0 -n1 php -l
+        run: |
+          find app routes config database -type f -name "*.php" -print0 | xargs -0 -n1 php -l
 
-      - name: Run Tests
+
+      # --------------------------------------------------
+      # 8. Check Laravel Configuration
+      # --------------------------------------------------
+      - name: Check Laravel Configuration
+        run: php artisan config:clear
+
+
+      # --------------------------------------------------
+      # 9. Check Laravel Routes
+      # --------------------------------------------------
+      - name: Check Laravel Routes
+        run: php artisan route:list
+
+
+      # --------------------------------------------------
+      # 10. Check Laravel Migrations
+      # --------------------------------------------------
+      - name: Check Laravel Migrations
+        run: php artisan migrate --force
+
+
+      # --------------------------------------------------
+      # 11. Run Laravel Tests
+      # --------------------------------------------------
+      - name: Run Laravel Tests
         run: php artisan test
