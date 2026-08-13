@@ -82,7 +82,6 @@
                   <tr>
                      <th>ક્રમાંક</th>
                      <th>સપ્લાયર</th>
-                     <th>મોબાઇલ નંબર</th>
                      <th>સરનામૂ</th>
                      <th>કુલ બિલ</th>
                      <th>કુલ ખરીદી</th>
@@ -118,8 +117,6 @@
 
                         </div>
                      </td>
-
-                     <td>{{ $supplier->mobile }}</td>
 
                      <td>{{ $supplier->address }}</td>
 
@@ -159,7 +156,7 @@
                            <i class="bx bx-show"></i>
                         </a>
 
-                        <button class="btn btn-sm btn-outline-warning edit-supplier-btn" data-id="{{ $supplier->id }}" data-name="{{ $supplier->name }}" data-mobile="{{ $supplier->mobile }}" data-address="{{ $supplier->address }}" data-status="{{ $supplier->status }}" data-bs-toggle="modal" data-bs-target="#editSupplierModal" title="એડિટ કરો">
+                        <button class="btn btn-sm btn-outline-warning edit-supplier-btn" data-id="{{ $supplier->id }}" data-name="{{ $supplier->name }}" data-address="{{ $supplier->address }}" data-status="{{ $supplier->status }}" data-bs-toggle="modal" data-bs-target="#editSupplierModal" title="એડિટ કરો">
                            <i class="bx bx-edit"></i>
                         </button>
 
@@ -174,7 +171,7 @@
                   @empty
 
                   <tr>
-                     <td colspan="10" class="text-center">
+                     <td colspan="9" class="text-center">
                         હજુ સુધી કોઈ સપ્લાયર ઉમેરાયો નથી.
                      </td>
                   </tr>
@@ -255,7 +252,7 @@
                   <div class="row">
 
                      <!-- Supplier Name -->
-                     <div class="col-md-6 mb-3">
+                     <div class="col-12">
 
                         <label class="form-label">
                            સપ્લાયરનું નામ
@@ -266,16 +263,7 @@
                      </div>
 
 
-                     <!-- Mobile -->
-                     <div class="col-md-6 mb-3">
 
-                        <label class="form-label">
-                           સપ્લાયરનો મોબાઇલ નંબર
-                        </label>
-
-                        <input type="tel" class="form-control" id="new_supplier_mobile" name="mobile" placeholder="9876543210" maxlength="10" inputmode="numeric">
-
-                     </div>
 
 
                      <!-- Address -->
@@ -346,7 +334,7 @@
                   <div class="row">
 
                      <!-- Supplier Name -->
-                     <div class="col-md-6 mb-3">
+                     <div class="col-12">
 
                         <label class="form-label">
                            સપ્લાયરનું નામ
@@ -355,19 +343,6 @@
                         <input type="text" class="form-control" id="edit_supplier_name" placeholder="સપ્લાયરનું નામ">
 
                      </div>
-
-
-                     <!-- Mobile -->
-                     <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                           સપ્લાયરનો મોબાઇલ નંબર
-                        </label>
-
-                        <input type="tel" class="form-control" id="edit_supplier_mobile" placeholder="9876543210" maxlength="10" inputmode="numeric">
-
-                     </div>
-
 
                      <!-- Address -->
                      <div class="col-md-8 mb-3">
@@ -425,6 +400,114 @@
    </div>
    <!-- / Edit Supplier Modal -->
 
+   {{-- ENGLISH -> GUJARATI TRANSLITERATION (Enter key) --}}
+   <script>
+      (function () {
+
+         function attachTransliteration(inputId) {
+
+            const el = document.getElementById(inputId);
+
+            if (!el) {
+               return;
+            }
+
+            el.addEventListener('keydown', function (e) {
+
+               // Transliterate only when ENTER is pressed
+               if (e.key !== 'Enter') {
+                  return;
+               }
+
+               const cursorPos = el.selectionStart;
+
+               const textBeforeCursor =
+                  el.value.substring(0, cursorPos);
+
+               const match =
+                  textBeforeCursor.match(/[a-zA-Z]+$/);
+
+               if (!match) {
+                  return;
+               }
+
+               const englishWord = match[0];
+
+               const wordStart =
+                  cursorPos - englishWord.length;
+
+               const textAfterCursor =
+                  el.value.substring(cursorPos);
+
+               // Prevent form submit / newline on Enter
+               e.preventDefault();
+
+               fetch(
+                  'https://inputtools.google.com/request?' +
+                  'text=' +
+                  encodeURIComponent(englishWord) +
+                  '&itc=gu-t-i0-und' +
+                  '&num=1'
+               )
+               .then(function (response) {
+                  return response.json();
+               })
+               .then(function (data) {
+
+                  if (
+                     !data ||
+                     data[0] !== 'SUCCESS' ||
+                     !data[1] ||
+                     !data[1][0] ||
+                     !data[1][0][1] ||
+                     !data[1][0][1][0]
+                  ) {
+                     return;
+                  }
+
+                  const gujaratiWord =
+                     data[1][0][1][0];
+
+                  const newValue =
+                     el.value.substring(0, wordStart) +
+                     gujaratiWord +
+                     textAfterCursor;
+
+                  el.value = newValue;
+
+                  const newCursorPos =
+                     wordStart + gujaratiWord.length;
+
+                  el.setSelectionRange(
+                     newCursorPos,
+                     newCursorPos
+                  );
+
+               })
+               .catch(function (error) {
+
+                  console.error(
+                     'Gujarati Transliteration Error:',
+                     error
+                  );
+
+               });
+
+            });
+
+         }
+
+         // Add modal
+         attachTransliteration('supplier_name');
+         attachTransliteration('new_supplier_address');
+
+         // Edit modal
+         attachTransliteration('edit_supplier_name');
+         attachTransliteration('edit_supplier_address');
+
+      })();
+   </script>
+
    {{-- ADD NEW SUPPLIER --}}
    <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -433,8 +516,6 @@
 
          const name = document.getElementById('supplier_name');
 
-         const mobile = document.getElementById('new_supplier_mobile');
-
          const address = document.getElementById('new_supplier_address');
 
          const saveBtn = document.getElementById('saveSupplierBtn');
@@ -442,35 +523,16 @@
          const saveText = document.getElementById('saveSupplierText');
 
 
-         // MOBILE - ONLY NUMBERS + MAX 10 DIGITS
-         mobile.addEventListener('input', function() {
-            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
-         });
-
-
          form.addEventListener('submit', async function(e) {
 
             e.preventDefault();
 
             const nameValue = name.value.trim();
-            const mobileValue = mobile.value.trim();
             const addressValue = address.value.trim();
 
             if (nameValue === '') {
                GlassToast.warning('ચેતવણી', 'સપ્લાયરનું નામ દાખલ કરો.');
                name.focus();
-               return;
-            }
-
-            if (mobileValue === '') {
-               GlassToast.warning('ચેતવણી', 'મોબાઇલ નંબર દાખલ કરો.');
-               mobile.focus();
-               return;
-            }
-
-            if (mobileValue.length !== 10) {
-               GlassToast.error('ભૂલ', 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.');
-               mobile.focus();
                return;
             }
 
@@ -523,8 +585,6 @@
 
                   if (data.errors.name) {
                      GlassToast.error('સપ્લાયરનું નામ', data.errors.name[0]);
-                  } else if (data.errors.mobile) {
-                     GlassToast.error('મોબાઇલ નંબર', data.errors.mobile[0]);
                   } else if (data.errors.address) {
                      GlassToast.error('સરનામું', data.errors.address[0]);
                   }
@@ -565,14 +625,9 @@
 
          document.getElementById('edit_supplier_id').value = btn.dataset.id;
          document.getElementById('edit_supplier_name').value = btn.dataset.name;
-         document.getElementById('edit_supplier_mobile').value = btn.dataset.mobile;
          document.getElementById('edit_supplier_address').value = btn.dataset.address;
          document.getElementById('edit_supplier_status').value = btn.dataset.status;
 
-      });
-
-      document.getElementById('edit_supplier_mobile').addEventListener('input', function() {
-         this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
       });
 
       document.getElementById('editSupplierForm').addEventListener('submit', async function(e) {
@@ -581,17 +636,11 @@
 
          const id = document.getElementById('edit_supplier_id').value;
          const name = document.getElementById('edit_supplier_name').value.trim();
-         const mobile = document.getElementById('edit_supplier_mobile').value.trim();
          const address = document.getElementById('edit_supplier_address').value.trim();
          const status = document.getElementById('edit_supplier_status').value;
 
          if (name === '') {
             GlassToast.warning('ચેતવણી', 'સપ્લાયરનું નામ દાખલ કરો.');
-            return;
-         }
-
-         if (mobile.length !== 10) {
-            GlassToast.error('ભૂલ', 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.');
             return;
          }
 
@@ -620,7 +669,6 @@
 
                body: JSON.stringify({
                   name
-                  , mobile
                   , address
                   , status
                }),
@@ -735,5 +783,107 @@
       });
 
    </script>
+
+   {{-- SEARCH ENGLISH TO GUJRATI --}}
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const searchForm = document.querySelector(
+            'form[action="{{ route('supplier_list') }}"]'
+        );
+
+        const searchInput = searchForm?.querySelector(
+            'input[name="search"]'
+        );
+
+        if (!searchForm || !searchInput) {
+            return;
+        }
+
+        searchInput.addEventListener('keydown', function (e) {
+
+            // ENTER = transliterate only
+            if (e.key !== 'Enter') {
+                return;
+            }
+
+            // IMPORTANT:
+            // Stop form submission when Enter is pressed.
+            e.preventDefault();
+
+            const cursorPos = searchInput.selectionStart;
+
+            const textBeforeCursor =
+                searchInput.value.slice(0, cursorPos);
+
+            const textAfterCursor =
+                searchInput.value.slice(cursorPos);
+
+            // Get last English word
+            const match =
+                textBeforeCursor.match(/[a-zA-Z]+$/);
+
+            if (!match) {
+                return;
+            }
+
+            const englishWord = match[0];
+
+            const wordStart =
+                cursorPos - englishWord.length;
+
+            fetch(
+                'https://inputtools.google.com/request?' +
+                'text=' + encodeURIComponent(englishWord) +
+                '&itc=gu-t-i0-und&num=1'
+            )
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+
+                if (
+                    !data ||
+                    data[0] !== 'SUCCESS' ||
+                    !data[1] ||
+                    !data[1][0] ||
+                    !data[1][0][1] ||
+                    !data[1][0][1][0]
+                ) {
+                    return;
+                }
+
+                const gujaratiWord =
+                    data[1][0][1][0];
+
+                const newValue =
+                    searchInput.value.slice(0, wordStart) +
+                    gujaratiWord +
+                    textAfterCursor;
+
+                searchInput.value = newValue;
+
+                const newCursorPos =
+                    wordStart + gujaratiWord.length;
+
+                searchInput.setSelectionRange(
+                    newCursorPos,
+                    newCursorPos
+                );
+
+            })
+            .catch(function (error) {
+
+                console.error(
+                    'Gujarati Transliteration Error:',
+                    error
+                );
+
+            });
+
+        });
+
+    });
+    </script>
 
    @include('layout.footer')

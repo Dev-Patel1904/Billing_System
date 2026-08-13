@@ -8,7 +8,6 @@ use Illuminate\Validation\Rule;
 
 class SpllierlistController extends Controller
 {
-    // Page Show — with purchase aggregates per supplier, search + status filter + pagination
     public function supplier_list(Request $request)
     {
         $search = $request->query('search');
@@ -21,10 +20,7 @@ class SpllierlistController extends Controller
                 $query->latest()->limit(1);
             }])
             ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('mobile', 'like', "%{$search}%");
-                });
+                $query->where('name', 'like', "%{$search}%");
             })
             ->when($status, function ($query) use ($status) {
                 $query->where('status', $status);
@@ -45,14 +41,9 @@ class SpllierlistController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[\p{L}\s]+$/u',
+                'regex:/^[\x{0A80}-\x{0AFF}A-Za-z\s]+$/u',
             ],
 
-            'mobile' => [
-                'required',
-                'digits:10',
-                Rule::unique('suppliers', 'mobile')->ignore($supplier->id),
-            ],
 
             'address' => [
                 'required',
@@ -68,10 +59,6 @@ class SpllierlistController extends Controller
             'name.required' => 'સપ્લાયરનું નામ દાખલ કરો.',
             'name.max' => 'સપ્લાયરનું નામ ખૂબ લાંબું છે.',
             'name.regex' => 'સપ્લાયરનું નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
-
-            'mobile.required' => 'મોબાઇલ નંબર દાખલ કરો.',
-            'mobile.digits' => 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.',
-            'mobile.unique' => 'આ મોબાઇલ નંબર પહેલેથી નોંધાયેલ છે.',
 
             'address.required' => 'સરનામું દાખલ કરો.',
             'address.max' => 'સરનામું ખૂબ લાંબું છે.',
