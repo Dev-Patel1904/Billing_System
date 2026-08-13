@@ -442,14 +442,8 @@
                                             બિલ નંબર
                                         </label>
 
-                                        <input
-                                            type="text"
-                                            name="invoice_number"
-                                            id="invoice_number"
-                                            class="form-control"
-                                            placeholder="બિલ નંબર દાખલ કરો"
-                                            autocomplete="off"
-                                        >
+                                        <input type="text" name="invoice_number" id="invoice_number"
+                                            class="form-control" placeholder="બિલ નંબર દાખલ કરો" autocomplete="off">
                                     </div>
                                 </div>
 
@@ -651,8 +645,9 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mt-5 mb-5">
-                                    <button type="button" id="finalSaveBtn"
-                                        class="btn btn-outline-success">Save</button>
+                                    <button type="button" id="finalSaveBtn" class="btn btn-outline-danger">
+                                        બાકી
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -664,7 +659,68 @@
         </div>
     </div>
     <!-- / Content -->
+    <script>
+        const paidAmountInput = document.getElementById('paid_amount');
 
+        // Remove 0 when user clicks/focuses on the input
+        paidAmountInput.addEventListener('focus', function() {
+            if (this.value === '0') {
+                this.value = '';
+            }
+        });
+
+        // Put 0 back if user leaves it empty
+        paidAmountInput.addEventListener('blur', function() {
+            if (this.value === '') {
+                this.value = '0';
+            }
+
+            updatePaymentButton();
+        });
+
+        function updatePaymentButton() {
+            const totalAmount =
+                parseFloat(document.getElementById('total_amount').value) || 0;
+
+            const paidAmount =
+                parseFloat(document.getElementById('paid_amount').value) || 0;
+
+            const finalSaveBtn =
+                document.getElementById('finalSaveBtn');
+
+            // Remove previous colors
+            finalSaveBtn.classList.remove(
+                'btn-outline-danger',
+                'btn-outline-success',
+                'btn-outline-warning'
+            );
+
+            if (paidAmount === 0) {
+
+                // બાકી
+                finalSaveBtn.textContent = 'બાકી';
+                finalSaveBtn.classList.add('btn-outline-danger');
+
+            } else if (paidAmount === totalAmount) {
+
+                // રોકડ
+                finalSaveBtn.textContent = 'રોકડ';
+                finalSaveBtn.classList.add('btn-outline-success');
+
+            } else {
+
+                // આંશિક ચુકવણી
+                finalSaveBtn.textContent = 'આંશિક ચુકવણી';
+                finalSaveBtn.classList.add('btn-outline-warning');
+            }
+        }
+
+        // Update while typing
+        paidAmountInput.addEventListener('input', updatePaymentButton);
+
+        // Initial state
+        updatePaymentButton();
+    </script>
 
 
 
