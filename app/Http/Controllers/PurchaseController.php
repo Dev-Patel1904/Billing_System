@@ -99,6 +99,7 @@ class PurchaseController extends Controller
     {
         $validated = $request->validate([
             'billing_no'             => ['required', 'string', 'max:50', 'unique:purchases,billing_no'],
+            'invoice_date' => ['required', 'date'],
             'supplier_id'            => ['required', 'exists:suppliers,id'],
             'paid_amount'            => ['required', 'numeric', 'min:0'],
             'items'                  => ['required', 'array', 'min:1'],
@@ -131,6 +132,7 @@ class PurchaseController extends Controller
 
                 $purchase = Purchase::create([
                     'billing_no'     => $validated['billing_no'],
+                     'invoice_date'   => $validated['invoice_date'],
                     'supplier_id'    => $validated['supplier_id'],
                     'total_qty'      => $totalQty,
                     'total_amount'   => $totalAmount,

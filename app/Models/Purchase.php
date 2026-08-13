@@ -8,6 +8,7 @@ class Purchase extends Model
 {
     protected $fillable = [
         'billing_no',
+        'invoice_date',
         'supplier_id',
         'total_qty',
         'total_amount',

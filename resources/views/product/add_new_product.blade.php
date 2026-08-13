@@ -687,6 +687,7 @@
 
 
     <!-- Place this tag before closing body tag for github widget button. -->
+    {{-- Place this tag before closing body tag for github widget button. --}}
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
         const tableBody = document.getElementById("billTableBody");
@@ -706,22 +707,23 @@
 
         document.getElementById("saveBtn").addEventListener("click", function() {
 
-            const productName =
-                document.getElementById("product_name").value.trim();
+            const productNameInput = document.getElementById("product_name");
+            const qtyInput = document.getElementById("qty");
+            const prakarSelect = document.getElementById("prakar");
+            const rateInput = document.getElementById("rate");
+
+            const productName = productNameInput.value.trim();
 
             const qty =
-                parseFloat(document.getElementById("qty").value) || 0;
+                parseFloat(qtyInput.value) || 0;
 
             const rate =
-                parseFloat(document.getElementById("rate").value) || 0;
+                parseFloat(rateInput.value) || 0;
 
 
             // ========================================
             // PRAKAR
             // ========================================
-
-            const prakarSelect =
-                document.getElementById("prakar");
 
             const prakarValue =
                 prakarSelect.value;
@@ -736,28 +738,48 @@
 
             if (productName === "") {
 
-                alert("કૃપા કરીને પ્રોડક્ટનું નામ દાખલ કરો.");
+                GlassToast.warning(
+                    'ચેતવણી', 'કૃપા કરીને પ્રોડક્ટનું નામ દાખલ કરો.'
+                );
+
+                productNameInput.focus();
+
                 return;
             }
 
 
             if (prakarValue === "") {
 
-                alert("કૃપા કરીને પ્રકાર પસંદ કરો.");
+                GlassToast.warning(
+                    'ચેતવણી', 'કૃપા કરીને પ્રકાર પસંદ કરો.'
+                );
+
+                prakarSelect.focus();
+
                 return;
             }
 
 
-            if (qty < 1) {
+            if (!qtyInput.value || qty < 1) {
 
-                alert("જથ્થો ઓછામાં ઓછો 1 હોવો જોઈએ.");
+                GlassToast.warning(
+                    'ચેતવણી', 'જથ્થો ઓછામાં ઓછો 1 હોવો જોઈએ.'
+                );
+
+                qtyInput.focus();
+
                 return;
             }
 
 
-            if (rate < 1) {
+            if (!rateInput.value || rate < 1) {
 
-                alert("ભાવ ઓછામાં ઓછો 1 હોવો જોઈએ.");
+                GlassToast.warning(
+                    'ચેતવણી', 'ભાવ ઓછામાં ઓછો 1 હોવો જોઈએ.'
+                );
+
+                rateInput.focus();
+
                 return;
             }
 
@@ -817,56 +839,56 @@
 
 
                 const row = `
-            <tr
-                data-name="${escapeHtml(productName)}"
-                data-qty="${qty}"
-                data-prakar="${prakarValue}"
-                data-prakar-text="${escapeHtml(prakarText)}"
-                data-rate="${rate}"
-                data-total="${total}"
-            >
+        <tr
+            data-name="${escapeHtml(productName)}"
+            data-qty="${qty}"
+            data-prakar="${prakarValue}"
+            data-prakar-text="${escapeHtml(prakarText)}"
+            data-rate="${rate}"
+            data-total="${total}"
+        >
 
-                <td>
-                    ${rowNo}
-                </td>
+            <td>
+                ${rowNo}
+            </td>
 
-                <td>
-                    ${escapeHtml(productName)}
-                </td>
+            <td>
+                ${escapeHtml(productName)}
+            </td>
 
-                <td>
-                    ${qty} ${escapeHtml(prakarText)}
-                </td>
+            <td>
+                ${qty} ${escapeHtml(prakarText)}
+            </td>
 
-                <td>
-                    ₹${rate}
-                </td>
+            <td>
+                ₹${rate}
+            </td>
 
-                <td>
-                    ₹${total}
-                </td>
+            <td>
+                ₹${total}
+            </td>
 
-                <td>
+            <td>
 
-                    <a href="javascript:void(0)"
-                       class="dropdown-item edit-btn">
+                <a href="javascript:void(0)"
+                   class="dropdown-item edit-btn">
 
-                        <i class="bx bx-edit text-primary"></i>
+                    <i class="bx bx-edit text-primary"></i>
 
-                    </a>
+                </a>
 
 
-                    <a href="javascript:void(0)"
-                       class="dropdown-item delete-btn">
+                <a href="javascript:void(0)"
+                   class="dropdown-item delete-btn">
 
-                        <i class="bx bx-trash text-danger"></i>
+                    <i class="bx bx-trash text-danger"></i>
 
-                    </a>
+                </a>
 
-                </td>
+            </td>
 
-            </tr>
-        `;
+        </tr>
+    `;
 
 
                 tableBody.insertAdjacentHTML(
@@ -959,19 +981,9 @@
 
             if (paid > totalAmount) {
 
-                if (typeof GlassToast !== "undefined") {
-
-                    GlassToast.warning(
-                        "ચેતવણી", "આજે ચૂકવેલ રકમ કુલ રકમ કરતાં વધુ ન હોઈ શકે."
-                    );
-
-                } else {
-
-                    alert(
-                        "આજે ચૂકવેલ રકમ કુલ રકમ કરતાં વધુ ન હોઈ શકે."
-                    );
-                }
-
+                GlassToast.warning(
+                    "ચેતવણી", "આજે ચૂકવેલ રકમ કુલ રકમ કરતાં વધુ ન હોઈ શકે."
+                );
 
                 paid = totalAmount;
 
@@ -1345,12 +1357,21 @@
 
             const supplierId = document.getElementById("supplier_id").value;
             const billingNo = document.getElementById("invoice_number").value.trim();
+            const invoiceDate = document.getElementById("invoice_date").value;
 
             if (billingNo === "") {
                 GlassToast.warning(
                     'ચેતવણી', 'કૃપા કરીને બિલ નંબર દાખલ કરો.'
                 );
                 document.getElementById("invoice_number").focus();
+                return;
+            }
+
+            if (invoiceDate === "") {
+                GlassToast.warning(
+                    'ચેતવણી', 'કૃપા કરીને બિલ તારીખ પસંદ કરો.'
+                );
+                document.getElementById("invoice_date").focus();
                 return;
             }
 
@@ -1408,6 +1429,7 @@
 
                     body: JSON.stringify({
                         billing_no: billingNo,
+                        invoice_date: document.getElementById("invoice_date").value,
                         supplier_id: supplierId,
                         paid_amount: paidAmount,
                         items: items,

@@ -11,7 +11,6 @@ class Suppliers extends Model
     protected $fillable = [
         'name',
         'address',
-        'status',
     ];
 
     public function purchases()

@@ -11,7 +11,6 @@ class SpllierlistController extends Controller
     public function supplier_list(Request $request)
     {
         $search = $request->query('search');
-        $status = $request->query('status');
 
         $suppliers = Suppliers::withCount('purchases')
             ->withSum('purchases', 'total_amount')
@@ -22,67 +21,59 @@ class SpllierlistController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
             })
-            ->when($status, function ($query) use ($status) {
-                $query->where('status', $status);
-            })
+
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
 
-        return view('list.supplier_list', compact('suppliers', 'search', 'status'));
+        return view('list.supplier_list', compact('suppliers', 'search'));
     }
 
 
     // Update Supplier (Edit Modal)
-    public function update(Request $request, Suppliers $supplier)
-    {
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[\x{0A80}-\x{0AFF}A-Za-z\s]+$/u',
-            ],
+public function update(Request $request, Suppliers $supplier)
+{
+    $validated = $request->validate([
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[\x{0A80}-\x{0AFF}A-Za-z\s]+$/u',
+        ],
 
+        'address' => [
+            'required',
+            'string',
+            'max:1000',
+        ],
 
-            'address' => [
-                'required',
-                'string',
-                'max:1000',
-            ],
+    ], [
+        'name.required' => 'સપ્લાયરનું નામ દાખલ કરો.',
+        'name.max' => 'સપ્લાયરનું નામ ખૂબ લાંબું છે.',
+        'name.regex' => 'સપ્લાયરનું નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
 
-            'status' => [
-                'required',
-                Rule::in(['active', 'inactive']),
-            ],
-        ], [
-            'name.required' => 'સપ્લાયરનું નામ દાખલ કરો.',
-            'name.max' => 'સપ્લાયરનું નામ ખૂબ લાંબું છે.',
-            'name.regex' => 'સપ્લાયરનું નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
+        'address.required' => 'સરનામું દાખલ કરો.',
+        'address.max' => 'સરનામું ખૂબ લાંબું છે.',
+    ]);
 
-            'address.required' => 'સરનામું દાખલ કરો.',
-            'address.max' => 'સરનામું ખૂબ લાંબું છે.',
+    try {
 
-            'status.required' => 'સ્થિતિ પસંદ કરો.',
+        $supplier->update($validated);
+
+        return response()->json([
+            'status'   => true,
+            'message'  => 'સપ્લાયર સફળતાપૂર્વક અપડેટ થયો.',
+            'supplier' => $supplier,
         ]);
 
-        try {
+    } catch (\Exception $e) {
 
-            $supplier->update($validated);
-
-            return response()->json([
-                'status'   => true,
-                'message'  => 'સપ્લાયર સફળતાપૂર્વક અપડેટ થયો.',
-                'supplier' => $supplier,
-            ]);
-        } catch (\Exception $e) {
-
-            return response()->json([
-                'status'  => false,
-                'message' => 'સપ્લાયર અપડેટ કરવામાં ભૂલ આવી.',
-            ], 500);
-        }
+        return response()->json([
+            'status'  => false,
+            'message' => 'સપ્લાયર અપડેટ કરવામાં ભૂલ આવી.',
+        ], 500);
     }
+}
 
 
     // Delete Supplier
