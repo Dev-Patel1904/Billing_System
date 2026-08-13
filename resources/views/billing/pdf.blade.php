@@ -899,7 +899,7 @@
             <div class="shop-section">
 
                 <h1 class="shop-name">
-                    Estiment
+                    ESTIMATE
                 </h1>
             </div>
 
