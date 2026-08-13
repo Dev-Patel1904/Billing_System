@@ -10,6 +10,8 @@ class PurchaseItem extends Model
         'purchase_id',
         'product_name',
         'qty',
+        'prakar',
+        'prakar_text',
         'rate',
         'total',
     ];

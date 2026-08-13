@@ -16,7 +16,7 @@ class SupplierController extends Controller
     }
 
 
-    // Store Supplier
+    // Store Supplier (mobile field nathi — fakt name + address)
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -24,14 +24,7 @@ class SupplierController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[\p{L}\s]+$/u',
-            ],
-
-            // ONLY 10 DIGITS + MUST BE UNIQUE
-            'mobile' => [
-                'required',
-                'digits:10',
-                'unique:suppliers,mobile',
+                'regex:/^[\x{0A80}-\x{0AFF}A-Za-z\s]+$/u',
             ],
 
             'address' => [
@@ -44,10 +37,6 @@ class SupplierController extends Controller
             'name.max' => 'સપ્લાયરનું નામ ખૂબ લાંબું છે.',
             'name.regex' => 'સપ્લાયરનું નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
 
-            'mobile.required' => 'મોબાઇલ નંબર દાખલ કરો.',
-            'mobile.digits' => 'મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.',
-            'mobile.unique' => 'આ મોબાઇલ નંબર પહેલેથી નોંધાયેલ છે.',
-
             'address.required' => 'સરનામું દાખલ કરો.',
             'address.max' => 'સરનામું ખૂબ લાંબું છે.',
         ]);
@@ -55,7 +44,6 @@ class SupplierController extends Controller
 
         $supplier = Suppliers::create([
             'name' => $validated['name'],
-            'mobile' => $validated['mobile'],
             'address' => $validated['address'],
         ]);
 

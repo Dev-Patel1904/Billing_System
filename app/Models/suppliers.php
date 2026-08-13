@@ -10,7 +10,6 @@ class Suppliers extends Model
 
     protected $fillable = [
         'name',
-        'mobile',
         'address',
         'status',
     ];

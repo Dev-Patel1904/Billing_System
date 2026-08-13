@@ -29,7 +29,7 @@ class PurchaseController extends Controller
     }
 
 
-    // Update Payment -> add "amount" to paid_amount, subtract from balance_amount
+    // Update Payment
     public function updatePayment(Request $request, Purchase $purchase)
     {
         $validated = $request->validate([
@@ -98,15 +98,21 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'supplier_id'           => ['required', 'exists:suppliers,id'],
-            'paid_amount'           => ['required', 'numeric', 'min:0'],
-            'items'                 => ['required', 'array', 'min:1'],
-            'items.*.product_name'  => ['required', 'string', 'max:255'],
-            'items.*.qty'           => ['required', 'numeric', 'min:0.01'],
-            'items.*.rate'          => ['required', 'numeric', 'min:0'],
+            'billing_no'             => ['required', 'string', 'max:50', 'unique:purchases,billing_no'],
+            'supplier_id'            => ['required', 'exists:suppliers,id'],
+            'paid_amount'            => ['required', 'numeric', 'min:0'],
+            'items'                  => ['required', 'array', 'min:1'],
+            'items.*.product_name'   => ['required', 'string', 'max:255'],
+            'items.*.qty'            => ['required', 'numeric', 'min:0.01'],
+            'items.*.prakar'         => ['required', 'string', 'max:30'],
+            'items.*.prakar_text'    => ['required', 'string', 'max:50'],
+            'items.*.rate'           => ['required', 'numeric', 'min:0'],
         ], [
-            'supplier_id.required' => 'કૃપા કરીને સપ્લાયર પસંદ કરો.',
-            'items.required'       => 'ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.',
+            'billing_no.required'     => 'કૃપા કરીને બિલ નંબર દાખલ કરો.',
+            'billing_no.unique'       => 'આ બિલ નંબર પહેલેથી ઉપયોગમાં લેવાયેલ છે.',
+            'supplier_id.required'    => 'કૃપા કરીને સપ્લાયર પસંદ કરો.',
+            'items.required'          => 'ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.',
+            'items.*.prakar.required' => 'કૃપા કરીને પ્રકાર પસંદ કરો.',
         ]);
 
         $totalQty    = 0;
@@ -124,7 +130,7 @@ class PurchaseController extends Controller
             $purchase = DB::transaction(function () use ($validated, $totalQty, $totalAmount, $paid, $balance) {
 
                 $purchase = Purchase::create([
-                    'billing_no'     => 'B' . now()->format('ymdHis') . rand(100, 999),
+                    'billing_no'     => $validated['billing_no'],
                     'supplier_id'    => $validated['supplier_id'],
                     'total_qty'      => $totalQty,
                     'total_amount'   => $totalAmount,
@@ -138,6 +144,8 @@ class PurchaseController extends Controller
                         'purchase_id'  => $purchase->id,
                         'product_name' => $item['product_name'],
                         'qty'          => $item['qty'],
+                        'prakar'       => $item['prakar'],
+                        'prakar_text'  => $item['prakar_text'],
                         'rate'         => $item['rate'],
                         'total'        => $item['qty'] * $item['rate'],
                     ]);
