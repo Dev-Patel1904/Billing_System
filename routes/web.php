@@ -25,7 +25,11 @@ Route::post('/reset-password/verify-otp', [ForgotPassController::class, 'verifyO
 Route::post('/reset-password/verify', [ForgotPassController::class, 'resetPassword'])->name('reset.password.verify');
 Route::post('/reset-password/resend-otp', [ForgotPassController::class, 'resendOtp'])->name('reset.password.resend-otp');
 
-
+Route::get('/test-gujarati-pdf', function () {
+    return view('billing.pdf');
+});
+Route::get('/billing/pdf/{bill}', [BillingController::class, 'pdf'])
+    ->name('billing.pdf');
 
 Route::middleware('admin.auth')->group(function () {
 
