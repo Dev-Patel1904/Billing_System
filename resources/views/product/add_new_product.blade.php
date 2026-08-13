@@ -436,6 +436,22 @@
                             </div>
 
                             <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="invoice_number" class="form-label">
+                                            બિલ નંબર
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            name="invoice_number"
+                                            id="invoice_number"
+                                            class="form-control"
+                                            placeholder="બિલ નંબર દાખલ કરો"
+                                            autocomplete="off"
+                                        >
+                                    </div>
+                                </div>
 
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -486,7 +502,6 @@
                                             min="1">
                                     </div>
                                 </div>
-
                             </div>
 
                             <button type="button" id="saveBtn" class="btn btn-outline-primary">
