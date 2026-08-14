@@ -41,11 +41,12 @@ Route::middleware('admin.auth')->group(function () {
     Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('suppliers.store');
 
     //purchase
-    Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase');
-    Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
-    Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->name('purchases.destroy');
-    Route::get('/purchase_detail/{purchase}', [PurchaseController::class, 'purchase_detail'])->name('purchase_detail');
-    Route::put('/purchases/{purchase}/update-payment', [PurchaseController::class, 'updatePayment'])->name('purchases.update_payment');
+Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase');
+Route::post('/purchases/store', [PurchaseController::class, 'store'])->name('purchases.store');
+Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->name('purchases.destroy');
+Route::get('/purchase_detail/{purchase}', [PurchaseController::class, 'purchase_detail'])->name('purchase_detail');
+Route::put('/purchases/{purchase}/update-payment', [PurchaseController::class, 'updatePayment'])->name('purchases.update_payment');
+Route::get('/purchase/{purchase}/pdf', [PurchaseController::class, 'pdf'])->name('purchase.pdf');
 
     //supplier-list
     Route::get('/supplier_list', [SpllierlistController::class, 'supplier_list'])->name('supplier_list');

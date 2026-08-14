@@ -29,6 +29,15 @@ class PurchaseController extends Controller
     }
 
 
+    // Purchase PDF / Print Page
+    public function pdf(Purchase $purchase)
+    {
+        $purchase->load('items', 'supplier');
+
+        return view('purchase.pdf', compact('purchase'));
+    }
+
+
     // Update Payment
     public function updatePayment(Request $request, Purchase $purchase)
     {
@@ -99,7 +108,7 @@ class PurchaseController extends Controller
     {
         $validated = $request->validate([
             'billing_no'             => ['required', 'string', 'max:50', 'unique:purchases,billing_no'],
-            'invoice_date' => ['required', 'date'],
+            'invoice_date'           => ['required', 'date'],
             'supplier_id'            => ['required', 'exists:suppliers,id'],
             'paid_amount'            => ['required', 'numeric', 'min:0'],
             'items'                  => ['required', 'array', 'min:1'],
@@ -111,6 +120,7 @@ class PurchaseController extends Controller
         ], [
             'billing_no.required'     => 'કૃપા કરીને બિલ નંબર દાખલ કરો.',
             'billing_no.unique'       => 'આ બિલ નંબર પહેલેથી ઉપયોગમાં લેવાયેલ છે.',
+            'invoice_date.required'   => 'કૃપા કરીને બિલ તારીખ પસંદ કરો.',
             'supplier_id.required'    => 'કૃપા કરીને સપ્લાયર પસંદ કરો.',
             'items.required'          => 'ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.',
             'items.*.prakar.required' => 'કૃપા કરીને પ્રકાર પસંદ કરો.',
@@ -132,7 +142,7 @@ class PurchaseController extends Controller
 
                 $purchase = Purchase::create([
                     'billing_no'     => $validated['billing_no'],
-                     'invoice_date'   => $validated['invoice_date'],
+                    'invoice_date'   => $validated['invoice_date'],
                     'supplier_id'    => $validated['supplier_id'],
                     'total_qty'      => $totalQty,
                     'total_amount'   => $totalAmount,

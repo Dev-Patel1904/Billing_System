@@ -51,7 +51,8 @@
                                         class="btn btn-sm btn-outline-primary">
                                         <i class="bx bx-show"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-outline-secondary">
+                                    <a href="{{ route('purchase.pdf', $purchase->id) }}" target="_blank"
+                                        class="btn btn-sm btn-outline-secondary" title="પ્રિન્ટ કરો">
                                         <i class="bx bx-printer"></i>
                                     </a>
                                 </td>
