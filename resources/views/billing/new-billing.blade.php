@@ -1,478 +1,761 @@
 @include('layout.sidebar')
+<style>
+    /* ================================
+   Premium Product Select
+================================ */
+
+    .premium-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #344054;
+    }
+
+    /* Main wrapper */
+    .premium-product-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-height: 52px;
+        background: #ffffff;
+        border: 1px solid #d9dee8;
+        border-radius: 12px;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+    }
+
+    /* Hover */
+    .premium-product-wrapper:hover {
+        border-color: #b8c1d1;
+        box-shadow: 0 4px 14px rgba(16, 24, 40, 0.07);
+    }
+
+    /* Focus effect */
+    .premium-product-wrapper:focus-within {
+        border-color: #696cff;
+        box-shadow:
+            0 0 0 3px rgba(105, 108, 255, 0.10),
+            0 5px 16px rgba(16, 24, 40, 0.06);
+    }
+
+    /* Product icon */
+    .premium-product-icon {
+        width: 48px;
+        min-width: 48px;
+        height: 52px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: #696cff;
+        font-size: 21px;
+    }
+
+    /* Select2 container */
+    .premium-product-wrapper .select2-container {
+        flex: 1;
+        width: auto !important;
+    }
+
+    /* Select2 selection */
+    .premium-product-wrapper .select2-container--default .select2-selection--single {
+        height: 50px !important;
+
+        display: flex !important;
+        align-items: center;
+
+        border: none !important;
+        background: transparent !important;
+
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* Selected text */
+    .premium-product-wrapper .select2-container--default .select2-selection--single .select2-selection__rendered {
+
+        padding-left: 0 !important;
+        padding-right: 35px !important;
+
+        font-size: 14px;
+        font-weight: 500;
+        color: #344054;
+
+        line-height: normal !important;
+    }
+
+    /* Placeholder */
+    .premium-product-wrapper .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #98a2b3;
+    }
+
+    /* Arrow */
+    .premium-product-wrapper .select2-container--default .select2-selection--single .select2-selection__arrow {
+
+        height: 50px !important;
+        top: 0 !important;
+        right: 4px !important;
+
+        width: 30px;
+    }
+
+    .premium-product-wrapper .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        border-color: #667085 transparent transparent transparent;
+    }
+
+    /* Voice button */
+    .premium-voice-btn {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+
+        margin-right: 6px;
+
+        border: 0;
+        border-radius: 10px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: #f2f3ff;
+        color: #696cff;
+
+        font-size: 20px;
+
+        cursor: pointer;
+
+        transition: all 0.25s ease;
+    }
+
+    /* Voice hover */
+    .premium-voice-btn:hover {
+        background: #696cff;
+        color: #ffffff;
+
+        transform: translateY(-1px);
+
+        box-shadow: 0 5px 12px rgba(105, 108, 255, 0.25);
+    }
+
+    /* Voice click */
+    .premium-voice-btn:active {
+        transform: scale(0.94);
+    }
+
+
+    /* ================================
+   Select2 Dropdown
+================================ */
+
+    .select2-container--default .select2-dropdown {
+        margin-top: 6px;
+
+        border: 1px solid #e4e7ec !important;
+        border-radius: 12px !important;
+
+        overflow: hidden;
+
+        box-shadow: 0 12px 30px rgba(16, 24, 40, 0.12);
+    }
+
+    /* Search box */
+    .select2-container--default .select2-search--dropdown {
+        padding: 10px;
+    }
+
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+
+        height: 42px;
+
+        border: 1px solid #d9dee8 !important;
+        border-radius: 8px;
+
+        padding: 0 12px;
+
+        font-size: 14px;
+
+        outline: none;
+    }
+
+    .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+
+        border-color: #696cff !important;
+
+        box-shadow: 0 0 0 3px rgba(105, 108, 255, 0.10);
+    }
+
+    /* Dropdown options */
+    .select2-container--default .select2-results__option {
+
+        padding: 11px 14px;
+
+        font-size: 14px;
+        color: #344054;
+
+        transition: all 0.15s ease;
+    }
+
+    /* Hover */
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+
+        background: #696cff !important;
+        color: #ffffff !important;
+    }
+
+    /* Selected */
+    .select2-container--default .select2-results__option[aria-selected="true"] {
+
+        background: #f2f3ff;
+        color: #696cff;
+        font-weight: 600;
+    }
+</style>
 
 <!-- Content wrapper -->
 <div class="content-wrapper">
-   <!-- Content -->
-   <div class="container-xxl flex-grow-1 container-p-y">
-      <!-- Basic Layout -->
-      <div class="row mb-6 gy-6">
-         <div class="col-xl">
-            <div class="card">
-               <div class="card-header d-flex justify-content-between align-items-center">
-                  <h5 class="mb-0">બિલ બનાવો</h5>
-                  <small class="text-body float-end">ગ્રાહકની માહિતી</small>
-               </div>
-               <div class="card-body">
-                  <form>
+    <!-- Content -->
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- Basic Layout -->
+        <div class="row mb-6 gy-6">
+            <div class="col-xl">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">બિલ બનાવો</h5>
+                        <small class="text-body float-end">ગ્રાહકની માહિતી</small>
+                    </div>
+                    <div class="card-body">
+                        <form>
 
-                     <div class="mb-3">
-                        <label class="form-label">ગ્રાહકનો મોબાઇલ નંબર</label>
-                        <div class="input-group">
-                           <input type="text" class="form-control" id="customerMobile" placeholder="ગ્રાહકનો મોબાઇલ નંબર" maxlength="10">
-                           <span class="input-group-text d-none" id="mobileLoader">
-                              <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
-                           </span>
-                        </div>
-                     </div>
-
-                     <div class="mb-0">
-                        <label class="form-label">ગ્રાહકનું નામ</label>
-
-                        <div class="input-group">
-                           <input type="text" class="form-control" id="customerName" placeholder="ગ્રાહકનું નામ">
-
-                           <!-- Loader -->
-                           <span class="input-group-text d-none" id="customerNameLoader">
-                              <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
-                           </span>
-
-                           <span class="input-group-text voice-btn" id="voiceCustomerName">
-                              <i class="bx bx-microphone"></i>
-                           </span>
-                        </div>
-                     </div>
-
-                     <!-- Product Details -->
-                     <div class="card mt-3" style="box-shadow:none !important;">
-                        <div id="productRows">
-                           <div class="row g-3 align-items-end product-row mb-3">
-
-                              <div class="col-md-12">
-                                 <label class="form-label">પ્રોડક્ટનું નામ</label>
-
-                                 <div class="input-group">
-                                    <input type="text" id="productName" class="form-control productName" placeholder="પ્રોડક્ટનું નામ">
-
-                                    <span class="input-group-text voiceProduct voice-btn">
-                                       <i class="bx bx-microphone"></i>
+                            <div class="mb-3">
+                                <label class="form-label">ગ્રાહકનો મોબાઇલ નંબર</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="customerMobile"
+                                        placeholder="ગ્રાહકનો મોબાઇલ નંબર" maxlength="10">
+                                    <span class="input-group-text d-none" id="mobileLoader">
+                                        <span class="spinner-border spinner-border-sm text-primary"
+                                            role="status"></span>
                                     </span>
-                                 </div>
-                              </div>
+                                </div>
+                            </div>
 
-                              <div class="col-md-12">
-                                    
-                                        <label for="prakar" class="form-label">પ્રકાર</label>
+                            <div class="mb-0">
+                                <label class="form-label">ગ્રાહકનું નામ</label>
 
-                                        <select name="prakar" id="prakar" class="form-select">
-                                            <option value="">પ્રકાર પસંદ કરો</option>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="customerName"
+                                        placeholder="ગ્રાહકનું નામ">
 
-                                            <option value="quantity">જથ્થો</option>
-                                            <option value="box">પેટી</option>
-                                            <option value="piece">નંગ</option>
-                                            <option value="kg">કિલો</option>
-                                            <option value="gram">ગ્રામ</option>
-                                            <option value="liter">લિટર</option>
-                                            <option value="ml">મિલી લિટર</option>
-                                            <option value="meter">મીટર</option>
-                                            <option value="packet">પેકેટ</option>
-                                            <option value="bottle">બોટલ</option>
-                                            <option value="dozen">ડઝન</option>
-                                            <option value="pair">જોડી</option>
-                                            <option value="bundle">બંડલ</option>
-                                            <option value="bag">થેલી</option>
-                                            <option value="roll">રોલ</option>
-                                            <option value="set">સેટ</option>
-                                        </select>
-                                        
+                                    <!-- Loader -->
+                                    <span class="input-group-text d-none" id="customerNameLoader">
+                                        <span class="spinner-border spinner-border-sm text-primary" role="status"
+                                            aria-hidden="true"></span>
+                                    </span>
+
+                                    <span class="input-group-text voice-btn" id="voiceCustomerName">
+                                        <i class="bx bx-microphone"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Product Details -->
+                            <div class="card mt-3" style="box-shadow:none !important;">
+                                <div id="productRows">
+                                    <div class="row g-3 align-items-end product-row mb-3">
+
+                                        <div class="col-md-12">
+
+                                            <label for="productName" class="premium-label">
+                                                પ્રોડક્ટનું નામ
+                                            </label>
+
+                                            <div class="premium-product-wrapper">
+
+                                                <div class="premium-product-icon">
+                                                    <i class="bx bx-package"></i>
+                                                </div>
+
+                                                <select id="productName" class="form-control productName"
+                                                    name="product_name">
+
+                                                    <option value="">પ્રોડક્ટ પસંદ કરો</option>
+
+                                                    @foreach ($products as $product)
+                                                        <option value="{{ $product->product_name }}"
+                                                            data-prakar="{{ $product->prakar }}"
+                                                            data-prakar-text="{{ $product->prakar_text }}"
+                                                            data-rate="{{ $product->rate }}">
+
+                                                            {{ $product->product_name }}
+
+                                                        </option>
+                                                    @endforeach
+
+                                                </select>
+
+                                                <button type="button" class="premium-voice-btn voiceProduct voice-btn"
+                                                    title="વૉઇસ દ્વારા પ્રોડક્ટ શોધો">
+
+                                                    <i class="bx bx-microphone"></i>
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+                                        <div id="productDetails" class="row g-3 mt-2 d-none">
+
+                                            <!-- Prakar -->
+                                            <div class="col-md-6">
+
+                                                <label for="prakar" class="form-label">
+                                                    પ્રકાર
+                                                </label>
+
+                                                <select name="prakar" id="prakar" class="form-select">
+
+                                                    <option value="">પ્રકાર પસંદ કરો</option>
+
+                                                    <option value="quantity">જથ્થો</option>
+                                                    <option value="box">પેટી</option>
+                                                    <option value="piece">નંગ</option>
+                                                    <option value="kg">કિલો</option>
+                                                    <option value="gram">ગ્રામ</option>
+                                                    <option value="liter">લિટર</option>
+                                                    <option value="ml">મિલી લિટર</option>
+                                                    <option value="meter">મીટર</option>
+                                                    <option value="packet">પેકેટ</option>
+                                                    <option value="bottle">બોટલ</option>
+                                                    <option value="dozen">ડઝન</option>
+                                                    <option value="pair">જોડી</option>
+                                                    <option value="bundle">બંડલ</option>
+                                                    <option value="bag">થેલી</option>
+                                                    <option value="roll">રોલ</option>
+                                                    <option value="set">સેટ</option>
+
+                                                </select>
+
+                                            </div>
+
+
+                                            <div class="col-md-6">
+                                                <label class="form-label">નંગ / જથ્થો</label>
+                                                <input type="number" id="qty" class="form-control"
+                                                    placeholder="0">
+                                            </div>
+
+                                            <!-- રકમ -->
+                                            <div class="col-md-12">
+
+                                                <label for="rate" class="form-label">
+                                                    રકમ
+                                                </label>
+
+                                                <div class="input-group">
+
+                                                    <span class="input-group-text">
+                                                        ₹
+                                                    </span>
+
+                                                    <input type="number" id="rate" name="rate"
+                                                        class="form-control" placeholder="0.00" min="0"
+                                                        step="0.01">
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-success btn-sm" id="addItem">
+                                                <i class="bx bx-plus"></i>બિલમાં ઉમેરો
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl">
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <form id="billForm" action="{{ route('billing.store') }}" method="POST" target="_blank">
+                            @csrf
+
+                            <!-- Hidden fields submitted with the bill -->
+                            <input type="hidden" name="customer_mobile" id="hiddenCustomerMobile">
+                            <input type="hidden" name="customer_name" id="hiddenCustomerName">
+                            <input type="hidden" name="previous_due" id="hiddenPreviousDue" value="0">
+                            <input type="hidden" name="due_paid_now" id="hiddenPaidDueAmount" value="0">
+                            <input type="hidden" name="payment_type" id="hiddenPaymentType">
+
+                            <div class="table-responsive text-nowrap mt-3">
+                                <table class="table table-bordered text-center align-middle" id="productTable">
+
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="10%">ક્રમ</th>
+                                            <th>પ્રોડક્ટનું નામ</th>
+                                            <th>જથ્થો</th>
+                                            <th>ભાવ (₹)</th>
+                                            <th>કુલ રકમ (₹)</th>
+                                            <th width="8%">એક્શન</th>
+
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+
+
+                            <!-- Summary -->
+
+                            <div class="card border-0 shadow-sm mt-3">
+                                <div class="card-body">
+
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold">કુલ જથ્થો</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" id="total_qty" class="form-control text-end"
+                                                readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold">કુલ રકમ</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" id="total_amount" class="form-control text-end"
+                                                readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row align-items-center mb-3 d-none" id="previousDueRow">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold text-danger">આગળની બાકી
+                                                રકમ</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="number" id="previous_due" disabled
+                                                class="form-control text-end" value="0" placeholder="₹ 0.00">
+                                        </div>
+                                    </div>
+
+                                    <div class="row align-items-center mb-3 d-none" id="payDueSection">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold">શું બાકી રકમ ચૂકવવી છે?</label>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="pay_due"
+                                                    id="pay_yes" value="yes">
+
+                                                <label class="form-check-label" for="pay_yes">
+                                                    હા
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="pay_due"
+                                                    id="pay_no" value="no" checked>
+
+                                                <label class="form-check-label" for="pay_no">
+                                                    ના
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="row align-items-center mb-4">
+                                        <div class="col-md-6">
+                                            <label class="fw-bold text-success fs-5">ચૂકવવાની કુલ
+                                                રકમ</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" id="grand_total"
+                                                class="form-control form-control-lg fw-bold text-end border-success"
+                                                readonly>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-3">
+                                <div class="col-6">
+                                    <button type="submit"
+                                        class="btn btn-outline-warning w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                                        id="dueBtn">
+                                        <i class="bx bx-time-five fs-4"></i>
+                                        <span class="fw-semibold">બાકી</span>
+                                    </button>
                                 </div>
 
-                              <div class="col-md-6">
-                                 <label class="form-label">નંગ / જથ્થો</label>
-                                 <input type="number" id="qty" class="form-control" placeholder="0">
-                              </div>
+                                <div class="col-6">
+                                    <button type="submit"
+                                        class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                                        id="cashBtn">
+                                        <i class="bx bx-money fs-4"></i>
+                                        <span class="fw-semibold">રોકડ</span>
+                                    </button>
+                                </div>
+                            </div>
 
-                              <div class="col-md-6">
-                                 <label class="form-label">રકમ</label>
-                                 <input type="number" id="rate" class="form-control" placeholder="₹ 0.00">
-                              </div>
-
-                              <div class="col-md-6">
-                                 <button type="button" class="btn btn-success btn-sm" id="addItem">
-                                    <i class="bx bx-plus"></i>બિલમાં ઉમેરો
-                                 </button>
-                              </div>
-
-                           </div>
-                        </div>
-                     </div>
-                  </form>
-               </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-         </div>
-         <div class="col-xl">
-            <div class="card">
+        </div>
+    </div>
+    <!-- / Content -->
 
-               <div class="card-body">
+    {{-- MODEL FOR BAKI CHUKVANI RAKAM  --}}
+    <div class="modal fade" id="duePaymentModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
 
-                  <form id="billForm" action="{{ route('billing.store') }}" method="POST" target="_blank">
-                     @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">બાકી રકમ ચૂકવણી</h5>
 
-                     <!-- Hidden fields submitted with the bill -->
-                     <input type="hidden" name="customer_mobile" id="hiddenCustomerMobile">
-                     <input type="hidden" name="customer_name" id="hiddenCustomerName">
-                     <input type="hidden" name="previous_due" id="hiddenPreviousDue" value="0">
-                     <input type="hidden" name="due_paid_now" id="hiddenPaidDueAmount" value="0">
-                     <input type="hidden" name="payment_type" id="hiddenPaymentType">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-                     <div class="table-responsive text-nowrap mt-3">
-                        <table class="table table-bordered text-center align-middle" id="productTable">
+                <div class="modal-body">
 
-                           <thead class="table-light">
-                              <tr>
-                                 <th width="10%">ક્રમ</th>
-                                 <th>પ્રોડક્ટનું નામ</th>
-                                 <th>જથ્થો</th>
-                                 <th>ભાવ (₹)</th>
-                                 <th>કુલ રકમ (₹)</th>
-                                 <th width="8%">એક્શન</th>
+                    <div class="mb-3">
+                        <label class="form-label">આગળની બાકી રકમ</label>
 
-                              </tr>
-                           </thead>
+                        <input type="number" id="modal_previous_due" class="form-control" readonly>
+                    </div>
 
-                           <tbody>
+                    <div class="mb-3">
+                        <label class="form-label">બાકી ચૂકવણી રકમ</label>
 
-                           </tbody>
+                        <input type="number" id="paid_due_amount" class="form-control" placeholder="રકમ દાખલ કરો">
+                    </div>
 
-                        </table>
-                     </div>
+                </div>
 
+                <div class="modal-footer">
 
-                     <!-- Summary -->
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                        બંધ
+                    </button>
 
-                     <div class="card border-0 shadow-sm mt-3">
-                        <div class="card-body">
+                    <button class="btn btn-success" id="saveDuePayment">
+                        ₹ જમા કરો
+                    </button>
 
-                           <div class="row align-items-center mb-3">
-                              <div class="col-md-6">
-                                 <label class="fw-semibold">કુલ જથ્થો</label>
-                              </div>
-                              <div class="col-md-6">
-                                 <input type="text" id="total_qty" class="form-control text-end" readonly>
-                              </div>
-                           </div>
-
-                           <div class="row align-items-center mb-3">
-                              <div class="col-md-6">
-                                 <label class="fw-semibold">કુલ રકમ</label>
-                              </div>
-                              <div class="col-md-6">
-                                 <input type="text" id="total_amount" class="form-control text-end" readonly>
-                              </div>
-                           </div>
-
-                           <div class="row align-items-center mb-3 d-none" id="previousDueRow">
-                              <div class="col-md-6">
-                                 <label class="fw-semibold text-danger">આગળની બાકી
-                                    રકમ</label>
-                              </div>
-                              <div class="col-md-6">
-                                 <input type="number" id="previous_due" disabled class="form-control text-end" value="0" placeholder="₹ 0.00">
-                              </div>
-                           </div>
-
-                           <div class="row align-items-center mb-3 d-none" id="payDueSection">
-                              <div class="col-md-6">
-                                 <label class="fw-semibold">શું બાકી રકમ ચૂકવવી છે?</label>
-                              </div>
-
-                              <div class="col-md-6">
-                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pay_due" id="pay_yes" value="yes">
-
-                                    <label class="form-check-label" for="pay_yes">
-                                       હા
-                                    </label>
-                                 </div>
-
-                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pay_due" id="pay_no" value="no" checked>
-
-                                    <label class="form-check-label" for="pay_no">
-                                       ના
-                                    </label>
-                                 </div>
-                              </div>
-                           </div>
-
-                           <hr>
-
-                           <div class="row align-items-center mb-4">
-                              <div class="col-md-6">
-                                 <label class="fw-bold text-success fs-5">ચૂકવવાની કુલ
-                                    રકમ</label>
-                              </div>
-                              <div class="col-md-6">
-                                 <input type="text" id="grand_total" class="form-control form-control-lg fw-bold text-end border-success" readonly>
-                              </div>
-                           </div>
-
-                        </div>
-                     </div>
-
-                     <div class="row g-3 mt-3">
-                        <div class="col-6">
-                           <button type="submit" class="btn btn-outline-warning w-100 d-flex align-items-center justify-content-center gap-2 py-2" id="dueBtn">
-                              <i class="bx bx-time-five fs-4"></i>
-                              <span class="fw-semibold">બાકી</span>
-                           </button>
-                        </div>
-
-                        <div class="col-6">
-                           <button type="submit" class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2 py-2" id="cashBtn">
-                              <i class="bx bx-money fs-4"></i>
-                              <span class="fw-semibold">રોકડ</span>
-                           </button>
-                        </div>
-                     </div>
-
-                  </form>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-   <!-- / Content -->
-
-   {{-- MODEL FOR BAKI CHUKVANI RAKAM  --}}
-   <div class="modal fade" id="duePaymentModal" tabindex="-1">
-      <div class="modal-dialog modal-sm">
-         <div class="modal-content">
-
-            <div class="modal-header">
-               <h5 class="modal-title">બાકી રકમ ચૂકવણી</h5>
-
-               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-
-               <div class="mb-3">
-                  <label class="form-label">આગળની બાકી રકમ</label>
-
-                  <input type="number" id="modal_previous_due" class="form-control" readonly>
-               </div>
-
-               <div class="mb-3">
-                  <label class="form-label">બાકી ચૂકવણી રકમ</label>
-
-                  <input type="number" id="paid_due_amount" class="form-control" placeholder="રકમ દાખલ કરો">
-               </div>
+                </div>
 
             </div>
+        </div>
+    </div>
 
-            <div class="modal-footer">
+    <!-- Footer -->
 
-               <button class="btn btn-secondary" data-bs-dismiss="modal">
-                  બંધ
-               </button>
+    @include('layout.footer')
 
-               <button class="btn btn-success" id="saveDuePayment">
-                  ₹ જમા કરો
-               </button>
+    <script>
+        $(document).ready(function() {
 
-            </div>
+            let customerHasDue = false;
+            let previousDueTotal = 0;
+            let duePaidNow = 0;
+            let duePaymentSaved = false;
 
-         </div>
-      </div>
-   </div>
-
-   <!-- Footer -->
-
-   @include('layout.footer')
-
-   <script>
-      $(document).ready(function() {
-
-         let customerHasDue = false;
-         let previousDueTotal = 0;
-         let duePaidNow = 0;
-         let duePaymentSaved = false;
-
-         // ==========================================
-         // CUSTOMER NAME -> BLOCK NUMBERS WHILE TYPING
-         // ==========================================
-         $("#customerName").on("input", function() {
-            let value = $(this).val();
-            let cleaned = value.replace(/[0-9]/g, '');
-            if (value !== cleaned) {
-               $(this).val(cleaned);
-            }
-         });
-
-         // ==========================================
-         // CUSTOMER MOBILE -> AUTOFILL + SHOW/HIDE DUE
-         // ==========================================
-
-         $("#customerMobile").on("blur", function() {
-
-            let mobile = $(this).val().trim();
-
-            if (mobile.length !== 10) {
-               return;
-            }
-
-            // Show loader
-            $("#customerNameLoader").removeClass("d-none");
-
-            // Optional: clear old name while checking
-            $("#customerName").val("");
-
-            $.ajax({
-               url: "{{ route('billing.check-customer') }}"
-               , method: "POST",
-
-               data: {
-                  _token: "{{ csrf_token() }}"
-                  , mobile: mobile
-               },
-
-               success: function(res) {
-
-                  duePaidNow = 0;
-                  duePaymentSaved = false;
-
-                  $('input[name="pay_due"]').prop("checked", false);
-                  $("#pay_no").prop("checked", true);
-
-                  if (res.exists) {
-
-                     // Automatically show customer name
-                     $("#customerName").val(res.name);
-
-                     // Lock mobile number for existing customer
-                     $("#customerMobile").prop("readonly", true);
-
-                     if (res.due_amount > 0) {
-
-                        customerHasDue = true;
-                        previousDueTotal = res.due_amount;
-
-                        $("#previous_due").val(previousDueTotal);
-
-                        $("#previousDueRow").removeClass("d-none");
-                        $("#payDueSection").removeClass("d-none");
-
-                     } else {
-
-                        customerHasDue = false;
-                        previousDueTotal = 0;
-
-                        $("#previous_due").val(0);
-
-                        $("#previousDueRow").addClass("d-none");
-                        $("#payDueSection").addClass("d-none");
-                     }
-
-                  } else {
-
-                     // New customer
-                     customerHasDue = false;
-                     previousDueTotal = 0;
-
-                     $("#customerMobile").prop("readonly", false);
-
-                     $("#customerName").val("");
-
-                     $("#previous_due").val(0);
-
-                     $("#previousDueRow").addClass("d-none");
-                     $("#payDueSection").addClass("d-none");
-                  }
-
-                  updateTotals();
-               },
-
-               error: function() {
-
-                  console.log("Customer check failed");
-
-                  $("#customerName").val("");
-               },
-
-               complete: function() {
-
-                  // Hide loader after AJAX finishes
-                  $("#customerNameLoader").addClass("d-none");
-               }
+            // ==========================================
+            // CUSTOMER NAME -> BLOCK NUMBERS WHILE TYPING
+            // ==========================================
+            $("#customerName").on("input", function() {
+                let value = $(this).val();
+                let cleaned = value.replace(/[0-9]/g, '');
+                if (value !== cleaned) {
+                    $(this).val(cleaned);
+                }
             });
 
-         });
+            // ==========================================
+            // CUSTOMER MOBILE -> AUTOFILL + SHOW/HIDE DUE
+            // ==========================================
 
-         updateTotals();
+            $("#customerMobile").on("blur", function() {
 
-         // Add Item
-         $("#addItem").click(function() {
+                let mobile = $(this).val().trim();
 
-            let mobile = $("#customerMobile").val().trim();
-            let customer = $("#customerName").val().trim();
-            let product = $("#productName").val().trim();
-            let qty = parseFloat($("#qty").val()) || 0;
-            let rate = parseFloat($("#rate").val()) || 0;
+                if (mobile.length !== 10) {
+                    return;
+                }
 
-            let prakarValue = $("#prakar").val();
-            let prakarText = $("#prakar option:selected").text();
+                // Show loader
+                $("#customerNameLoader").removeClass("d-none");
 
-            if (mobile == "") {
-               GlassToast.warning("મોબાઈલ નંબર", "કૃપા કરીને ગ્રાહકનો મોબાઇલ નંબર દાખલ કરો.");
-               $("#customerMobile").focus();
-               return;
-            }
+                // Optional: clear old name while checking
+                $("#customerName").val("");
 
-            if (mobile.length != 10) {
-               GlassToast.warning("ગ્રાહકનું નામ", "મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.");
-               $("#customerMobile").focus();
-               return;
-            }
+                $.ajax({
+                    url: "{{ route('billing.check-customer') }}",
+                    method: "POST",
 
-            if (customer == "") {
-               GlassToast.warning("ગ્રાહકનું નામ", "કૃપા કરીને ગ્રાહકનું નામ દાખલ કરો.");
-               $("#customerName").focus();
-               return;
-            }
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        mobile: mobile
+                    },
 
-            if (/[0-9]/.test(customer)) {
-               GlassToast.warning("ગ્રાહકનું નામ", "ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
-               $("#customerName").focus();
-               return;
-            }
+                    success: function(res) {
 
-            if (product == "") {
-               GlassToast.warning("પ્રોડક્ટનું નામ", "કૃપા કરીને પ્રોડક્ટનું નામ દાખલ કરો.");
-               $("#productName").focus();
-               return;
-            }
+                        duePaidNow = 0;
+                        duePaymentSaved = false;
 
-            if (qty <= 0) {
-               GlassToast.warning("જથ્થો", "કૃપા કરીને જથ્થો દાખલ કરો.");
-               $("#qty").focus();
-               return;
-            }
+                        $('input[name="pay_due"]').prop("checked", false);
+                        $("#pay_no").prop("checked", true);
 
-            if (rate <= 0) {
-               GlassToast.warning("રકમ", "કૃપા કરીને રકમ દાખલ કરો.");
-               $("#rate").focus();
-               return;
-            }
-            if (prakarValue == "") {
-               GlassToast.warning("પ્રકાર", "કૃપા કરીને પ્રકાર પસંદ કરો.");
-               $("#prakar").focus();
-               return;
-            }
+                        if (res.exists) {
 
-            let amount = qty * rate;
-            let rowNo = $("#productTable tbody tr").length + 1;
+                            // Automatically show customer name
+                            $("#customerName").val(res.name);
 
-            let row = `
+                            // Lock mobile number for existing customer
+                            $("#customerMobile").prop("readonly", true);
+
+                            if (res.due_amount > 0) {
+
+                                customerHasDue = true;
+                                previousDueTotal = res.due_amount;
+
+                                $("#previous_due").val(previousDueTotal);
+
+                                $("#previousDueRow").removeClass("d-none");
+                                $("#payDueSection").removeClass("d-none");
+
+                            } else {
+
+                                customerHasDue = false;
+                                previousDueTotal = 0;
+
+                                $("#previous_due").val(0);
+
+                                $("#previousDueRow").addClass("d-none");
+                                $("#payDueSection").addClass("d-none");
+                            }
+
+                        } else {
+
+                            // New customer
+                            customerHasDue = false;
+                            previousDueTotal = 0;
+
+                            $("#customerMobile").prop("readonly", false);
+
+                            $("#customerName").val("");
+
+                            $("#previous_due").val(0);
+
+                            $("#previousDueRow").addClass("d-none");
+                            $("#payDueSection").addClass("d-none");
+                        }
+
+                        updateTotals();
+                    },
+
+                    error: function() {
+
+                        console.log("Customer check failed");
+
+                        $("#customerName").val("");
+                    },
+
+                    complete: function() {
+
+                        // Hide loader after AJAX finishes
+                        $("#customerNameLoader").addClass("d-none");
+                    }
+                });
+
+            });
+
+            updateTotals();
+
+            // Add Item
+            $("#addItem").click(function() {
+
+                let mobile = $("#customerMobile").val().trim();
+                let customer = $("#customerName").val().trim();
+                let product = $("#productName").val().trim();
+                let qty = parseFloat($("#qty").val()) || 0;
+                let rate = parseFloat($("#rate").val()) || 0;
+
+                let prakarValue = $("#prakar").val();
+                let prakarText = $("#prakar option:selected").text();
+
+                if (mobile == "") {
+                    GlassToast.warning("મોબાઈલ નંબર", "કૃપા કરીને ગ્રાહકનો મોબાઇલ નંબર દાખલ કરો.");
+                    $("#customerMobile").focus();
+                    return;
+                }
+
+                if (mobile.length != 10) {
+                    GlassToast.warning("ગ્રાહકનું નામ", "મોબાઇલ નંબર 10 અંકનો હોવો જોઈએ.");
+                    $("#customerMobile").focus();
+                    return;
+                }
+
+                if (customer == "") {
+                    GlassToast.warning("ગ્રાહકનું નામ", "કૃપા કરીને ગ્રાહકનું નામ દાખલ કરો.");
+                    $("#customerName").focus();
+                    return;
+                }
+
+                if (/[0-9]/.test(customer)) {
+                    GlassToast.warning("ગ્રાહકનું નામ", "ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
+                    $("#customerName").focus();
+                    return;
+                }
+
+                if (product == "") {
+                    GlassToast.warning("પ્રોડક્ટનું નામ", "કૃપા કરીને પ્રોડક્ટનું નામ દાખલ કરો.");
+                    $("#productName").focus();
+                    return;
+                }
+
+                if (qty <= 0) {
+                    GlassToast.warning("જથ્થો", "કૃપા કરીને જથ્થો દાખલ કરો.");
+                    $("#qty").focus();
+                    return;
+                }
+
+                if (rate <= 0) {
+                    GlassToast.warning("રકમ", "કૃપા કરીને રકમ દાખલ કરો.");
+                    $("#rate").focus();
+                    return;
+                }
+                if (prakarValue == "") {
+                    GlassToast.warning("પ્રકાર", "કૃપા કરીને પ્રકાર પસંદ કરો.");
+                    $("#prakar").focus();
+                    return;
+                }
+
+                let amount = qty * rate;
+                let rowNo = $("#productTable tbody tr").length + 1;
+
+                let row = `
         <tr>
             <td class="row-no">${rowNo}</td>
             <td>
@@ -499,238 +782,307 @@
             </td>
         </tr>`;
 
-            $("#productTable tbody").append(row);
+                $("#productTable tbody").append(row);
 
-            $("#productName").val("");
-            $("#qty").val("");
-            $("#rate").val("");
-            $("#prakar").val("");
+                $("#productName").val("");
+                $("#qty").val("");
+                $("#rate").val("");
+                $("#prakar").val("");
 
-            updateTotals();
-         });
-
-         // Remove Row
-         $(document).on("click", ".removeRow", function() {
-
-            $(this).closest("tr").remove();
-
-            $("#productTable tbody tr").each(function(index) {
-               $(this).find(".row-no").text(index + 1);
+                updateTotals();
             });
 
-            updateTotals();
+            // Remove Row
+            $(document).on("click", ".removeRow", function() {
 
-         });
+                $(this).closest("tr").remove();
 
-         function updateTotals() {
+                $("#productTable tbody tr").each(function(index) {
+                    $(this).find(".row-no").text(index + 1);
+                });
 
-            let totalQty = 0;
-            let totalAmount = 0;
+                updateTotals();
 
-            $(".qty").each(function() {
-               totalQty += parseFloat($(this).val()) || 0;
             });
 
-            $(".amount").each(function() {
-               totalAmount += parseFloat($(this).val()) || 0;
+            function updateTotals() {
+
+                let totalQty = 0;
+                let totalAmount = 0;
+
+                $(".qty").each(function() {
+                    totalQty += parseFloat($(this).val()) || 0;
+                });
+
+                $(".amount").each(function() {
+                    totalAmount += parseFloat($(this).val()) || 0;
+                });
+
+                let grandTotal = totalAmount;
+
+                $("#total_qty").val(totalQty);
+                $("#total_amount").val(totalAmount.toFixed(2));
+                $("#grand_total").val(grandTotal.toFixed(2));
+            }
+
+            // ==========================================
+            // BEFORE SUBMIT -> sync hidden fields
+            // ==========================================
+
+            function syncHiddenFields(paymentType) {
+
+                $("#hiddenCustomerMobile").val($("#customerMobile").val().trim());
+                $("#hiddenCustomerName").val($("#customerName").val().trim());
+                $("#hiddenPreviousDue").val(previousDueTotal);
+                $("#hiddenPaidDueAmount").val(duePaidNow);
+                $("#hiddenPaymentType").val(paymentType);
+
+            }
+
+            $("#dueBtn").on("click", function(e) {
+
+                if ($("#customerMobile").val().trim().length !== 10) {
+                    e.preventDefault();
+                    alert("માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો.");
+                    return;
+                }
+
+                if (/[0-9]/.test($("#customerName").val().trim())) {
+                    e.preventDefault();
+                    alert("ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
+                    return;
+                }
+
+                if ($("#productTable tbody tr").length === 0) {
+                    e.preventDefault();
+                    alert("ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.");
+                    return;
+                }
+
+                e.preventDefault();
+
+                syncHiddenFields('due');
+
+                $("#billForm").submit();
+
+                // Give the browser a moment to open the PDF in the new tab,
+                // then reset this page completely.
+                setTimeout(function() {
+                    window.location.reload();
+                }, 800);
+
             });
 
-            let grandTotal = totalAmount;
+            $("#cashBtn").on("click", function(e) {
 
-            $("#total_qty").val(totalQty);
-            $("#total_amount").val(totalAmount.toFixed(2));
-            $("#grand_total").val(grandTotal.toFixed(2));
-         }
+                if ($("#customerMobile").val().trim().length !== 10) {
+                    e.preventDefault();
+                    alert("માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો.");
+                    return;
+                }
 
-         // ==========================================
-         // BEFORE SUBMIT -> sync hidden fields
-         // ==========================================
+                if (/[0-9]/.test($("#customerName").val().trim())) {
+                    e.preventDefault();
+                    alert("ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
+                    return;
+                }
 
-         function syncHiddenFields(paymentType) {
+                if ($("#productTable tbody tr").length === 0) {
+                    e.preventDefault();
+                    alert("ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.");
+                    return;
+                }
 
-            $("#hiddenCustomerMobile").val($("#customerMobile").val().trim());
-            $("#hiddenCustomerName").val($("#customerName").val().trim());
-            $("#hiddenPreviousDue").val(previousDueTotal);
-            $("#hiddenPaidDueAmount").val(duePaidNow);
-            $("#hiddenPaymentType").val(paymentType);
+                e.preventDefault();
 
-         }
+                syncHiddenFields('cash');
 
-         $("#dueBtn").on("click", function(e) {
+                $("#billForm").submit();
 
-            if ($("#customerMobile").val().trim().length !== 10) {
-               e.preventDefault();
-               alert("માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો.");
-               return;
-            }
+                setTimeout(function() {
+                    window.location.reload();
+                }, 800);
 
-            if (/[0-9]/.test($("#customerName").val().trim())) {
-               e.preventDefault();
-               alert("ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
-               return;
-            }
+            });
 
-            if ($("#productTable tbody tr").length === 0) {
-               e.preventDefault();
-               alert("ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.");
-               return;
-            }
+            // ==========================================
+            // BAKI CHUKAVANI RAKAM (modal)
+            // ==========================================
 
-            e.preventDefault();
+            $('input[name="pay_due"]').change(function() {
 
-            syncHiddenFields('due');
+                if ($(this).val() == 'yes') {
 
-            $("#billForm").submit();
+                    duePaymentSaved = false;
 
-            // Give the browser a moment to open the PDF in the new tab,
-            // then reset this page completely.
-            setTimeout(function() {
-               window.location.reload();
-            }, 800);
+                    $("#modal_previous_due").val(previousDueTotal);
+                    $("#paid_due_amount").val('');
 
-         });
+                    let modal = new bootstrap.Modal(document.getElementById('duePaymentModal'));
+                    modal.show();
 
-         $("#cashBtn").on("click", function(e) {
+                } else {
 
-            if ($("#customerMobile").val().trim().length !== 10) {
-               e.preventDefault();
-               alert("માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો.");
-               return;
-            }
+                    duePaidNow = 0;
+                    updateTotals();
 
-            if (/[0-9]/.test($("#customerName").val().trim())) {
-               e.preventDefault();
-               alert("ગ્રાહકના નામમાં નંબર ન હોવો જોઈએ.");
-               return;
-            }
+                }
 
-            if ($("#productTable tbody tr").length === 0) {
-               e.preventDefault();
-               alert("ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.");
-               return;
-            }
+            });
 
-            e.preventDefault();
+            $('#duePaymentModal').on('hidden.bs.modal', function() {
 
-            syncHiddenFields('cash');
+                if (!duePaymentSaved) {
+                    $("#pay_no").prop("checked", true);
+                    duePaidNow = 0;
+                    updateTotals();
+                }
 
-            $("#billForm").submit();
+            });
 
-            setTimeout(function() {
-               window.location.reload();
-            }, 800);
+            $("#saveDuePayment").click(function() {
 
-         });
+                let paidAmount = parseFloat($("#paid_due_amount").val()) || 0;
+                let mobile = $("#customerMobile").val().trim();
 
-         // ==========================================
-         // BAKI CHUKAVANI RAKAM (modal)
-         // ==========================================
+                if (paidAmount <= 0) {
+                    GlassToast.warning("રકમ", "ચૂકવણી રકમ દાખલ કરો.");
+                    return;
+                }
 
-         $('input[name="pay_due"]').change(function() {
+                if (paidAmount > previousDueTotal) {
+                    GlassToast.warning("રકમ", "ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.");
+                    return;
+                }
 
-            if ($(this).val() == 'yes') {
+                GlassToast.confirm(
+                    "ચૂકવણીની ખાતરી", "શું તમે બાકી રકમની ચૂકવણી સેવ કરવા માંગો છો?",
+                    function() {
 
-               duePaymentSaved = false;
+                        $.ajax({
+                            url: "{{ route('billing.pay-due') }}",
+                            method: "POST",
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                customer_mobile: mobile,
+                                paid_amount: paidAmount
+                            },
+                            success: function(res) {
 
-               $("#modal_previous_due").val(previousDueTotal);
-               $("#paid_due_amount").val('');
+                                if (res.success) {
 
-               let modal = new bootstrap.Modal(document.getElementById('duePaymentModal'));
-               modal.show();
+                                    duePaymentSaved = true;
+                                    duePaidNow = paidAmount;
 
-            } else {
+                                    previousDueTotal = res.remaining_due;
+                                    $("#previous_due").val(previousDueTotal);
 
-               duePaidNow = 0;
-               updateTotals();
+                                    if (previousDueTotal <= 0) {
+                                        $("#previousDueRow").addClass("d-none");
+                                        $("#payDueSection").addClass("d-none");
+                                    }
 
-            }
+                                    $("#pay_no").prop("checked", true);
 
-         });
+                                    GlassToast.success("સફળ", res.message);
 
-         $('#duePaymentModal').on('hidden.bs.modal', function() {
+                                    bootstrap.Modal.getInstance(
+                                        document.getElementById('duePaymentModal')
+                                    ).hide();
 
-            if (!duePaymentSaved) {
-               $("#pay_no").prop("checked", true);
-               duePaidNow = 0;
-               updateTotals();
-            }
+                                    updateTotals();
 
-         });
+                                } else {
+                                    GlassToast.warning("ભૂલ", res.message);
+                                }
 
-         $("#saveDuePayment").click(function() {
+                            },
+                            error: function(xhr) {
 
-            let paidAmount = parseFloat($("#paid_due_amount").val()) || 0;
-            let mobile = $("#customerMobile").val().trim();
+                                let msg = (xhr.responseJSON && xhr.responseJSON.message) ?
+                                    xhr.responseJSON.message :
+                                    "કંઈક ખોટું થયું, ફરી પ્રયાસ કરો.";
 
-            if (paidAmount <= 0) {
-               GlassToast.warning("રકમ", "ચૂકવણી રકમ દાખલ કરો.");
-               return;
-            }
+                                GlassToast.warning("ભૂલ", msg);
+                            }
+                        });
 
-            if (paidAmount > previousDueTotal) {
-               GlassToast.warning("રકમ", "ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.");
-               return;
-            }
+                    }
 
-            GlassToast.confirm(
-               "ચૂકવણીની ખાતરી"
-               , "શું તમે બાકી રકમની ચૂકવણી સેવ કરવા માંગો છો?"
-               , function() {
+                );
 
-                  $.ajax({
-                     url: "{{ route('billing.pay-due') }}"
-                     , method: "POST"
-                     , data: {
-                        _token: "{{ csrf_token() }}"
-                        , customer_mobile: mobile
-                        , paid_amount: paidAmount
-                     }
-                     , success: function(res) {
+            });
 
-                        if (res.success) {
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#productName').select2({
+                placeholder: 'પ્રોડક્ટ શોધો અથવા પસંદ કરો',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
 
-                           duePaymentSaved = true;
-                           duePaidNow = paidAmount;
+            $('#productName').select2({
+                placeholder: 'પ્રોડક્ટ શોધો અથવા પસંદ કરો',
+                allowClear: true,
+                width: '100%'
+            });
 
-                           previousDueTotal = res.remaining_due;
-                           $("#previous_due").val(previousDueTotal);
 
-                           if (previousDueTotal <= 0) {
-                              $("#previousDueRow").addClass("d-none");
-                              $("#payDueSection").addClass("d-none");
-                           }
+            $('#productName').on('change', function() {
 
-                           $("#pay_no").prop("checked", true);
+                let selectedOption = $(this).find('option:selected');
 
-                           GlassToast.success("સફળ", res.message);
+                let product = $(this).val();
 
-                           bootstrap.Modal.getInstance(
-                              document.getElementById('duePaymentModal')
-                           ).hide();
+                if (product) {
 
-                           updateTotals();
+                    // Get product information
+                    let prakar = selectedOption.data('prakar');
+                    let prakarText = selectedOption.data('prakar-text');
+                    let rate = selectedOption.data('rate');
 
-                        } else {
-                           GlassToast.warning("ભૂલ", res.message);
-                        }
 
-                     }
-                     , error: function(xhr) {
+                    // Show details
+                    $('#productDetails')
+                        .removeClass('d-none')
+                        .hide()
+                        .slideDown(250);
 
-                        let msg = (xhr.responseJSON && xhr.responseJSON.message) ?
-                           xhr.responseJSON.message :
-                           "કંઈક ખોટું થયું, ફરી પ્રયાસ કરો.";
 
-                        GlassToast.warning("ભૂલ", msg);
-                     }
-                  });
+                    // Set Prakar
+                    $('#prakar').val(prakar).trigger('change');
 
-               }
 
-            );
+                    // Set Prakar Text
+                    $('#prakar_text').val(prakarText || '');
 
-         });
 
-      });
+                    // Set Rate
+                    $('#rate').val(rate || '');
 
-   </script>
+                } else {
+
+                    // Hide details
+                    $('#productDetails')
+                        .slideUp(200, function() {
+                            $(this).addClass('d-none');
+                        });
+
+
+                    // Clear values
+                    $('#prakar').val('');
+                    $('#prakar_text').val('');
+                    $('#rate').val('');
+
+                }
+
+            });
+
+        });
+    </script>

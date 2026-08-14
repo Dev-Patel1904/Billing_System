@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Bill;
 use App\Models\BillItem;
+use App\Models\PurchaseItem;
+
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,21 @@ class BillingController extends Controller
 {
     public function create()
     {
-        return view('billing.new-billing');
+        $products = PurchaseItem::query()
+        ->whereNotNull('product_name')
+        ->where('product_name', '!=', '')
+        ->select(
+            'product_name',
+            'prakar',
+            'prakar_text',
+            'rate'
+        )
+        ->orderBy('product_name')
+        ->get()
+        ->unique('product_name')
+        ->values();
+
+    return view('billing.new-billing', compact('products'));
     }
 
     public function checkCustomer(Request $request)
