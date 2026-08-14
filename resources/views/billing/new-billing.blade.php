@@ -693,6 +693,125 @@
 
             updateTotals();
 
+            //add english to gujrati translation wire
+            // ==========================================
+            // PRODUCT SEARCH - ENGLISH TO GUJARATI
+            // Ctrl + Q
+            // ==========================================
+
+            $('#productName').on('select2:open', function() {
+
+                setTimeout(function() {
+
+                    const searchField = document.querySelector(
+                        '.select2-container--open .select2-search__field'
+                    );
+
+                    if (!searchField || searchField.dataset.transliterationBound) {
+                        return;
+                    }
+
+                    searchField.dataset.transliterationBound = 'true';
+
+                    searchField.addEventListener('keydown', function(e) {
+
+                        // Only Ctrl + Q
+                        if (!(e.ctrlKey && e.key.toLowerCase() === 'q')) {
+                            return;
+                        }
+
+                        // Prevent browser Ctrl + Q action
+                        e.preventDefault();
+
+                        const cursorPos = searchField.selectionStart;
+
+                        // Text before cursor
+                        const textBeforeCursor =
+                            searchField.value.slice(0, cursorPos);
+
+                        // Find last English word
+                        const match =
+                            textBeforeCursor.match(/[a-zA-Z]+$/);
+
+                        if (!match) {
+                            return;
+                        }
+
+                        const englishWord = match[0];
+
+                        const wordStart =
+                            cursorPos - englishWord.length;
+
+                        // Text after cursor
+                        const textAfterCursor =
+                            searchField.value.slice(cursorPos);
+
+                        fetch(
+                                'https://inputtools.google.com/request?' +
+                                'text=' + encodeURIComponent(englishWord) +
+                                '&itc=gu-t-i0-und&num=1'
+                            )
+                            .then(function(response) {
+                                return response.json();
+                            })
+                            .then(function(data) {
+
+                                if (
+                                    !data ||
+                                    data[0] !== 'SUCCESS' ||
+                                    !data[1] ||
+                                    !data[1][0] ||
+                                    !data[1][0][1] ||
+                                    !data[1][0][1][0]
+                                ) {
+                                    return;
+                                }
+
+                                const gujaratiWord =
+                                    data[1][0][1][0];
+
+                                // Replace only English word
+                                const newValue =
+                                    searchField.value.slice(0, wordStart) +
+                                    gujaratiWord +
+                                    textAfterCursor;
+
+                                searchField.value = newValue;
+
+                                // Move cursor after Gujarati word
+                                const newCursorPos =
+                                    wordStart + gujaratiWord.length;
+
+                                searchField.setSelectionRange(
+                                    newCursorPos,
+                                    newCursorPos
+                                );
+
+                                // Tell Select2 that search value changed
+                                $(searchField).trigger('input');
+
+                                // Also trigger keyup for Select2 compatibility
+                                $(searchField).trigger('keyup');
+
+                            })
+                            .catch(function(error) {
+
+                                console.error(
+                                    'Product Gujarati Transliteration Error:',
+                                    error
+                                );
+
+                            });
+
+                    });
+
+                }, 0);
+
+            });
+
+
+
+
             // Add Item
             $("#addItem").click(function() {
 

@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class BillItem extends Model
 {
-    protected $fillable = ['bill_id', 'product_name', 'qty', 'rate', 'amount'];
+    protected $fillable = [
+        'bill_id',
+        'product_name',
+        'qty',
+        'prakar',
+        'rate',
+        'amount',
+    ];
 
     public function bill()
     {

@@ -1,3 +1,11 @@
+@php
+    $remainingPreviousDue = (float) $bill->previous_due;
+
+    $currentBillDue = $bill->payment_type === 'due' ? (float) $bill->grand_total : 0;
+
+    $finalOutstanding = $remainingPreviousDue + $currentBillDue;
+@endphp
+
 <!DOCTYPE html>
 <html lang="gu">
 
@@ -1030,15 +1038,37 @@
                                     {{ $item->product_name }}
                                 </td>
 
+                                @php
+                                    $prakarNames = [
+                                        'quantity' => 'જથ્થો',
+                                        'box' => 'પેટી',
+                                        'piece' => 'નંગ',
+                                        'kg' => 'કિલો',
+                                        'gram' => 'ગ્રામ',
+                                        'liter' => 'લિટર',
+                                        'ml' => 'મિલી લિટર',
+                                        'meter' => 'મીટર',
+                                        'packet' => 'પેકેટ',
+                                        'bottle' => 'બોટલ',
+                                        'dozen' => 'ડઝન',
+                                        'pair' => 'જોડી',
+                                        'bundle' => 'બંડલ',
+                                        'bag' => 'થેલી',
+                                        'roll' => 'રોલ',
+                                        'set' => 'સેટ',
+                                    ];
+                                @endphp
+
                                 <td class="center">
-                                    {{ $item->qty }} પેકેટ
+                                    {{ number_format($item->qty, 2) }}
+                                    {{ $prakarNames[strtolower($item->prakar)] ?? $item->prakar }}
                                 </td>
 
-                                <td class="right">
+                                <td class="center">
                                     ₹{{ number_format($item->rate, 2) }}
                                 </td>
 
-                                <td class="right amount">
+                                <td class="center">
                                     ₹{{ number_format($item->amount, 2) }}
                                 </td>
 
@@ -1089,7 +1119,7 @@
 
                 <div class="summary">
 
-                    @if ($bill->previous_due > 0)
+                    @if ($finalOutstanding > 0)
                         <div class="summary-row">
 
                             <span class="summary-label">
@@ -1097,7 +1127,7 @@
                             </span>
 
                             <span class="summary-value">
-                                ₹{{ number_format($bill->previous_due, 2) }}
+                                ₹{{ number_format($finalOutstanding, 2) }}
                             </span>
 
                         </div>

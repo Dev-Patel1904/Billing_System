@@ -90,21 +90,29 @@ class BillingController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'customer_mobile' => ['required', 'digits:10'],
-            'customer_name'   => ['required', 'string', 'max:150'],
-            'previous_due'    => ['nullable', 'numeric', 'min:0'],
-            'due_paid_now'    => ['nullable', 'numeric', 'min:0'],
-            'payment_type'    => ['required', 'in:cash,due'],
-            'product_name'    => ['required', 'array', 'min:1'],
-            'product_name.*'  => ['required', 'string', 'max:255'],
-            'qty'             => ['required', 'array', 'min:1'],
-            'qty.*'           => ['required', 'numeric', 'min:0.01'],
-            'rate'            => ['required', 'array', 'min:1'],
-            'rate.*'          => ['required', 'numeric', 'min:0'],
-        ], [
-            'product_name.required' => 'ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.',
-        ]);
+       $validated = $request->validate([
+    'customer_mobile' => ['required', 'digits:10'],
+    'customer_name'   => ['required', 'string', 'max:150'],
+
+    'previous_due'    => ['nullable', 'numeric', 'min:0'],
+    'due_paid_now'    => ['nullable', 'numeric', 'min:0'],
+
+    'payment_type'    => ['required', 'in:cash,due'],
+
+    'product_name'    => ['required', 'array', 'min:1'],
+    'product_name.*'  => ['required', 'string', 'max:255'],
+
+    'qty'             => ['required', 'array', 'min:1'],
+    'qty.*'           => ['required', 'numeric', 'min:0.01'],
+
+    'prakar'          => ['required', 'array', 'min:1'],
+    'prakar.*'        => ['required', 'string', 'max:50'],
+
+    'rate'            => ['required', 'array', 'min:1'],
+    'rate.*'          => ['required', 'numeric', 'min:0'],
+], [
+    'product_name.required' => 'ઓછામાં ઓછું એક પ્રોડક્ટ ઉમેરો.',
+]);
 
         // previous_due / due_paid_now are now purely INFORMATIONAL for this
         // bill record — the actual customer balance was already updated
@@ -162,20 +170,22 @@ class BillingController extends Controller
             ]);
 
             foreach ($validated['product_name'] as $i => $productName) {
-                BillItem::create([
-                    'bill_id'      => $bill->id,
-                    'product_name' => $productName,
-                    'qty'          => $validated['qty'][$i],
-                    'rate'         => $validated['rate'][$i],
-                    'amount'       => $validated['qty'][$i] * $validated['rate'][$i],
-                ]);
-            }
+
+    BillItem::create([
+        'bill_id'      => $bill->id,
+        'product_name' => $productName,
+        'qty'          => $validated['qty'][$i],
+        'prakar'       => $validated['prakar'][$i],
+        'rate'          => $validated['rate'][$i],
+        'amount'       => $validated['qty'][$i] * $validated['rate'][$i],
+    ]);
+}
 
             return $bill->load('items', 'customer');
         });
        return redirect()->route('billing.pdf', ['bill' => $bill->id]);
 
-        
+
     }
     public function pdf($id)
     {

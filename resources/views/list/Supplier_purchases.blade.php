@@ -68,6 +68,21 @@
                         @endforelse
 
                     </tbody>
+
+                    @if ($purchases->count())
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="3" class="text-end fw-bold">
+                                    કુલ બાકી રકમ
+                                </td>
+                                <td class="fw-bold text-danger">
+                                    ₹{{ number_format($purchases->sum('balance_amount'), 2) }}
+                                </td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
+                    @endif
+
                 </table>
             </div>
         </div>
