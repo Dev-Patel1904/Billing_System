@@ -55,17 +55,17 @@
                                         <table class="table table-borderless mb-0">
 
                                             <tr>
-                                                <td class="fw-semibold">કુલ પ્રોડક્ટ</td>
+                                                <td class="fw-semibold">Total Items</td>
                                                 <td class="text-end">{{ $bill->items->count() }}</td>
                                             </tr>
 
                                             <tr>
-                                                <td class="fw-semibold">કુલ જથ્થો</td>
+                                                <td class="fw-semibold">Total Qty</td>
                                                 <td class="text-end">{{ $bill->total_qty }}</td>
                                             </tr>
 
                                             <tr>
-                                                <td class="fw-semibold">પેટા કુલ</td>
+                                                <td class="fw-semibold">Total Price</td>
                                                 <td class="text-end">₹{{ $bill->total_amount }}</td>
                                             </tr>
 
@@ -77,9 +77,9 @@
                                             @endif
 
                                             <tr class="border-top">
-                                                <td class="fw-bold fs-5">ચૂકવવાની કુલ રકમ</td>
+                                                <td class="fw-bold fs-5">Grand Total</td>
                                                 <td class="text-end fw-bold fs-5 text-primary">
-                                                    ₹{{ $bill->grand_total }}
+                                                    ₹{{ $bill->grand_total + $bill->due_paid_now ??'0' }}
                                                 </td>
                                             </tr>
 

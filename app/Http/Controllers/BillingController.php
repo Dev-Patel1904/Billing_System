@@ -26,7 +26,6 @@ class BillingController extends Controller
         )
         ->orderBy('product_name')
         ->get()
-        ->unique('product_name')
         ->values();
 
     return view('billing.new-billing', compact('products'));
