@@ -1038,26 +1038,7 @@
                                     {{ $item->product_name }}
                                 </td>
 
-                                @php
-                                    $prakarNames = [
-                                        'quantity' => 'જથ્થો',
-                                        'box' => 'પેટી',
-                                        'piece' => 'નંગ',
-                                        'kg' => 'કિલો',
-                                        'gram' => 'ગ્રામ',
-                                        'liter' => 'લિટર',
-                                        'ml' => 'મિલી લિટર',
-                                        'meter' => 'મીટર',
-                                        'packet' => 'પેકેટ',
-                                        'bottle' => 'બોટલ',
-                                        'dozen' => 'ડઝન',
-                                        'pair' => 'જોડી',
-                                        'bundle' => 'બંડલ',
-                                        'bag' => 'થેલી',
-                                        'roll' => 'રોલ',
-                                        'set' => 'સેટ',
-                                    ];
-                                @endphp
+
 
                                 <td class="center">
                                     {{ number_format($item->qty, 2) }}

@@ -170,15 +170,15 @@ class BillingController extends Controller
 
             foreach ($validated['product_name'] as $i => $productName) {
 
-    BillItem::create([
-        'bill_id'      => $bill->id,
-        'product_name' => $productName,
-        'qty'          => $validated['qty'][$i],
-        'prakar'       => $validated['prakar'][$i],
-        'rate'          => $validated['rate'][$i],
-        'amount'       => $validated['qty'][$i] * $validated['rate'][$i],
-    ]);
-}
+                BillItem::create([
+                    'bill_id'      => $bill->id,
+                    'product_name' => $productName,
+                    'qty'          => $validated['qty'][$i],
+                    'prakar'       => $validated['prakar'][$i],
+                    'rate'          => $validated['rate'][$i],
+                    'amount'       => $validated['qty'][$i] * $validated['rate'][$i],
+                ]);
+            }
 
             return $bill->load('items', 'customer');
         });
