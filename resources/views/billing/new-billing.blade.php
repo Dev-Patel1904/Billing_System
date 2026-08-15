@@ -282,7 +282,7 @@
                                        @foreach ($products as $product)
                                        <option value="{{ $product->product_name }}" data-prakar="{{ $product->prakar }}" data-prakar-text="{{ $product->prakar_text }}" data-rate="{{ $product->rate }}">
 
-                                          {{ $product->product_name }}
+                                          {{ $product->product_name }} - ₹{{ $product->rate }}
 
                                        </option>
                                        @endforeach
