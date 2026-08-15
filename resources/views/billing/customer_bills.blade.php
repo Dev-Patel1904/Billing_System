@@ -33,7 +33,7 @@
 
                 <div class="row g-3">
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card border shadow-sm h-100">
                             <div class="card-body">
                                 <small class="text-muted d-block mb-1">
@@ -47,7 +47,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card border shadow-sm h-100">
                             <div class="card-body">
                                 <small class="text-muted d-block mb-1">
@@ -61,7 +61,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card border shadow-sm h-100">
                             <div class="card-body">
                                 <small class="text-muted d-block mb-1">
@@ -71,6 +71,30 @@
                                 <h6 class="fw-bold mb-0">
                                     {{ $customer->mobile }}
                                 </h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- બાકી રકમ અને બટન -->
+                    <div class="col-md-3">
+                        <div class="card border shadow-sm h-100 bg-light">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <small class="text-muted d-block mb-1">
+                                        <i class="bx bx-wallet text-danger"></i>
+                                        કુલ બાકી રકમ
+                                    </small>
+                                    <h6 class="fw-bold mb-0 text-danger" id="displayBalanceDue">
+                                        ₹{{ number_format($customer->balance_due, 2) }}
+                                    </h6>
+                                </div>
+                                @if($customer->balance_due > 0)
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-sm btn-success w-100" id="openDueModalBtn">
+                                            <i class="bx bx-money"></i> બાકી જમા કરો
+                                        </button>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -139,7 +163,6 @@
                             <th>તારીખ</th>
                             <th>કુલ વસ્તુઓ</th>
                             <th>કુલ રકમ</th>
-                            <th>ચુકવણી</th>
 
                             <th class="text-center">ક્રિયા</th>
 
@@ -173,25 +196,13 @@
                                 ₹{{ $bill->grand_total }}
                             </td>
 
-                            <td>
-                                @if($bill->payment_type === 'cash')
-                                    <span class="badge bg-success">
-                                        રોકડ
-                                    </span>
-                                @else
-                                    <span class="badge bg-warning text-dark">
-                                        બાકી
-                                    </span>
-                                @endif
-                            </td>
-
                             <td class="text-center">
 
                                 <a href="{{ route('show_sales', $bill->id) }}" class="btn btn-sm btn-outline-info">
                                     <i class="bx bx-show"></i>
                                 </a>
 
-                                <a href="{{ route('billing.print', $bill->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <a href="{{ route('billing.pdf', $bill->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
                                     <i class="bx bx-printer"></i>
                                 </a>
 
@@ -202,7 +213,7 @@
                         @empty
 
                         <tr>
-                            <td colspan="7" class="text-center">
+                            <td colspan="6" class="text-center">
                                 આ ગ્રાહકનું હજુ સુધી કોઈ બિલ નથી.
                             </td>
                         </tr>
@@ -282,6 +293,115 @@
 
         </div>
     </div>
-    <!-- / Content -->
+</div>
+<!-- / Content -->
 
-    @include('layout.footer')
+{{-- MODEL FOR BAKI CHUKVANI RAKAM --}}
+<div class="modal fade" id="duePaymentModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">બાકી રકમ ચૂકવણી</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">આગળની બાકી રકમ</label>
+                    <input type="number" id="modal_previous_due" class="form-control" value="{{ $customer->balance_due }}" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">બાકી ચૂકવણી રકમ</label>
+                    <input type="number" id="paid_due_amount" class="form-control" placeholder="રકમ દાખલ કરો">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">બંધ</button>
+                <button class="btn btn-success" id="saveDuePayment">₹ જમા કરો</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@include('layout.footer')
+
+<!-- jQuery & AJAX Script for Modal functionality -->
+<script>
+    $(document).ready(function() {
+        let currentBalanceDue = {{ $customer->balance_due }};
+        let customerMobile = "{{ $customer->mobile }}";
+
+        // Open Modal
+        $("#openDueModalBtn").on("click", function() {
+            $("#modal_previous_due").val(currentBalanceDue);
+            $("#paid_due_amount").val('');
+            let modal = new bootstrap.Modal(document.getElementById('duePaymentModal'));
+            modal.show();
+        });
+
+        // Save Due Payment via AJAX
+        $("#saveDuePayment").click(function() {
+            let paidAmount = parseFloat($("#paid_due_amount").val()) || 0;
+
+            if (paidAmount <= 0) {
+                GlassToast.warning("રકમ", "ચૂકવણી રકમ દાખલ કરો.");
+                return;
+            }
+
+            if (paidAmount > currentBalanceDue) {
+                GlassToast.warning("રકમ", "ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.");
+                return;
+            }
+
+            GlassToast.confirm(
+                "ચૂકવણીની ખાતરી", "શું તમે બાકી રકમની ચૂકવણી સેવ કરવા માંગો છો?",
+                function() {
+                    $.ajax({
+                        url: "{{ route('billing.pay-due') }}",
+                        method: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            customer_mobile: customerMobile,
+                            paid_amount: paidAmount
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                currentBalanceDue = res.remaining_due;
+                                $("#modal_previous_due").val(currentBalanceDue);
+                                $("#displayBalanceDue").text("₹" + currentBalanceDue.toFixed(2));
+
+                                if (currentBalanceDue <= 0) {
+                                    $("#openDueModalBtn").closest('.col-md-3').fadeOut();
+                                }
+
+                                GlassToast.success("સફળ", res.message);
+
+                                bootstrap.Modal.getInstance(
+                                    document.getElementById('duePaymentModal')
+                                ).hide();
+
+                                // Optional: reload to sync everything cleanly
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+
+                            } else {
+                                GlassToast.warning("ભૂલ", res.message);
+                            }
+                        },
+                        error: function(xhr) {
+                            let msg = (xhr.responseJSON && xhr.responseJSON.message) ?
+                                xhr.responseJSON.message :
+                                "કંઈક ખોટું થયું, ફરી પ્રયાસ કરો.";
+                            GlassToast.warning("ભૂલ", msg);
+                        }
+                    });
+                }
+            );
+        });
+    });
+</script>

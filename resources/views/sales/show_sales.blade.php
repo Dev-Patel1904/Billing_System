@@ -1,6 +1,5 @@
 @include('layout.sidebar')
 
-
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
@@ -23,7 +22,7 @@
                                         <tr>
                                             <th>ક્રમાંક</th>
                                             <th>પ્રોડક્ટનું નામ</th>
-                                            <th>જથ્થો</th>
+                                            <th>જથ્થો (Qty)</th>
                                             <th>ભાવ</th>
                                             <th>કુલ રકમ</th>
                                         </tr>
@@ -36,7 +35,7 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $item->product_name }}</td>
-                                            <td>{{ $item->qty }}</td>
+                                            <td>{{ $item->qty }} {{ $item->prakar }}</td>
                                             <td>₹{{ $item->rate }}</td>
                                             <td>₹{{ $item->amount }}</td>
                                         </tr>
