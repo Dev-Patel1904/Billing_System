@@ -965,8 +965,8 @@
             </td>
             <td>
                 <input type="hidden" class="qty" name="qty[]" value="${qty}">
-                <input type="hidden" class="prakar" name="prakar[]" value="${prakarValue}">
-                ${qty} ${prakarText}
+<input type="hidden" class="prakar" name="prakar[]" value="${prakarText}">
+${qty} ${prakarText}
             </td>
             <td>
                 <input type="hidden" class="rate" name="rate[]" value="${rate}">
