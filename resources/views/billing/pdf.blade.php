@@ -1119,11 +1119,26 @@
 
                 <div class="summary">
 
+
+                    @if ($bill->due_paid_now > 0)
+                    <div class="summary-row">
+
+                        <span class="summary-label">
+                            બાકીમાંથી ચૂકવેલ
+                        </span>
+
+                        <span class="summary-value">
+                            ₹{{ number_format($bill->due_paid_now, 2) }}
+                        </span>
+
+                    </div>
+                @endif
+
                     @if ($finalOutstanding > 0)
                         <div class="summary-row">
 
                             <span class="summary-label">
-                                અગાઉની બાકી રકમ
+                                કુલ બાકી રકમ
                             </span>
 
                             <span class="summary-value">
@@ -1134,22 +1149,10 @@
                     @endif
 
 
-                    @if ($bill->due_paid_now > 0)
-                        <div class="summary-row">
-
-                            <span class="summary-label">
-                                બાકીમાંથી ચૂકવેલ
-                            </span>
-
-                            <span class="summary-value">
-                                ₹{{ number_format($bill->due_paid_now, 2) }}
-                            </span>
-
-                        </div>
-                    @endif
 
 
-                    <div class="summary-row grand-total">
+
+                    {{-- <div class="summary-row grand-total">
 
                         <span class="summary-label">
                             કુલ બાકી રકમ
@@ -1159,7 +1162,7 @@
                             ₹{{ number_format($bill->grand_total, 2) }}
                         </span>
 
-                    </div>
+                    </div> --}}
 
                 </div>
 
