@@ -9,12 +9,44 @@ use Illuminate\Validation\Rule;
 class Customer_listController extends Controller
 {
     // Show customer_list page
+    // public function customer_list(Request $request)
+    // {
+    //     $search = $request->query('search');
+    //     $sort = $request->query('sort', 'desc');
+
+    //     $customers = Customer::withCount('bills')
+    //         ->withSum('bills', 'total_amount')
+    //         ->with(['bills' => function ($query) {
+    //             $query->latest()->limit(1);
+    //         }])
+    //         ->when($search, function ($query) use ($search) {
+    //             $query->where(function ($q) use ($search) {
+    //                 $q->where('name', 'like', "%{$search}%")
+    //                   ->orWhere('mobile', 'like', "%{$search}%");
+    //             });
+    //         })
+    //         ->when($sort === 'due', function ($query) {
+    //             $query->where('balance_due', '!=', 0);
+    //         })
+    //         ->when($sort === 'asc', function ($query) {
+    //             $query->orderBy('created_at', 'asc');
+    //         })
+    //         ->when($sort !== 'asc', function ($query) {
+    //             $query->orderBy('created_at', 'desc');
+    //         })
+    //         ->paginate(10)
+    //         ->withQueryString();
+
+    //     return view('list.customer_list', compact('customers', 'search', 'sort'));
+    // }
+
+    // Show customer_list page
     public function customer_list(Request $request)
     {
         $search = $request->query('search');
         $sort = $request->query('sort', 'desc');
 
-        $customers = Customer::withCount('bills')
+        $customersQuery = Customer::withCount('bills')
             ->withSum('bills', 'total_amount')
             ->with(['bills' => function ($query) {
                 $query->latest()->limit(1);
@@ -22,7 +54,7 @@ class Customer_listController extends Controller
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('mobile', 'like', "%{$search}%");
+                    ->orWhere('mobile', 'like', "%{$search}%");
                 });
             })
             ->when($sort === 'due', function ($query) {
@@ -33,11 +65,22 @@ class Customer_listController extends Controller
             })
             ->when($sort !== 'asc', function ($query) {
                 $query->orderBy('created_at', 'desc');
-            })
+            });
+
+        // કુલ બાકી રકમ
+        $totalDue = (clone $customersQuery)->sum('balance_due');
+
+        // Customer pagination
+        $customers = $customersQuery
             ->paginate(10)
             ->withQueryString();
 
-        return view('list.customer_list', compact('customers', 'search', 'sort'));
+        return view('list.customer_list', compact(
+            'customers',
+            'search',
+            'sort',
+            'totalDue'
+        ));
     }
 
 

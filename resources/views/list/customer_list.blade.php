@@ -127,6 +127,18 @@
                      </td>
                   </tr>
                   @endforelse
+
+                  @if($customers->count() > 0)
+                  <tr class="table-light fw-bold">
+                     <td colspan="5" class="text-end">
+                        કુલ બાકી રકમ :
+                     </td>
+                     <td class="text-danger">
+                        ₹{{ number_format($customers->sum('balance_due'), 2) }}
+                     </td>
+                     <td colspan="2"></td>
+                  </tr>
+                  @endif
                </tbody>
             </table>
          </div>
