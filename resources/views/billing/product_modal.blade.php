@@ -22,8 +22,15 @@
                         પ્રોડક્ટનું નામ
                     </label>
 
-                    <input type="text" class="form-control" id="product_name" name="product_name"
-                        placeholder="પ્રોડક્ટનું નામ દાખલ કરો">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="product_name" name="product_name"
+                            placeholder="પ્રોડક્ટનું નામ દાખલ કરો">
+                        
+                        <!-- Loader for English to Gujarati Conversion -->
+                        <span class="input-group-text d-none" id="productNameLoader">
+                            <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Type -->
@@ -70,7 +77,7 @@
                     બંધ કરો
                 </button>
 
-                <button type="button" class="btn btn-primary">
+                <button type="button" class="btn btn-primary" id="saveNewProductBtn">
                     પ્રોડક્ટ ઉમેરો
                 </button>
             </div>

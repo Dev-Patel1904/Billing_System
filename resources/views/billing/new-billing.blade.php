@@ -1305,3 +1305,150 @@
       });
 
    </script>
+   <script>
+      $(document).ready(function() {
+    $("#saveNewProductBtn").click(function() {
+        let productName = $("#product_name").val().trim();
+        let productType = $("#product_type").val();
+        let quantity = parseFloat($("#quantity").val()) || 0;
+        let amount = parseFloat($("#amount").val()) || 0;
+
+        if (productName === "") {
+            GlassToast.warning("પ્રોડક્ટ", "કૃપા કરીને પ્રોડક્ટનું નામ દાખલ કરો.");
+            $("#product_name").focus();
+            return;
+        }
+        if (productType === "") {
+            GlassToast.warning("પ્રકાર", "કૃપા કરીને પ્રકાર પસંદ કરો.");
+            $("#product_type").focus();
+            return;
+        }
+        if (quantity <= 0) {
+            GlassToast.warning("જથ્થો", "માન્ય જથ્થો દાખલ કરો.");
+            $("#quantity").focus();
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('billing.store-extra-product') }}",
+            method: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                product_name: productName,
+                product_type: productType,
+                quantity: quantity,
+                amount: amount
+            },
+            success: function(res) {
+                if (res.success) {
+                    GlassToast.success("સફળ", res.message);
+
+                    // જો ડ્રોપડાઉનમાં આ પ્રોડક્ટ ન હોય તો જ એડ કરો
+                    if ($('#productName option[value="' + res.product_name + '"]').length == 0) {
+                        let newOption = new Option(res.product_name + ' - ₹' + res.rate, res.product_name, false, false);
+                        $(newOption).attr('data-prakar', res.prakar);
+                        $(newOption).attr('data-prakar-text', res.prakar_text);
+                        $(newOption).attr('data-rate', res.rate);
+                        $('#productName').append(newOption).trigger('change');
+                    }
+
+                    // મોડલ ઓટોમેટિક બંધ કરો (Close)
+                    $('#addProductModal').modal('hide');
+
+                    // મોડલના ઇનપુટ્સ ખાલી કરો
+                    $("#product_name").val('');
+                    $("#product_type").val('');
+                    $("#quantity").val('');
+                    $("#amount").val('');
+                }
+            },
+            error: function(xhr) {
+                let msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "કંઈક ખોટું થયું છે, ફરી પ્રયાસ કરો.";
+                GlassToast.warning("ભૂલ", msg);
+            }
+        });
+    });
+});
+   </script>
+   <script>
+    $(document).ready(function() {
+        // ==========================================
+        // PRODUCT NAME -> ENGLISH TO GUJARATI (ON ENTER)
+        // ==========================================
+        $("#product_name").on("keydown", function(e) {
+            // Only Enter key
+            if (e.key !== "Enter") {
+                return;
+            }
+
+            e.preventDefault();
+
+            const input = this;
+            const cursorPos = input.selectionStart;
+
+            // Text before cursor
+            const textBeforeCursor = input.value.slice(0, cursorPos);
+
+            // Find last English word
+            const match = textBeforeCursor.match(/[a-zA-Z]+$/);
+
+            if (!match) {
+                return;
+            }
+
+            const englishWord = match[0];
+            const wordStart = cursorPos - englishWord.length;
+
+            // Text after cursor
+            const textAfterCursor = input.value.slice(cursorPos);
+
+            // Show loader
+            $("#productNameLoader").removeClass("d-none");
+
+            fetch(
+                "https://inputtools.google.com/request?" +
+                "text=" + encodeURIComponent(englishWord) +
+                "&itc=gu-t-i0-und&num=1"
+            )
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (
+                    !data ||
+                    data[0] !== "SUCCESS" ||
+                    !data[1] ||
+                    !data[1][0] ||
+                    !data[1][0][1] ||
+                    !data[1][0][1][0]
+                ) {
+                    return;
+                }
+
+                const gujaratiWord = data[1][0][1][0];
+
+                // Replace only the last English word
+                const newValue =
+                    input.value.slice(0, wordStart) +
+                    gujaratiWord +
+                    textAfterCursor;
+
+                input.value = newValue;
+
+                // Move cursor after Gujarati word
+                const newCursorPos = wordStart + gujaratiWord.length;
+                input.setSelectionRange(newCursorPos, newCursorPos);
+
+                // Trigger input event
+                $(input).trigger("input");
+            })
+            .catch(function(error) {
+                console.error("Product Name Gujarati Transliteration Error:", error);
+            })
+            .finally(function() {
+                // Hide loader
+                $("#productNameLoader").addClass("d-none");
+            });
+        });
+    });
+</script>

@@ -67,6 +67,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::post('/billing/pay-due', [BillingController::class, 'payDue'])->name('billing.pay-due');
     Route::post('/billing/check-customer', [BillingController::class, 'checkCustomer'])->name('billing.check-customer');
     Route::post('/billing/store', [BillingController::class, 'store'])->name('billing.store');
+    Route::post('/billing/store-extra-product', [BillingController::class, 'storeExtraProduct'])->name('billing.store-extra-product');
 
     //Sales
     Route::get('/sales', [SaleController::class, 'sales'])->name('sales');

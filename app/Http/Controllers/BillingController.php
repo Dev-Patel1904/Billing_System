@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Bill;
 use App\Models\BillItem;
 use App\Models\PurchaseItem;
-
+use App\Models\ExtraProduct;
 use App\Models\Customer;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mpdf\Mpdf;
@@ -32,6 +33,38 @@ class BillingController extends Controller
         $type = Type::orderBy('id', 'DESC')->get();
 
     return view('billing.new-billing', compact('products', 'type'));
+    }
+
+// Add a new product to the extra_product table (if it doesn't already exist)
+    public function storeExtraProduct(Request $request)
+    {
+        $validated = $request->validate([
+            'product_name' => ['required', 'string', 'max:255'],
+            'product_type' => ['required', 'exists:types,id'],
+            'quantity'     => ['required', 'numeric', 'min:0.01'],
+            'amount'       => ['required', 'numeric', 'min:0'],
+        ]);
+
+        $type = Type::find($validated['product_type']);
+
+        // જો પ્રોડક્ટ પહેલેથી હોય તો અપડેટ કરો અથવા નવી બનાવો
+        $extraProduct = ExtraProduct::updateOrCreate(
+            ['product_name' => $validated['product_name']],
+            [
+                'prakar'      => $type->id,
+                'prakar_text' => $type->name,
+                'rate'        => $validated['amount'],
+            ]
+        );
+
+        return response()->json([
+            'success'      => true,
+            'message'      => 'પ્રોડક્ટ સફળતાપૂર્વક ઉમેરાઈ ગઈ.',
+            'product_name' => $extraProduct->product_name,
+            'prakar'       => $extraProduct->prakar,
+            'prakar_text'  => $extraProduct->prakar_text,
+            'rate'         => (float) $extraProduct->rate,
+        ]);
     }
 
     public function checkCustomer(Request $request)
