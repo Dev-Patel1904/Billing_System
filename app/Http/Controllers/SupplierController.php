@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Suppliers;
 use Illuminate\Http\Request;
+use App\Models\Type;
 
 class SupplierController extends Controller
 {
@@ -12,7 +13,9 @@ class SupplierController extends Controller
     {
         $suppliers = Suppliers::orderBy('id', 'DESC')->get();
 
-        return view('product.add_new_product', compact('suppliers'));
+        $type = Type::orderBy('id', 'DESC')->get();
+
+        return view('product.add_new_product', compact('suppliers','type'));
     }
 
 

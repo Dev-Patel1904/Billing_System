@@ -1042,7 +1042,7 @@
 
                                 <td class="center">
                                     {{ number_format($item->qty, 2) }}
-                                    {{ $prakarNames[strtolower($item->prakar)] ?? $item->prakar }}
+                                    {{ $item->type->name ?? '' }}
                                 </td>
 
                                 <td class="center">

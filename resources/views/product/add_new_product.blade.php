@@ -1,5 +1,28 @@
 @include('layout.sidebar')
 <style>
+    .payment-btn {
+        min-width: 145px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+
+    .payment-btn i {
+        font-size: 19px;
+    }
+
+    @media (max-width: 576px) {
+        .payment-btn {
+            flex: 1 1 100%;
+            width: 100%;
+        }
+    }
+</style>
+<style>
     /* ========================================
    Premium Supplier Field
 ======================================== */
@@ -316,23 +339,10 @@
 
                                         <select name="prakar" id="prakar" class="form-select">
                                             <option value="">પ્રકાર પસંદ કરો</option>
+                                            @foreach ($type as $item)
+                                                <option value="{{ $item -> id }}">{{ $item -> name }}</option>
+                                            @endforeach
 
-                                            <option value="quantity">જથ્થો</option>
-                                            <option value="box">પેટી</option>
-                                            <option value="piece">નંગ</option>
-                                            <option value="kg">કિલો</option>
-                                            <option value="gram">ગ્રામ</option>
-                                            <option value="liter">લિટર</option>
-                                            <option value="ml">મિલી લિટર</option>
-                                            <option value="meter">મીટર</option>
-                                            <option value="packet">પેકેટ</option>
-                                            <option value="bottle">બોટલ</option>
-                                            <option value="dozen">ડઝન</option>
-                                            <option value="pair">જોડી</option>
-                                            <option value="bundle">બંડલ</option>
-                                            <option value="bag">થેલી</option>
-                                            <option value="roll">રોલ</option>
-                                            <option value="set">સેટ</option>
                                         </select>
                                     </div>
                                 </div>
@@ -606,8 +616,24 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mt-5 mb-5">
+
                                     <button type="button" id="finalSaveBtn" class="btn btn-outline-danger">
                                         બાકી
+                                    </button>
+
+                                    <!-- Check Payment Button -->
+                                    <button type="button" id="checkPaymentBtn"
+                                        class="btn btn-outline-primary payment-btn" data-bs-toggle="modal"
+                                        data-bs-target="#checkPaymentModal">
+
+                                        <i class="bx bx-receipt"></i>
+                                        <span>ચેક થી ચુકવણી</span>
+                                    </button>
+
+                                    <!-- Google Pay -->
+                                    <button type="button" class="btn btn-outline-success payment-btn">
+                                        <i class="bx bxl-google"></i>
+                                        <span>ગૂગલ પે</span>
                                     </button>
                                 </div>
                             </div>
@@ -679,6 +705,33 @@
 
         // Initial state
         updatePaymentButton();
+        // ========================================
+        // BALANCE
+        // ========================================
+
+        const balance =
+            Math.max(totalAmount - paid, 0);
+
+        document.getElementById("balance_amount").value = balance;
+
+
+        // ========================================
+        // CHECK PAYMENT BUTTON
+        // ========================================
+
+        const checkPaymentBtn =
+            document.getElementById("checkPaymentBtn");
+
+        if (checkPaymentBtn) {
+
+            if (balance <= 0) {
+                checkPaymentBtn.disabled = true;
+                checkPaymentBtn.classList.add("disabled");
+            } else {
+                checkPaymentBtn.disabled = false;
+                checkPaymentBtn.classList.remove("disabled");
+            }
+        }
     </script>
 
 
@@ -686,9 +739,37 @@
 
 
 
-    <!-- Place this tag before closing body tag for github widget button. -->
     {{-- Place this tag before closing body tag for github widget button. --}}
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script>
+        function updateCheckPaymentButton() {
+
+            const balanceInput = document.getElementById('balance_amount');
+            const checkPaymentBtn = document.getElementById('checkPaymentBtn');
+
+            if (!balanceInput || !checkPaymentBtn) {
+                return;
+            }
+
+            const balance = parseFloat(balanceInput.value) || 0;
+
+            if (balance <= 0) {
+
+                // Disable button
+                checkPaymentBtn.disabled = true;
+
+                // Bootstrap disabled appearance
+                checkPaymentBtn.classList.add('disabled');
+
+            } else {
+
+                // Enable button
+                checkPaymentBtn.disabled = false;
+
+                checkPaymentBtn.classList.remove('disabled');
+            }
+        }
+    </script>
     <script>
         const tableBody = document.getElementById("billTableBody");
 
@@ -846,7 +927,7 @@
             data-prakar-text="${escapeHtml(prakarText)}"
             data-rate="${rate}"
             data-total="${total}"
-        >
+            >
 
             <td>
                 ${rowNo}
@@ -885,10 +966,10 @@
 
                 </a>
 
-            </td>
+                </td>
 
-        </tr>
-    `;
+                </tr>
+                `;
 
 
                 tableBody.insertAdjacentHTML(
@@ -1004,6 +1085,8 @@
 
             document.getElementById("balance_amount").value =
                 balance;
+            // Update check payment button
+            updateCheckPaymentButton();
         }
 
 
@@ -1656,6 +1739,328 @@
             if (this.showPicker) {
                 this.showPicker();
             }
+        });
+    </script>
+    <!-- Check Payment Modal -->
+    <div class="modal fade" id="checkPaymentModal" tabindex="-1" aria-labelledby="checkPaymentModalLabel"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkPaymentModalLabel">
+                        <i class="bx bx-receipt me-2"></i>
+                        ચેક થી ચુકવણી
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+
+                    <!-- Amount -->
+                    <div class="mb-3">
+                        <label for="check_amount" class="form-label">
+                            ચુકવણીની રકમ
+                        </label>
+
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+
+                            <input type="number" id="check_amount" class="form-control"
+                                placeholder="ચુકવણીની રકમ દાખલ કરો" min="0" step="0.01">
+                        </div>
+
+                        <small class="text-danger mt-1 d-block">
+                            બાકી રકમ: ₹<span id="checkBalanceDisplay">0</span>
+                        </small>
+                    </div>
+
+                    <!-- Check Number -->
+                    <div class="mb-3">
+                        <label for="check_number" class="form-label">
+                            ચેક નંબર
+                        </label>
+
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bx bx-hash"></i>
+                            </span>
+
+                            <input type="text" id="check_number" class="form-control"
+                                placeholder="ચેક નંબર દાખલ કરો">
+                        </div>
+                    </div>
+
+                    <!-- Check Date -->
+                    <div class="mb-3">
+                        <label for="check_date" class="form-label">
+                            ચેક તારીખ
+                        </label>
+
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bx bx-calendar"></i>
+                            </span>
+
+                            <input type="date" id="check_date" class="form-control">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bx bx-x me-1"></i>
+                        રદ કરો
+                    </button>
+
+                    <button type="button" class="btn btn-primary" id="saveCheckPayment">
+                        <i class="bx bx-check me-1"></i>
+                        ચુકવણી ઉમેરો
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <style>
+        .payment-btn {
+            min-width: 145px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        .payment-btn i {
+            font-size: 19px;
+        }
+
+        #checkPaymentModal .modal-content {
+            border-radius: 12px;
+            border: none;
+        }
+
+        #checkPaymentModal .modal-header {
+            padding: 18px 20px;
+        }
+
+        #checkPaymentModal .modal-body {
+            padding: 20px;
+        }
+
+        #checkPaymentModal .form-label {
+            font-weight: 500;
+        }
+
+        #checkPaymentModal .input-group-text {
+            min-width: 42px;
+            justify-content: center;
+        }
+
+        @media (max-width: 576px) {
+            #checkPaymentModal .modal-dialog {
+                margin: 10px;
+            }
+
+            #checkPaymentModal .modal-footer {
+                flex-direction: column;
+            }
+
+            #checkPaymentModal .modal-footer button {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const balanceInput = document.getElementById('balance_amount');
+            const checkPaymentBtn = document.getElementById('checkPaymentBtn');
+
+            const checkAmount = document.getElementById('check_amount');
+            const checkBalanceDisplay = document.getElementById('checkBalanceDisplay');
+
+            const saveCheckPayment = document.getElementById('saveCheckPayment');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Get Current Balance
+            |--------------------------------------------------------------------------
+            */
+            function getBalance() {
+                let balance = balanceInput.value || '0';
+
+                // Remove ₹, commas, spaces etc.
+                balance = balance
+                    .toString()
+                    .replace(/₹/g, '')
+                    .replace(/,/g, '')
+                    .trim();
+
+                return parseFloat(balance) || 0;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Enable / Disable Check Payment Button
+            |--------------------------------------------------------------------------
+            */
+            function updateCheckPaymentButton() {
+
+                const balance = getBalance();
+
+                if (balance <= 0) {
+
+                    // Disable button
+                    checkPaymentBtn.disabled = true;
+
+                    // Optional Bootstrap styling
+                    checkPaymentBtn.classList.add('disabled');
+
+                } else {
+
+                    // Enable button
+                    checkPaymentBtn.disabled = false;
+
+                    checkPaymentBtn.classList.remove('disabled');
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | When Modal Opens
+            |--------------------------------------------------------------------------
+            */
+            const checkPaymentModal = document.getElementById('checkPaymentModal');
+
+            checkPaymentModal.addEventListener('show.bs.modal', function() {
+
+                const balance = getBalance();
+
+                if (balance <= 0) {
+                    return;
+                }
+
+                checkBalanceDisplay.textContent = balance.toFixed(2);
+
+                checkAmount.max = balance;
+
+                checkAmount.value = balance.toFixed(2);
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Save Check Payment
+            |--------------------------------------------------------------------------
+            */
+            saveCheckPayment.addEventListener('click', function() {
+
+                const amount = parseFloat(checkAmount.value) || 0;
+                const balance = getBalance();
+
+                const checkNumber = document
+                    .getElementById('check_number')
+                    .value
+                    .trim();
+
+                const checkDate = document
+                    .getElementById('check_date')
+                    .value;
+
+
+                // Check amount
+                if (amount <= 0) {
+                    alert('કૃપા કરીને ચુકવણીની રકમ દાખલ કરો.');
+                    return;
+                }
+
+
+                // Payment cannot be greater than balance
+                if (amount > balance) {
+                    alert(
+                        'ચુકવણીની રકમ બાકી રકમ કરતાં વધારે હોઈ શકે નહીં.' +
+                        '\n\nબાકી રકમ: ₹' + balance.toFixed(2)
+                    );
+
+                    checkAmount.focus();
+                    return;
+                }
+
+
+                // Check number
+                if (!checkNumber) {
+                    alert('કૃપા કરીને ચેક નંબર દાખલ કરો.');
+                    return;
+                }
+
+
+                // Check date
+                if (!checkDate) {
+                    alert('કૃપા કરીને ચેક તારીખ પસંદ કરો.');
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Payment Data
+                |--------------------------------------------------------------------------
+                */
+                console.log('Check Payment:', {
+                    amount: amount,
+                    check_number: checkNumber,
+                    check_date: checkDate,
+                    previous_balance: balance,
+                    remaining_balance: balance - amount
+                });
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Close Modal
+                |--------------------------------------------------------------------------
+                */
+                const modal = bootstrap.Modal.getInstance(checkPaymentModal);
+
+                if (modal) {
+                    modal.hide();
+                }
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Initial Check
+            |--------------------------------------------------------------------------
+            */
+            updateCheckPaymentButton();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Watch Balance Changes
+            |--------------------------------------------------------------------------
+            */
+            balanceInput.addEventListener('input', function() {
+                updateCheckPaymentButton();
+            });
+
         });
     </script>
     @include('layout.footer')
