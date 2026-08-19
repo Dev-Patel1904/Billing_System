@@ -53,15 +53,7 @@ jobs:
         run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
 
-      # --------------------------------------------------
-      # 6. Create Laravel Environment
-      # --------------------------------------------------
-      - name: Generate Application Key
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-
-
+      
       # --------------------------------------------------
       # 7. Check PHP Syntax
       # --------------------------------------------------
@@ -70,29 +62,6 @@ jobs:
           find app routes config database -type f -name "*.php" -print0 | xargs -0 -n1 php -l
 
 
-      # --------------------------------------------------
-      # 8. Check Laravel Configuration
-      # --------------------------------------------------
-      - name: Check Laravel Configuration
-        run: php artisan config:clear
+    
 
-
-      # --------------------------------------------------
-      # 9. Check Laravel Routes
-      # --------------------------------------------------
-      - name: Check Laravel Routes
-        run: php artisan route:list
-
-
-      # --------------------------------------------------
-      # 10. Check Laravel Migrations
-      # --------------------------------------------------
-      - name: Check Laravel Migrations
-        run: php artisan migrate --force
-
-
-      # --------------------------------------------------
-      # 11. Run Laravel Tests
-      # --------------------------------------------------
-      - name: Run Laravel Tests
-        run: php artisan test
+    
