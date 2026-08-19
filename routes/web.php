@@ -51,6 +51,9 @@ Route::middleware('admin.auth')->group(function () {
     Route::put('/purchases/{purchase}/update-payment', [PurchaseController::class, 'updatePayment'])->name('purchases.update_payment');
     Route::get('/purchase/{purchase}/pdf', [PurchaseController::class, 'pdf'])->name('purchase.pdf');
 
+    //payment
+    Route::post('/purchases/{purchase}/pay', [PurchaseController::class, 'addPayment'])->name('purchases.add_payment');
+
     //supplier-list
     Route::get('/supplier_list', [SpllierlistController::class, 'supplier_list'])->name('supplier_list');
     Route::put('/suppliers/{supplier}', [SpllierlistController::class, 'update'])->name('suppliers.update');
