@@ -1,4 +1,5 @@
 @include('layout.sidebar')
+@include('billing.product_modal')
 <style>
    /* ================================
    Premium Product Select
@@ -226,7 +227,18 @@
             <div class="card">
                <div class="card-header d-flex justify-content-between align-items-center">
                   <h5 class="mb-0">બિલ બનાવો</h5>
-                  <small class="text-body float-end">ગ્રાહકની માહિતી</small>
+                  <!-- Add Product Button -->
+                  <small class="text-body float-end">
+                     <button
+                        type="button"
+                        class="btn btn-primary btn-sm px-3"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addProductModal"
+                     >
+                        <i class="bi bi-plus-lg me-1"></i>
+                        પ્રોડક્ટ ઉમેરો
+                     </button>
+                  </small>
                </div>
                <div class="card-body">
                   <form>
