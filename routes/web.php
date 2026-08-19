@@ -53,7 +53,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::put('/suppliers/{supplier}', [SpllierlistController::class, 'update'])->name('suppliers.update');
     Route::delete('/suppliers/{supplier}', [SpllierlistController::class, 'destroy'])->name('suppliers.destroy');
     Route::get('/supplier/{supplier}/purchases', [SpllierlistController::class, 'supplierPurchases'])->name('supplier.purchases');
-
+    Route::post('/supplier/pay-due', [SpllierlistController::class, 'payDue'])->name('supplier.pay-due');
 
     //setting
     Route::get('/settings', [AdminLogin::class, 'settings'])->name('settings');

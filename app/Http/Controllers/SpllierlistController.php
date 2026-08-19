@@ -106,4 +106,62 @@ public function update(Request $request, Suppliers $supplier)
 
         return view('list.supplier_purchases', compact('supplier', 'purchases'));
     }
+
+    // સપ્લાયરની બાકી રકમ ચૂકવણી માટે (Pay Due)
+    public function payDue(Request $request)
+    {
+        $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'paid_amount' => 'required|numeric|min:0.01',
+        ]);
+
+        $supplierId = $request->input('supplier_id');
+        $paidAmount = floatval($request->input('paid_amount'));
+
+        $supplier = Suppliers::findOrFail($supplierId);
+
+        // સપ્લાયરની બધી જ ખરીદીઓ મેળવો જેમાં બેલેન્સ બાકી હોય (જૂની ખરીદીઓ પહેલાં)
+        $purchases = $supplier->purchases()
+            ->where('balance_amount', '>', 0)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $totalBalanceDue = $purchases->sum('balance_amount');
+
+        if ($paidAmount > $totalBalanceDue) {
+            return response()->json([
+                'success' => false,
+                'message' => 'ચૂકવણી રકમ કુલ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.',
+            ], 422);
+        }
+
+        $remainingPaid = $paidAmount;
+
+        foreach ($purchases as $purchase) {
+            if ($remainingPaid <= 0) {
+                break;
+            }
+
+            if ($remainingPaid >= $purchase->balance_amount) {
+                $remainingPaid -= $purchase->balance_amount;
+                $purchase->paid_amount += $purchase->balance_amount;
+                $purchase->balance_amount = 0;
+                $purchase->save();
+            } else {
+                $purchase->balance_amount -= $remainingPaid;
+                $purchase->paid_amount += $remainingPaid;
+                $purchase->save();
+                $remainingPaid = 0;
+            }
+        }
+
+        // અપડેટ થયેલું કુલ બાકી બેલેન્સ
+        $newRemainingDue = $supplier->purchases()->sum('balance_amount');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'બાકી રકમ સફળતાપૂર્વક જમા થઈ ગઈ છે.',
+            'remaining_due' => $newRemainingDue,
+        ]);
+    }
 }
