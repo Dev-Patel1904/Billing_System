@@ -16,7 +16,6 @@ class ForgotPassController extends Controller
         return view('product.Forgot_password');
     }
 
-    // Step 1: Validate mobile from admins table + generate OTP
     public function sendOtp(Request $request)
     {
         $validated = $request->validate([

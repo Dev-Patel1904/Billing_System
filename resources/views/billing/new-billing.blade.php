@@ -309,24 +309,13 @@
 
                                     <select name="prakar" id="prakar" class="form-select">
 
-                                       <option value="">પ્રકાર પસંદ કરો</option>
+                                        <option value="">પ્રકાર પસંદ કરો</option>
 
-                                       <option value="quantity">જથ્થો</option>
-                                       <option value="box">પેટી</option>
-                                       <option value="piece">નંગ</option>
-                                       <option value="kg">કિલો</option>
-                                       <option value="gram">ગ્રામ</option>
-                                       <option value="liter">લિટર</option>
-                                       <option value="ml">મિલી લિટર</option>
-                                       <option value="meter">મીટર</option>
-                                       <option value="packet">પેકેટ</option>
-                                       <option value="bottle">બોટલ</option>
-                                       <option value="dozen">ડઝન</option>
-                                       <option value="pair">જોડી</option>
-                                       <option value="bundle">બંડલ</option>
-                                       <option value="bag">થેલી</option>
-                                       <option value="roll">રોલ</option>
-                                       <option value="set">સેટ</option>
+                                        @foreach ($type as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
 
                                     </select>
 
@@ -948,7 +937,11 @@
                return;
             }
             if (prakarValue == "") {
-               GlassToast.warning("પ્રકાર", "કૃપા કરીને પ્રકાર પસંદ કરો.");
+               GlassToast.warning(
+                  "પ્રકાર"
+                  , "કૃપા કરીને પ્રકાર પસંદ કરો."
+               );
+
                $("#prakar").focus();
                return;
             }
@@ -957,31 +950,41 @@
             let rowNo = $("#productTable tbody tr").length + 1;
 
             let row = `
-        <tr>
-            <td class="row-no">${rowNo}</td>
-            <td>
-                <input type="hidden" name="product_name[]" value="${product}">
-                ${product}
-            </td>
-            <td>
-                <input type="hidden" class="qty" name="qty[]" value="${qty}">
-<input type="hidden" class="prakar" name="prakar[]" value="${prakarText}">
-${qty} ${prakarText}
-            </td>
-            <td>
-                <input type="hidden" class="rate" name="rate[]" value="${rate}">
-                ₹ ${rate.toFixed(2)}
-            </td>
-            <td>
-                <input type="hidden" class="amount" name="amount[]" value="${amount}">
-                ₹ ${amount.toFixed(2)}
-            </td>
-            <td>
-                <button type="button" class="btn btn-danger btn-sm removeRow">
-                    <i class="bx bx-trash"></i>
-                </button>
-            </td>
-        </tr>`;
+<tr>
+    <td class="row-no">${rowNo}</td>
+
+    <td>
+        <input type="hidden" name="product_name[]" value="${product}">
+        ${product}
+    </td>
+
+    <td>
+        <input type="hidden" class="qty" name="qty[]" value="${qty}">
+
+        <input type="hidden"
+               class="prakar"
+               name="prakar[]"
+               value="${prakarValue}">
+
+        ${qty} ${prakarText}
+    </td>
+
+    <td>
+        <input type="hidden" class="rate" name="rate[]" value="${rate}">
+        ₹ ${rate.toFixed(2)}
+    </td>
+
+    <td>
+        <input type="hidden" class="amount" name="amount[]" value="${amount}">
+        ₹ ${amount.toFixed(2)}
+    </td>
+
+    <td>
+        <button type="button" class="btn btn-danger btn-sm removeRow">
+            <i class="bx bx-trash"></i>
+        </button>
+    </td>
+</tr>`;
 
             $("#productTable tbody").append(row);
 

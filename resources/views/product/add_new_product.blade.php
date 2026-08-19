@@ -316,23 +316,10 @@
 
                                         <select name="prakar" id="prakar" class="form-select">
                                             <option value="">પ્રકાર પસંદ કરો</option>
+                                            @foreach ($type as $item)
+                                                <option value="{{ $item -> id }}">{{ $item -> name }}</option>
+                                            @endforeach
 
-                                            <option value="quantity">જથ્થો</option>
-                                            <option value="box">પેટી</option>
-                                            <option value="piece">નંગ</option>
-                                            <option value="kg">કિલો</option>
-                                            <option value="gram">ગ્રામ</option>
-                                            <option value="liter">લિટર</option>
-                                            <option value="ml">મિલી લિટર</option>
-                                            <option value="meter">મીટર</option>
-                                            <option value="packet">પેકેટ</option>
-                                            <option value="bottle">બોટલ</option>
-                                            <option value="dozen">ડઝન</option>
-                                            <option value="pair">જોડી</option>
-                                            <option value="bundle">બંડલ</option>
-                                            <option value="bag">થેલી</option>
-                                            <option value="roll">રોલ</option>
-                                            <option value="set">સેટ</option>
                                         </select>
                                     </div>
                                 </div>
@@ -686,7 +673,6 @@
 
 
 
-    <!-- Place this tag before closing body tag for github widget button. -->
     {{-- Place this tag before closing body tag for github widget button. --}}
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
