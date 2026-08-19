@@ -6,6 +6,7 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use App\Models\Type;
 
 class AdminLogin extends Controller
 {
@@ -64,8 +65,11 @@ class AdminLogin extends Controller
     }
 
     //show setting page
-    public function settings(){
-        return view("admin.Setting");
+    public function settings()
+    {
+        $types = Type::orderBy('name')->get();
+
+        return view('admin.Setting', compact('types'));
     }
 
     // Change Password (PIN)

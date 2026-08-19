@@ -10,6 +10,7 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mpdf\Mpdf;
+use App\Models\Type;
 
 class BillingController extends Controller
 {
@@ -28,7 +29,9 @@ class BillingController extends Controller
         ->get()
         ->values();
 
-    return view('billing.new-billing', compact('products'));
+        $type = Type::orderBy('id', 'DESC')->get();
+
+    return view('billing.new-billing', compact('products', 'type'));
     }
 
     public function checkCustomer(Request $request)
@@ -189,7 +192,7 @@ class BillingController extends Controller
     public function pdf($id)
     {
         $bill = Bill::with([
-            'items',
+            'items.type',
             'customer'
         ])->findOrFail($id);
 

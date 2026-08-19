@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Type;
 
 class BillItem extends Model
 {
@@ -18,5 +19,10 @@ class BillItem extends Model
     public function bill()
     {
         return $this->belongsTo(Bill::class);
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class, 'prakar');
     }
 }

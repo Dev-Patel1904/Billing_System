@@ -10,9 +10,12 @@ use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Customer_listController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\TypeController;
 
 //Login
-Route::get('/', function () {return view('product.welcome');})->name('admin.login');
+Route::get('/', function () {
+    return view('product.welcome');
+})->name('admin.login');
 Route::post('/admin/login', [AdminLogin::class, 'login'])->name('admin.login.submit');
 Route::get('/admin/logout', [AdminLogin::class, 'logout'])->name('admin.logout');
 
@@ -67,8 +70,12 @@ Route::middleware('admin.auth')->group(function () {
 
     //Sales
     Route::get('/sales', [SaleController::class, 'sales'])->name('sales');
-    Route::get('/show_sales/{bill}', function ($bill) { return view('sales.show_sales'); })->name('show_sales');
+    Route::get('/show_sales/{bill}', function ($bill) {return view('sales.show_sales');})->name('show_sales');
     Route::get('/show_sales/{bill}', [SaleController::class, 'show_sales'])->name('show_sales');
+
+    //type
+    Route::post('/types/store', [TypeController::class, 'store'])->name('types.store');
+    Route::put('/types/{type}', [TypeController::class, 'update'])->name('types.update');
 
 
     //Customer_list
