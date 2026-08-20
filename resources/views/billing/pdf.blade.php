@@ -1253,7 +1253,7 @@
                             </span>
 
                             <span class="summary-value" style="font-weight:700; font-size:17px;">
-                                ₹{{ number_format($bill->total_amount, 2) }}
+                                ₹{{ number_format(($bill->total_amount ?? 0) + ($bill->due_paid_now ?? 0), 2) }}
                             </span>
 
                         </div>
@@ -1265,7 +1265,6 @@
             <div class="summary-area">
 
                 <div class="summary">
-                    @if ($bill->due_paid_now > 0)
                         @if ($finalOutstanding > 0)
                             <div class="summary-row">
 
@@ -1279,7 +1278,6 @@
 
                             </div>
                         @endif
-                    @endif
                 </div>
             </div>
 
