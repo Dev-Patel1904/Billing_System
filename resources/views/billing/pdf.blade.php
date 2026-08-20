@@ -1146,7 +1146,7 @@
 
 
             {{-- SUMMARY --}}
-
+            
             <div class="summary-area">
 
                 <div class="summary">
@@ -1204,7 +1204,7 @@
 
                         </div>
                     @endif
-
+                    @if ($bill->payment_type === 'cash')
                     @if ($bill->due_paid_now > 0)
                         {{-- GRAND TOTAL --}}
                         <div class="summary-row" style="border-top:2px solid #222; margin-top:10px; padding-top:12px;">
@@ -1230,6 +1230,34 @@
                             </span>
 
                         </div>
+                    @endif
+                    @else
+                         @if ($bill->due_paid_now > 0)
+                        {{-- GRAND TOTAL --}}
+                        <div class="summary-row" style="border-top:2px solid #222; margin-top:10px; padding-top:12px;">
+
+                            <span class="summary-label" style="font-weight:700; font-size:16px;">
+                                GRAND TOTAL 
+                            </span>
+
+                            <span class="summary-value" style="font-weight:700; font-size:17px;">
+                                ₹{{ number_format(($bill->due_paid_now ?? 0), 2) }}
+                            </span>
+
+                        </div>
+                    @else
+                        <div class="summary-row" style="border-top:2px solid #222; margin-top:10px; padding-top:12px;">
+
+                            <span class="summary-label" style="font-weight:700; font-size:16px;">
+                                GRAND TOTAL 
+                            </span>
+
+                            <span class="summary-value" style="font-weight:700; font-size:17px;">
+                                ₹{{ number_format($bill->total_amount, 2) }}
+                            </span>
+
+                        </div>
+                    @endif
                     @endif
                 </div>
 
