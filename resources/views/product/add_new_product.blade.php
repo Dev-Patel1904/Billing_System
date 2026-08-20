@@ -1533,6 +1533,16 @@
                 const modalInstance = bootstrap.Modal.getInstance(checkPaymentModal);
                 if (modalInstance) modalInstance.hide();
 
+                // ==========================================
+                // REDIRECT to purchase list 2 seconds after
+                // showing the success toast
+                // ==========================================
+                if (data.redirect) {
+                   setTimeout(function() {
+                      window.location.href = data.redirect;
+                   }, 2000);
+                }
+
              } else if (response.status === 422 && data.errors) {
 
                 const firstErrorKey = Object.keys(data.errors)[0];
