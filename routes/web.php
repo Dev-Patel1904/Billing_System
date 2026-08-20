@@ -12,7 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TypeController;
 
-//Login
+//Login admin
 Route::get('/', function () {
     return view('product.welcome');
 })->name('admin.login');
