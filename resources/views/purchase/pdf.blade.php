@@ -913,17 +913,7 @@
                 @endif
 
             </div>
-
-
-            {{-- FOOTER --}}
-
-            <div class="footer">
-                <strong>આભાર!</strong>
-                ફરીથી પધારજો. 🙏
-            </div>
-
         </div>
-
     </div>
 
 

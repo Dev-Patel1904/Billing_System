@@ -17,6 +17,39 @@
                 </div>
             </div>
 
+            <!-- Search Filter -->
+            <div class="card-body border-bottom">
+                <form method="GET" action="{{ route('purchase') }}">
+                    <div class="row g-3">
+
+                        <div class="col-lg-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="bx bx-search"></i>
+                                </span>
+                                <input type="text" name="search" id="supplierSearch" class="form-control"
+                                    placeholder="સપ્લાયરનું નામ શોધો..." value="{{ $search }}" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <button type="submit" class="btn btn-outline-primary w-100">
+                                <i class="bx bx-filter-alt"></i>
+                                ફિલ્ટર
+                            </button>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <a href="{{ route('purchase') }}" class="btn btn-outline-secondary w-100">
+                                <i class="bx bx-reset"></i>
+                                રીસેટ
+                            </a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
             <div class="table-responsive text-nowrap">
                 <table class="table">
                     <thead class="table-light">
@@ -70,7 +103,11 @@
 
                             <tr>
                                 <td colspan="7" class="text-center">
-                                    હજુ સુધી કોઈ ખરીદી ઉમેરાઈ નથી.
+                                    @if ($search)
+                                        "{{ $search }}" માટે કોઈ ખરીદી મળી નથી.
+                                    @else
+                                        હજુ સુધી કોઈ ખરીદી ઉમેરાઈ નથી.
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
@@ -93,9 +130,140 @@
 
                 </table>
             </div>
+
+            <!-- Pagination -->
+            @if ($purchases->hasPages())
+                <div class="card-footer bg-white">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+                        <small class="text-muted">
+                            {{ $purchases->total() }} ખરીદીમાંથી {{ $purchases->firstItem() }} થી {{ $purchases->lastItem() }} દર્શાવવામાં આવ્યા છે
+                        </small>
+
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+
+                                <li class="page-item {{ $purchases->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $purchases->onFirstPage() ? '#' : $purchases->previousPageUrl() }}">પાછળ</a>
+                                </li>
+
+                                @php
+                                    $current = $purchases->currentPage();
+                                    $last = $purchases->lastPage();
+                                    $window = 1;
+                                @endphp
+
+                                <li class="page-item {{ $current == 1 ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $purchases->url(1) }}">1</a>
+                                </li>
+
+                                @if ($current - $window > 2)
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#">...</a>
+                                    </li>
+                                @endif
+
+                                @for ($page = max(2, $current - $window); $page <= min($last - 1, $current + $window); $page++)
+                                    <li class="page-item {{ $current == $page ? 'active' : '' }}">
+                                        <a class="page-link" href="{{ $purchases->url($page) }}">{{ $page }}</a>
+                                    </li>
+                                @endfor
+
+                                @if ($current + $window < $last - 1)
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#">...</a>
+                                    </li>
+                                @endif
+
+                                @if ($last > 1)
+                                    <li class="page-item {{ $current == $last ? 'active' : '' }}">
+                                        <a class="page-link" href="{{ $purchases->url($last) }}">{{ $last }}</a>
+                                    </li>
+                                @endif
+
+                                <li class="page-item {{ !$purchases->hasMorePages() ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $purchases->hasMorePages() ? $purchases->nextPageUrl() : '#' }}">આગળ</a>
+                                </li>
+
+                            </ul>
+                        </nav>
+
+                    </div>
+                </div>
+            @endif
+
         </div>
     </div>
     <!-- / Content -->
+
+    {{-- SEARCH FIELD: ENGLISH -> GUJARATI TRANSLITERATION (on Enter) --}}
+    <script>
+        (function() {
+
+            const el = document.getElementById('supplierSearch');
+
+            if (!el) {
+                return;
+            }
+
+            el.addEventListener('keydown', function(e) {
+
+                if (e.key !== 'Enter') {
+                    return;
+                }
+
+                const cursorPos = el.selectionStart;
+                const textBeforeCursor = el.value.substring(0, cursorPos);
+                const match = textBeforeCursor.match(/[a-zA-Z]+$/);
+
+                if (!match) {
+                    // No English word to translate -> let Enter submit the form normally
+                    return;
+                }
+
+                const englishWord = match[0];
+                const wordStart = cursorPos - englishWord.length;
+                const textAfterCursor = el.value.substring(cursorPos);
+
+                e.preventDefault();
+
+                fetch(
+                        'https://inputtools.google.com/request?' +
+                        'text=' + encodeURIComponent(englishWord) +
+                        '&itc=gu-t-i0-und&num=1'
+                    )
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+
+                        if (
+                            !data ||
+                            data[0] !== 'SUCCESS' ||
+                            !data[1] ||
+                            !data[1][0] ||
+                            !data[1][0][1] ||
+                            !data[1][0][1][0]
+                        ) {
+                            return;
+                        }
+
+                        const gujaratiWord = data[1][0][1][0];
+
+                        el.value = el.value.substring(0, wordStart) + gujaratiWord + textAfterCursor;
+
+                        const newCursorPos = wordStart + gujaratiWord.length;
+                        el.setSelectionRange(newCursorPos, newCursorPos);
+
+                    })
+                    .catch(function(error) {
+                        console.error('Gujarati Transliteration Error:', error);
+                    });
+
+            });
+
+        })();
+    </script>
 
     {{-- DELETE PURCHASE --}}
     <script>
