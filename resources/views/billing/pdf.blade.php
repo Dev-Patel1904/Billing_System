@@ -179,7 +179,7 @@
         ========================= */
 
         .content {
-            padding: 28px 32px 32px;
+            padding: 0px 32px 32px;
         }
 
         .section-title {
@@ -902,24 +902,90 @@
 
         {{-- HEADER --}}
 
-        <div class="bill-header">
+        <div class="bill-header"
+            style=" position:relative; width:100%; min-height:55px; display:flex; align-items:center; justify-content:center;">
 
-            <div class="shop-section">
+            <!-- Date - Left Side -->
+            <div
+                style="position:absolute;left: 35px; top:50%; transform:translateY(-50%); display:flex; align-items:center; white-space:nowrap;">
+                <span
+                    style="
+                        font-size:14px;
+                        font-weight:600;
+                        color:#6b7280;
+                        ">
+                    તારીખ
+                </span>
 
-                <h1 class="shop-name">
+                <span
+                    style="
+                        margin:0 8px;
+                        color:#9ca3af;
+                    ">
+                    :
+                </span>
+
+                <span
+                    style="
+                            font-size:15px;
+                            font-weight:600;
+                            color:#111827;
+                        ">
+                    {{ $bill->created_at->format('d-m-Y') }}
+                </span>
+            </div>
+
+
+            <!-- Center Title -->
+            <div class="shop-section"
+                style="
+                    text-align:center;
+                    width:100%;
+                ">
+                <h1 class="shop-name"
+                    style="
+                    margin:0;
+                    font-size:24px;
+                    font-weight:700;
+                    color:#111827;
+                    line-height:1.2;
+                ">
                     ESTIMATE
                 </h1>
             </div>
 
-            <div class="bill-heading">
 
-                <div class="title">
-                    બિલ
-                </div>
+            <!-- Bill Number - Right Side -->
+            <div
+                style="
+                    position:absolute;
+                    right: 40px;
+                    top:50%;
+                    transform:translateY(-50%);
+                    display:flex;
+                    flex-direction:column;
+                    align-items:flex-end;
+                    line-height:1.4;
+                ">
 
-                <div class="bill-number">
-                    # {{ $bill->bill_no }}
-                </div>
+                <span
+                    style="
+                        font-size:14px;
+                        font-weight:600;
+                        color:#6b7280;
+                    ">
+                    બિલ નંબર
+                </span>
+
+                <span
+                    style="
+                        margin-top:2px;
+                        font-size:15px;
+                        font-weight:600;
+                        color:#111827;
+                    ">
+                    {{ $bill->bill_no }}
+                </span>
 
             </div>
 
@@ -928,75 +994,60 @@
 
         <div class="content">
 
-            {{-- CUSTOMER --}}
+            <div class="info-box"
+                style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 20px;">
 
-            <div class="section-title">
-                ગ્રાહકની માહિતી
-            </div>
+                <div style="display:flex; align-items:center; width:100%;">
 
-            <div class="customer-card">
+                    <!-- Customer Name -->
+                    <div style="display:flex; align-items:center; flex:1; min-width:0;">
+                        <span style="font-size:14px; font-weight:600; color:#6b7280; white-space:nowrap;">
+                            ગ્રાહકનું નામ
+                        </span>
 
-                <div class="info-box">
+                        <span style="margin:0 8px; color:#9ca3af;">:</span>
 
-                    <span class="info-label">
-                        ગ્રાહકનું નામ
-                    </span>
-
-                    <span class="info-value">
-                        {{ $bill->customer->name }}
-                    </span>
-
-                </div>
-
-
-                <div class="info-box">
-
-                    <span class="info-label">
-                        મોબાઈલ નંબર
-                    </span>
-
-                    <span class="info-value">
-                        {{ $bill->customer->mobile }}
-                    </span>
-
-                </div>
+                        <span
+                            style="font-size:15px; font-weight:600; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            {{ $bill->customer->name }}
+                        </span>
+                    </div>
 
 
-                <div class="info-box">
+                    <!-- Mobile Number -->
+                    <div style="display:flex; align-items:center; flex:1; min-width:0;">
+                        <span style="font-size:14px; font-weight:600; color:#6b7280; white-space:nowrap;">
+                            મોબાઈલ નંબર
+                        </span>
 
-                    <span class="info-label">
-                        બિલ નંબર
-                    </span>
+                        <span style="margin:0 8px; color:#9ca3af;">:</span>
 
-                    <span class="info-value">
-                        {{ $bill->bill_no }}
-                    </span>
-
-                </div>
+                        <span style="font-size:15px; font-weight:600; color:#111827; white-space:nowrap;">
+                            {{ $bill->customer->mobile }}
+                        </span>
+                    </div>
 
 
-                <div class="info-box">
+                    <!-- ગામ નું નામ -->
+                    <div style="display:flex; align-items:center; flex:1; min-width:0;">
+                        <span style="font-size:14px; font-weight:600; color:#6b7280; white-space:nowrap;">
+                            ગામ નું નામ
+                        </span>
 
-                    <span class="info-label">
-                        તારીખ
-                    </span>
+                        <span style="margin:0 8px; color:#9ca3af;">:</span>
 
-                    <span class="info-value">
-                        {{ $bill->created_at->format('d-m-Y') }}
-                    </span>
+                        <span style="font-size:15px; font-weight:600; color:#111827; white-space:nowrap;">
+                            આખડોલ
+                        </span>
+                    </div>
+
 
                 </div>
 
             </div>
-
-
             {{-- PRODUCTS --}}
 
-            <div class="section-title">
-                ખરીદીની વિગતો
-            </div>
-
-            <div class="table-wrapper">
+            <div class="table-wrapper" style="margin-top:10px; ">
 
                 {{-- PRODUCT TABLE --}}
                 <table class="product-table">
@@ -1099,56 +1150,110 @@
             <div class="summary-area">
 
                 <div class="summary">
+                    @if ($bill->payment_type === 'cash')
+                        @if (($finalOutstanding ?? 0) > 0 || ($bill->due_paid_now ?? 0) > 0)
+                            <div class="summary-row">
+                                <span class="summary-label">
+                                    કુલ આગળ ની બાકી રકમ
+                                </span>
 
+                                <span class="summary-value">
+                                    ₹{{ number_format(($finalOutstanding ?? 0) + ($bill->due_paid_now ?? 0), 2) }}
+                                </span>
+                            </div>
+                        @endif
+                    @else
+                        @if (($finalOutstanding ?? 0) > 0 || ($bill->due_paid_now ?? 0) > 0)
+                            <div class="summary-row">
+                                <span class="summary-label">
+                                    કુલ આગળ ની બાકી રકમ
+                                </span>
+
+                                <span class="summary-value">
+                                    ₹{{ number_format(($bill->previous_due ?? 0) + ($bill->due_paid_now ?? 0), 2) }}
+                                </span>
+                            </div>
+                        @endif
+
+                    @endif
 
                     @if ($bill->due_paid_now > 0)
-                    <div class="summary-row">
-
-                        <span class="summary-label">
-                            બાકીમાંથી ચૂકવેલ
-                        </span>
-
-                        <span class="summary-value">
-                            ₹{{ number_format($bill->due_paid_now, 2) }}
-                        </span>
-
-                    </div>
-                @endif
-
-                    @if ($finalOutstanding > 0)
                         <div class="summary-row">
 
                             <span class="summary-label">
-                                કુલ બાકી રકમ
+                                બાકી માંથી આજે ચૂકવેલ
                             </span>
 
                             <span class="summary-value">
-                                ₹{{ number_format($finalOutstanding, 2) }}
+                                ₹{{ number_format($bill->due_paid_now, 2) }}
                             </span>
 
                         </div>
                     @endif
 
+                    @if ($bill->payment_type === 'due')
+                        <div class="summary-row">
 
+                            <span class="summary-label">
+                                આજે બાકી લીધેલ રકમ
+                            </span>
 
+                            <span class="summary-value">
+                                ₹{{ number_format($bill->total_amount, 2) }}
+                            </span>
 
+                        </div>
+                    @endif
 
-                    {{-- <div class="summary-row grand-total">
+                    @if ($bill->due_paid_now > 0)
+                        {{-- GRAND TOTAL --}}
+                        <div class="summary-row" style="border-top:2px solid #222; margin-top:10px; padding-top:12px;">
 
-                        <span class="summary-label">
-                            કુલ બાકી રકમ
-                        </span>
+                            <span class="summary-label" style="font-weight:700; font-size:16px;">
+                                GRAND TOTAL
+                            </span>
 
-                        <span class="summary-value">
-                            ₹{{ number_format($bill->grand_total, 2) }}
-                        </span>
+                            <span class="summary-value" style="font-weight:700; font-size:17px;">
+                                ₹{{ number_format(($bill->total_amount ?? 0) + ($bill->due_paid_now ?? 0), 2) }}
+                            </span>
 
-                    </div> --}}
+                        </div>
+                    @else
+                        <div class="summary-row" style="border-top:2px solid #222; margin-top:10px; padding-top:12px;">
 
+                            <span class="summary-label" style="font-weight:700; font-size:16px;">
+                                GRAND TOTAL
+                            </span>
+
+                            <span class="summary-value" style="font-weight:700; font-size:17px;">
+                                ₹{{ number_format($bill->total_amount, 2) }}
+                            </span>
+
+                        </div>
+                    @endif
                 </div>
 
             </div>
+            <div class="summary-area">
 
+                <div class="summary">
+                    @if ($bill->due_paid_now > 0)
+                        @if ($finalOutstanding > 0)
+                            <div class="summary-row">
+
+                                <span class="summary-label" style="color: red">
+                                    કુલ બાકી રકમ
+                                </span>
+
+                                <span class="summary-value" style="color: red">
+                                    ₹{{ number_format($finalOutstanding, 2) }}
+                                </span>
+
+                            </div>
+                        @endif
+                    @endif
+                </div>
+            </div>
 
             {{-- PAYMENT STATUS --}}
 
@@ -1178,22 +1283,7 @@
                 @endif
 
             </div>
-
-
-            {{-- FOOTER --}}
-
-            <div class="footer">
-
-                <strong>
-                    આભાર!
-                </strong>
-
-                ફરીથી પધારજો. 🙏
-
-            </div>
-
         </div>
-
     </div>
 
 
