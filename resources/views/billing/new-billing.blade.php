@@ -270,6 +270,23 @@
                         </div>
                      </div>
 
+                     <div class="mb-0 mt-2">
+                        <label class="form-label">ગામ નું નામ</label>
+
+                        <div class="input-group">
+                           <input type="text" class="form-control" id="" placeholder="ગામ નું નામ">
+
+                           <!-- Loader -->
+                           <span class="input-group-text d-none" id="">
+                              <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+                           </span>
+
+                           <span class="input-group-text voice-btn" id="voiceCustomerName">
+                              <i class="bx bx-microphone"></i>
+                           </span>
+                        </div>
+                     </div>
+
                      <!-- Product Details -->
                      <div class="card mt-3" style="box-shadow:none !important;">
                         <div id="productRows">
