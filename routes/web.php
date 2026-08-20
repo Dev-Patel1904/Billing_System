@@ -31,6 +31,11 @@ Route::post('/reset-password/resend-otp', [ForgotPassController::class, 'resendO
 Route::get('/test-gujarati-pdf', function () {
     return view('billing.pdf');
 });
+
+Route::get('/check', function () {
+    return view('check.check_list');
+})->name('check');
+
 Route::get('/billing/pdf/{bill}', [BillingController::class, 'pdf'])
     ->name('billing.pdf');
 

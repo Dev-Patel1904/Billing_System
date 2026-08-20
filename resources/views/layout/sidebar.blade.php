@@ -166,6 +166,14 @@
                      <div class="text-truncate">સપ્લાયરની યાદી</div>
                   </a>
                </li>
+
+               <li class="menu-item {{ request()->routeIs('check') ? 'active' : '' }}">
+                  <a href="{{ route('check') }}" class="menu-link">
+                      <i class="menu-icon tf-icons bx bx-receipt"></i>
+                     <div class="text-truncate">ચેકની યાદી</div>
+                  </a>
+               </li>
+
             </ul>
          </aside>
          <!-- / Menu -->
