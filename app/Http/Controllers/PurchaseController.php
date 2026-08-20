@@ -11,15 +11,22 @@ use App\Models\PurchasePayment;
 class PurchaseController extends Controller
 {
     // Purchase List Page
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+
         $purchases = Purchase::with('supplier')
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas('supplier', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('purchase.purchase', compact('purchases'));
+        return view('purchase.purchase', compact('purchases', 'search'));
     }
-
 
     // Purchase Detail Page
     public function purchase_detail(Purchase $purchase)
@@ -248,14 +255,12 @@ class PurchaseController extends Controller
                 'balance_amount' => (float) $purchase->balance_amount,
                 'redirect'       => route('purchase'),
             ]);
-
         } catch (\Exception $e) {
 
             return response()->json([
                 'status'  => false,
                 'message' => 'ચુકવણી ઉમેરવામાં ભૂલ આવી.',
             ], 500);
-
         }
     }
 }
