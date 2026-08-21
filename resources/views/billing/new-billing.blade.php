@@ -274,15 +274,15 @@
                         <label class="form-label">ગામ નું નામ</label>
 
                         <div class="input-group">
-                           <input type="text" class="form-control" id="" placeholder="ગામ નું નામ">
+                           <input type="text" class="form-control" id="customerVillage" name="customer_village" placeholder="ગામ નું નામ">
 
                            <!-- Loader -->
-                           <span class="input-group-text d-none" id="">
-                              <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+                           <span class="input-group-text d-none" id="villageLoader">
+                                 <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
                            </span>
 
-                           <span class="input-group-text voice-btn" id="voiceCustomerName">
-                              <i class="bx bx-microphone"></i>
+                           <span class="input-group-text voice-btn" id="voiceVillage">
+                                 <i class="bx bx-microphone"></i>
                            </span>
                         </div>
                      </div>
@@ -399,6 +399,7 @@
                      <!-- Hidden fields submitted with the bill -->
                      <input type="hidden" name="customer_mobile" id="hiddenCustomerMobile">
                      <input type="hidden" name="customer_name" id="hiddenCustomerName">
+                     <input type="hidden" name="customer_village" id="hiddenCustomerVillage"> <!-- આ ઉમેરો -->
                      <input type="hidden" name="previous_due" id="hiddenPreviousDue" value="0">
                      <input type="hidden" name="due_paid_now" id="hiddenPaidDueAmount" value="0">
                      <input type="hidden" name="payment_type" id="hiddenPaymentType">
@@ -735,6 +736,9 @@
                      // Lock mobile number for existing customer
                      $("#customerMobile").prop("readonly", true);
 
+                     // Automatically show customer village
+                     $("#customerVillage").val(res.village);
+
                      if (res.due_amount > 0) {
 
                         customerHasDue = true;
@@ -765,6 +769,8 @@
                      $("#customerMobile").prop("readonly", false);
 
                      $("#customerName").val("");
+
+                     $("#customerVillage").val("");
 
                      $("#previous_due").val(0);
 
@@ -1061,15 +1067,13 @@
          // ==========================================
          // BEFORE SUBMIT -> sync hidden fields
          // ==========================================
-
          function syncHiddenFields(paymentType) {
-
             $("#hiddenCustomerMobile").val($("#customerMobile").val().trim());
             $("#hiddenCustomerName").val($("#customerName").val().trim());
+            $("#hiddenCustomerVillage").val($("#customerVillage").val().trim()); // આ સેવ થશે
             $("#hiddenPreviousDue").val(previousDueTotal);
             $("#hiddenPaidDueAmount").val(duePaidNow);
             $("#hiddenPaymentType").val(paymentType);
-
          }
 
          $("#dueBtn").on("click", function(e) {
@@ -1465,6 +1469,71 @@
             .finally(function() {
                 // Hide loader
                 $("#productNameLoader").addClass("d-none");
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+
+        // ==========================================
+        // VILLAGE NAME - ENGLISH TO GUJARATI (ON ENTER)
+        // ==========================================
+        $("#customerVillage").on("keydown", function(e) {
+            if (e.key !== "Enter") {
+                return;
+            }
+
+            e.preventDefault();
+
+            const input = this;
+            const cursorPos = input.selectionStart;
+            const textBeforeCursor = input.value.slice(0, cursorPos);
+            const match = textBeforeCursor.match(/[a-zA-Z]+$/);
+
+            if (!match) {
+                return;
+            }
+
+            const englishWord = match[0];
+            const wordStart = cursorPos - englishWord.length;
+            const textAfterCursor = input.value.slice(cursorPos);
+
+            $("#villageLoader").removeClass("d-none");
+
+            fetch(
+                "https://inputtools.google.com/request?" +
+                "text=" + encodeURIComponent(englishWord) +
+                "&itc=gu-t-i0-und&num=1"
+            )
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (
+                    !data ||
+                    data[0] !== "SUCCESS" ||
+                    !data[1] ||
+                    !data[1][0] ||
+                    !data[1][0][1] ||
+                    !data[1][0][1][0]
+                ) {
+                    return;
+                }
+
+                const gujaratiWord = data[1][0][1][0];
+                const newValue = input.value.slice(0, wordStart) + gujaratiWord + textAfterCursor;
+                input.value = newValue;
+
+                const newCursorPos = wordStart + gujaratiWord.length;
+                input.setSelectionRange(newCursorPos, newCursorPos);
+                $(input).trigger("input");
+            })
+            .catch(function(error) {
+                console.error("Village Name Gujarati Transliteration Error:", error);
+            })
+            .finally(function() {
+                $("#villageLoader").addClass("d-none");
             });
         });
     });

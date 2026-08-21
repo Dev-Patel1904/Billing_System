@@ -1037,7 +1037,7 @@
                         <span style="margin:0 8px; color:#9ca3af;">:</span>
 
                         <span style="font-size:15px; font-weight:600; color:#111827; white-space:nowrap;">
-                            આખડોલ
+                            {{ $bill->customer->village }}
                         </span>
                     </div>
 
