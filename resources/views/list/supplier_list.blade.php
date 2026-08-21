@@ -78,8 +78,7 @@
                             <th>ક્રમાંક</th>
                             <th>સપ્લાયર</th>
                             <th>સરનામૂ</th>
-                            <th>બાકી રકમ</th>
-
+                            <th>કુલ બિલ</th>
                             <th class="text-center">ક્રિયા</th>
                         </tr>
                     </thead>
@@ -333,9 +332,6 @@
                                 <textarea class="form-control" id="edit_supplier_address" rows="3" placeholder="સરનામું દાખલ કરો"></textarea>
 
                             </div>
-
-
-
 
                         </div>
 

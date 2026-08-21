@@ -31,7 +31,7 @@ class PurchaseController extends Controller
     // Purchase Detail Page
     public function purchase_detail(Purchase $purchase)
     {
-        $purchase->load('items', 'supplier');
+        $purchase->load('items', 'supplier', 'payments');
 
         return view('purchase.purchase_detail', compact('purchase'));
     }

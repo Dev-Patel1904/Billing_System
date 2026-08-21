@@ -167,8 +167,8 @@
                   </a>
                </li>
 
-               <li class="menu-item {{ request()->routeIs('check') ? 'active' : '' }}">
-                  <a href="{{ route('check') }}" class="menu-link">
+               <li class="menu-item {{ request()->routeIs('checks.index') ? 'active' : '' }}">
+                  <a href="{{ route('checks.index') }}" class="menu-link">
                       <i class="menu-icon tf-icons bx bx-receipt"></i>
                      <div class="text-truncate">ચેકની યાદી</div>
                   </a>

@@ -31,49 +31,48 @@ class SpllierlistController extends Controller
 
 
     // Update Supplier (Edit Modal)
-public function update(Request $request, Suppliers $supplier)
-{
-    $validated = $request->validate([
-        'name' => [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^[\x{0A80}-\x{0AFF}A-Za-z\s]+$/u',
-        ],
+    public function update(Request $request, Suppliers $supplier)
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[\x{0A80}-\x{0AFF}A-Za-z\s]+$/u',
+            ],
 
-        'address' => [
-            'required',
-            'string',
-            'max:1000',
-        ],
+            'address' => [
+                'required',
+                'string',
+                'max:1000',
+            ],
 
-    ], [
-        'name.required' => 'સપ્લાયરનું નામ દાખલ કરો.',
-        'name.max' => 'સપ્લાયરનું નામ ખૂબ લાંબું છે.',
-        'name.regex' => 'સપ્લાયરનું નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
+        ], [
+            'name.required' => 'સપ્લાયરનું નામ દાખલ કરો.',
+            'name.max' => 'સપ્લાયરનું નામ ખૂબ લાંબું છે.',
+            'name.regex' => 'સપ્લાયરનું નામમાં માત્ર અક્ષરો અને સ્પેસ હોવા જોઈએ.',
 
-        'address.required' => 'સરનામું દાખલ કરો.',
-        'address.max' => 'સરનામું ખૂબ લાંબું છે.',
-    ]);
-
-    try {
-
-        $supplier->update($validated);
-
-        return response()->json([
-            'status'   => true,
-            'message'  => 'સપ્લાયર સફળતાપૂર્વક અપડેટ થયો.',
-            'supplier' => $supplier,
+            'address.required' => 'સરનામું દાખલ કરો.',
+            'address.max' => 'સરનામું ખૂબ લાંબું છે.',
         ]);
 
-    } catch (\Exception $e) {
+        try {
 
-        return response()->json([
-            'status'  => false,
-            'message' => 'સપ્લાયર અપડેટ કરવામાં ભૂલ આવી.',
-        ], 500);
+            $supplier->update($validated);
+
+            return response()->json([
+                'status'   => true,
+                'message'  => 'સપ્લાયર સફળતાપૂર્વક અપડેટ થયો.',
+                'supplier' => $supplier,
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'સપ્લાયર અપડેટ કરવામાં ભૂલ આવી.',
+            ], 500);
+        }
     }
-}
 
 
     // Delete Supplier
@@ -107,12 +106,14 @@ public function update(Request $request, Suppliers $supplier)
         return view('list.supplier_purchases', compact('supplier', 'purchases'));
     }
 
-    // સપ્લાયરની બાકી રકમ ચૂકવણી માટે (Pay Due)
+    //(Pay Due)
     public function payDue(Request $request)
     {
         $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'paid_amount' => 'required|numeric|min:0.01',
+            'supplier_id'     => 'required|exists:suppliers,id',
+            'paid_amount'     => 'required|numeric|min:0.01',
+            'payment_method'  => 'nullable|in:cash,check,gpay',
+            'check_number'    => 'nullable|string|max:50',
         ]);
 
         $supplierId = $request->input('supplier_id');
@@ -120,7 +121,6 @@ public function update(Request $request, Suppliers $supplier)
 
         $supplier = Suppliers::findOrFail($supplierId);
 
-        // સપ્લાયરની બધી જ ખરીદીઓ મેળવો જેમાં બેલેન્સ બાકી હોય (જૂની ખરીદીઓ પહેલાં)
         $purchases = $supplier->purchases()
             ->where('balance_amount', '>', 0)
             ->orderBy('created_at', 'asc')
@@ -155,7 +155,6 @@ public function update(Request $request, Suppliers $supplier)
             }
         }
 
-        // અપડેટ થયેલું કુલ બાકી બેલેન્સ
         $newRemainingDue = $supplier->purchases()->sum('balance_amount');
 
         return response()->json([

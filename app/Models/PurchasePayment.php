@@ -12,6 +12,7 @@ class PurchasePayment extends Model
         'amount',
         'check_number',
         'check_date',
+        'status',
         'created_by',
     ];
 

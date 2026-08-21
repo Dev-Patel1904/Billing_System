@@ -11,6 +11,7 @@ use App\Http\Controllers\Customer_listController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\TypeController;
+use App\Http\Controllers\CheckController;
 
 //Login admin
 Route::get('/', function () {
@@ -32,9 +33,9 @@ Route::get('/test-gujarati-pdf', function () {
     return view('billing.pdf');
 });
 
-Route::get('/check', function () {
-    return view('check.check_list');
-})->name('check');
+// Route::get('/check', function () {
+//     return view('check.check_list');
+// })->name('check');
 
 Route::get('/billing/pdf/{bill}', [BillingController::class, 'pdf'])
     ->name('billing.pdf');
@@ -59,6 +60,11 @@ Route::middleware('admin.auth')->group(function () {
     //payment
     Route::post('/purchases/{purchase}/pay', [PurchaseController::class, 'addPayment'])->name('purchases.add_payment');
 
+
+    //check
+    Route::get('/checks', [CheckController::class, 'index'])->name('checks.index');
+    Route::post('/checks/{payment}/status', [CheckController::class, 'updateStatus'])->name('checks.update_status');
+
     //supplier-list
     Route::get('/supplier_list', [SpllierlistController::class, 'supplier_list'])->name('supplier_list');
     Route::put('/suppliers/{supplier}', [SpllierlistController::class, 'update'])->name('suppliers.update');
@@ -79,7 +85,9 @@ Route::middleware('admin.auth')->group(function () {
 
     //Sales
     Route::get('/sales', [SaleController::class, 'sales'])->name('sales');
-    Route::get('/show_sales/{bill}', function ($bill) {return view('sales.show_sales');})->name('show_sales');
+    Route::get('/show_sales/{bill}', function ($bill) {
+        return view('sales.show_sales');
+    })->name('show_sales');
     Route::get('/show_sales/{bill}', [SaleController::class, 'show_sales'])->name('show_sales');
 
     //type

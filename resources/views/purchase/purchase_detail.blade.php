@@ -76,19 +76,58 @@
                </div>
 
                <div class="col-12 col-md-4">
-                  <div class="card border shadow-sm h-100">
-                     <div class="card-body">
-                        <small class="text-muted d-block mb-1">
-                           <i class="bx bx-phone text-info"></i>
-                           મોબાઇલ નંબર
+                <div class="card border shadow-sm h-100">
+                    <div class="card-body">
+                        <small class="text-muted d-block mb-2">
+                            <i class="bx bx-wallet text-info"></i>
+                            Payment Details
                         </small>
+                        @forelse($purchase->payments as $payment)
+                            @if($payment->payment_method === 'cash')
+                                <h6 class="fw-bold mb-0">
+                                    Cash
+                                </h6>
+                                <small class="text-success">
+                                    ₹ {{ number_format($payment->amount, 2) }}
+                                </small>
+                            @elseif($payment->payment_method === 'gpay')
+                                <h6 class="fw-bold mb-0">
+                                    G-Pay
+                                </h6>
+                                <small class="text-success">
+                                    Total Paid: ₹ {{ number_format($payment->amount, 2) }}
+                                </small>
+                            @elseif($payment->payment_method === 'check')
+                                <a href="{{ route('checks.index', ['check_number' => $payment->check_number]) }}"
+                                   class="text-decoration-none text-reset d-block p-2 rounded"
+                                   style="cursor: pointer; transition: background-color 0.2s ease;"
+                                   onmouseover="this.style.backgroundColor='#f8f9fa'"
+                                   onmouseout="this.style.backgroundColor='transparent'"
+                                   title="ચેકની વિગત જુઓ">
 
-                        <h6 class="fw-bold mb-0">
-                           {{ $purchase->supplier->mobile ?? '-' }}
-                        </h6>
-                     </div>
-                  </div>
-               </div>
+                                    <h6 class="fw-bold mb-1">
+                                        Check
+                                        <i class="bx bx-link-external text-muted" style="font-size: 13px;"></i>
+                                    </h6>
+                                    <small class="d-block">
+                                        Check No:
+                                        <strong>{{ $payment->check_number }}</strong>
+                                    </small>
+                                    <small class="text-success">
+                                        Paid Amount:
+                                        ₹ {{ number_format($payment->amount, 2) }}
+                                    </small>
+
+                                </a>
+                            @endif
+                        @empty
+                            <h6 class="fw-bold mb-0 text-muted">
+                                No Payment
+                            </h6>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
 
             </div>
 
