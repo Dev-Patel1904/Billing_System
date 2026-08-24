@@ -452,15 +452,23 @@
 
                            <div class="row align-items-center mb-3 d-none" id="previousDueRow">
                               <div class="col-md-6">
-                                 <label class="fw-semibold text-danger">આગળની બાકી
-                                    રકમ</label>
+                                 <label class="fw-semibold text-danger">
+                                       આગળની બાકી રકમ
+                                 </label>
                               </div>
+
                               <div class="col-md-6">
-                                 <input type="number" id="previous_due" disabled class="form-control text-end" value="0" placeholder="₹ 0.00">
+                                 <input type="number"
+                                          id="previous_due"
+                                          disabled
+                                          class="form-control text-end"
+                                          value="0"
+                                          placeholder="₹ 0.00">
                               </div>
                            </div>
 
-                           <div class="row align-items-center mb-3 d-none" id="payDueSection">
+
+                           {{-- <div class="row align-items-center mb-3 d-none" id="payDueSection">
                               <div class="col-md-6">
                                  <label class="fw-semibold">શું બાકી રકમ ચૂકવવી છે?</label>
                               </div>
@@ -482,38 +490,123 @@
                                     </label>
                                  </div>
                               </div>
-                           </div>
+                           </div> --}}
 
                            <hr>
 
-                           <div class="row align-items-center mb-4">
-                              <div class="col-md-6">
-                                 <label class="fw-bold text-success fs-5">ચૂકવવાની કુલ
-                                    રકમ</label>
+                           <!-- Grand Total -->
+                              <div class="row align-items-center mb-4">
+                                 <div class="col-md-6">
+                                    <label class="fw-bold text-success fs-5">
+                                          ચૂકવવાની કુલ રકમ
+                                    </label>
+                                 </div>
+
+                                 <div class="col-md-6">
+                                    <input type="text"
+                                             id="grand_total"
+                                             class="form-control form-control-lg fw-bold text-end border-success"
+                                             readonly>
+                                 </div>
                               </div>
-                              <div class="col-md-6">
-                                 <input type="text" id="grand_total" class="form-control form-control-lg fw-bold text-end border-success" readonly>
+
+
+                              <!-- Today's Payment -->
+                              <div class="row align-items-center mb-4">
+                                 <div class="col-md-6">
+                                    <label class="fw-bold fs-5">
+                                          આજે ચુકવેલ કુલ રકમ
+                                    </label>
+                                 </div>
+
+                                 <div class="col-md-6">
+                                    <input type="number"
+                                             id="today_paid"
+                                             class="form-control form-control-lg fw-bold text-end border-success"
+                                             min="0"
+                                             step="0.01"
+                                             value="0"
+                                             placeholder="0">
+                                 </div>
                               </div>
+
+
+                                                      <!-- Payment Buttons -->
+                              <div class="row g-3 mt-3">
+
+                                 <!-- Half Payment -->
+                                 <div class="col-md-4 d-none" id="halfPaymentCol">
+                                    <button type="button"
+                                             class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                                             id="halfPaymentBtn">
+                                          <i class="bx bx-calculator fs-4"></i>
+                                          <span class="fw-semibold">અડધી ચુકવણી</span>
+                                    </button>
+                                 </div>
+
+
+                                 <!-- Due -->
+                                 <div class="col-md-4 d-none" id="dueCol">
+                                    <button type="button"
+                                             class="btn btn-outline-warning w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                                             id="dueBtn">
+                                          <i class="bx bx-time-five fs-4"></i>
+                                          <span class="fw-semibold">બાકી</span>
+                                    </button>
+                                 </div>
+
+
+                                 <!-- Cash -->
+                                 <div class="col-md-4 d-none" id="cashCol">
+                                    <button type="button"
+                                             class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                                             id="cashBtn">
+                                          <i class="bx bx-money fs-4"></i>
+                                          <span class="fw-semibold">રોકડ</span>
+                                    </button>
+                                 </div>
+
+
+                                 <div class="col-md-4" id="googlePayCol">
+                                    <button type="button"
+                                             class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                                             id="googlePayBtn">
+                                       <span class="fw-semibold">Google Pay</span>
+                                    </button>
+                                 </div>
+                                  <!-- Cheque -->
+                                 <div class="col-md-4" id="chequeCol">
+                                    <button type="button"
+                                             class="btn btn-outline-info w-100 d-flex align-items-center justify-content-center gap-2 py-2"
+                                             id="chequeBtn">
+                                          <i class="bx bx-receipt fs-4"></i>
+                                          <span class="fw-semibold">ચેક</span>
+                                    </button>
+                                 </div>
+
+                              </div>
+                        </div>
+                     </div>
+
+                    <!-- Remaining -->
+                        <div class="row align-items-center mb-4">
+                           <div class="col-md-6">
+                              <label class="fw-bold text-danger fs-5">
+                                    બાકી રકમ
+                              </label>
                            </div>
 
-                        </div>
-                     </div>
-
-                     <div class="row g-3 mt-3">
-                        <div class="col-6">
-                           <button type="submit" class="btn btn-outline-warning w-100 d-flex align-items-center justify-content-center gap-2 py-2" id="dueBtn">
-                              <i class="bx bx-time-five fs-4"></i>
-                              <span class="fw-semibold">બાકી</span>
-                           </button>
+                           <div class="col-md-6">
+                              <input type="text"
+                                       id="remaining_amount"
+                                       class="form-control form-control-lg fw-bold text-end border-danger"
+                                       value="0.00"
+                                       readonly>
+                           </div>
                         </div>
 
-                        <div class="col-6">
-                           <button type="submit" class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2 py-2" id="cashBtn">
-                              <i class="bx bx-money fs-4"></i>
-                              <span class="fw-semibold">રોકડ</span>
-                           </button>
-                        </div>
-                     </div>
+
+                       
 
                   </form>
                </div>
@@ -1538,3 +1631,263 @@
         });
     });
 </script>
+
+{{-- new js --}}
+<script>
+                              document.addEventListener('DOMContentLoaded', function () {
+
+                                 const todayPaidInput = document.getElementById('today_paid');
+                                 const remainingInput = document.getElementById('remaining_amount');
+                                 const grandTotalInput = document.getElementById('grand_total');
+                                 const previousDueInput = document.getElementById('previous_due');
+
+                                 const halfPaymentCol = document.getElementById('halfPaymentCol');
+                                 const dueCol = document.getElementById('dueCol');
+                                 const cashCol = document.getElementById('cashCol');
+
+                                 const halfPaymentBtn = document.getElementById('halfPaymentBtn');
+                                 const dueBtn = document.getElementById('dueBtn');
+                                 const cashBtn = document.getElementById('cashBtn');
+
+                                 const googlePayCol = document.getElementById('googlePayCol');
+
+                                 
+                                
+
+                                 /*
+                                 * Remove default 0 when user clicks
+                                 */
+                                 todayPaidInput.addEventListener('focus', function () {
+
+                                    if (this.value === '0') {
+                                          this.value = '';
+                                    }
+
+                                 });
+
+
+                                 /*
+                                 * Get total payable
+                                 *
+                                 * Grand Total + Previous Due
+                                 */
+                                 function getTotalPayable() {
+
+                                    let grandTotal = parseFloat(
+                                          grandTotalInput.value.replace(/,/g, '')
+                                    ) || 0;
+
+                                    let previousDue = parseFloat(
+                                          previousDueInput?.value
+                                    ) || 0;
+
+                                    return grandTotal + previousDue;
+                                 }
+
+
+                                 /*
+                                 * Show only the correct payment button
+                                 */
+                                 function updatePaymentButtons() {
+
+                                    let totalPayable = getTotalPayable();
+
+                                    let todayPaid = parseFloat(
+                                          todayPaidInput.value
+                                    ) || 0;
+
+
+                                    // Hide all buttons first
+                                    halfPaymentCol.classList.add('d-none');
+                                    dueCol.classList.add('d-none');
+                                    cashCol.classList.add('d-none');
+
+
+                                    /*
+                                       * No payment
+                                       *
+                                       * Show: બાકી
+                                       */
+                                    if (todayPaid <= 0) {
+
+                                          dueCol.classList.remove('d-none');
+
+                                    }
+
+
+                                    /*
+                                       * Partial payment
+                                       *
+                                       * Show: અડધી ચુકવણી
+                                       */
+                                    else if (todayPaid > 0 && todayPaid < totalPayable) {
+
+                                          halfPaymentCol.classList.remove('d-none');
+
+                                    }
+
+
+                                    /*
+                                       * Full payment
+                                       *
+                                       * Show: રોકડ
+                                       */
+                                    else if (todayPaid >= totalPayable && totalPayable > 0) {
+
+                                          cashCol.classList.remove('d-none');
+                                          googlePayCol.classList.remove('d-none');
+                                        
+
+                                    }
+
+                                 }
+
+
+                                 /*
+                                 * Calculate remaining
+                                 */
+                                 function calculateRemaining() {
+
+                                    let totalPayable = getTotalPayable();
+
+                                    let todayPaid = parseFloat(
+                                          todayPaidInput.value
+                                    ) || 0;
+
+
+                                    /*
+                                       * Maximum payment
+                                       */
+                                    todayPaidInput.max = totalPayable;
+
+
+                                    /*
+                                       * Don't allow greater than total
+                                       */
+                                    if (todayPaid > totalPayable) {
+
+                                          todayPaid = totalPayable;
+
+                                          todayPaidInput.value = totalPayable.toFixed(2);
+
+                                    }
+
+
+                                    /*
+                                       * Remaining
+                                       */
+                                    let remaining = totalPayable - todayPaid;
+
+
+                                    if (remaining < 0) {
+                                          remaining = 0;
+                                    }
+
+
+                                    remainingInput.value = remaining.toFixed(2);
+
+
+                                    /*
+                                       * Update buttons
+                                       */
+                                    updatePaymentButtons();
+
+                                 }
+
+
+                                 /*
+                                 * User manually enters payment
+                                 */
+                                 todayPaidInput.addEventListener(
+                                    'input',
+                                    calculateRemaining
+                                 );
+
+
+                                 /*
+                                 * Grand total changed
+                                 */
+                                 if (grandTotalInput) {
+
+                                    grandTotalInput.addEventListener(
+                                          'input',
+                                          calculateRemaining
+                                    );
+
+                                 }
+
+
+                                 /*
+                                 * Previous due changed
+                                 */
+                                 if (previousDueInput) {
+
+                                    previousDueInput.addEventListener(
+                                          'input',
+                                          calculateRemaining
+                                    );
+
+                                 }
+
+
+                                 /*
+                                 * ============================
+                                 * બાકી BUTTON
+                                 * ============================
+                                 *
+                                 * Set today's payment = 0
+                                 */
+                                 dueBtn.addEventListener('click', function () {
+
+                                    todayPaidInput.value = '0';
+
+                                    calculateRemaining();
+
+                                 });
+
+
+                                 /*
+                                 * ============================
+                                 * અડધી ચુકવણી BUTTON
+                                 * ============================
+                                 *
+                                 * Set today's payment = 50%
+                                 */
+                                 halfPaymentBtn.addEventListener('click', function () {
+
+                                    let totalPayable = getTotalPayable();
+
+                                    let halfAmount = totalPayable / 2;
+
+                                    todayPaidInput.value = halfAmount.toFixed(2);
+
+                                    calculateRemaining();
+
+                                 });
+
+
+                                 /*
+                                 * ============================
+                                 * રોકડ BUTTON
+                                 * ============================
+                                 *
+                                 * Set today's payment = full amount
+                                 */
+                                 cashBtn.addEventListener('click', function () {
+
+                                    let totalPayable = getTotalPayable();
+
+                                    todayPaidInput.value = totalPayable.toFixed(2);
+
+                                    calculateRemaining();
+
+                                 });
+
+
+                                 /*
+                                 * Initial calculation
+                                 */
+                                 calculateRemaining();
+
+                              });
+                              </script>
