@@ -1792,18 +1792,22 @@
 
                <!-- Check Date -->
                <div class="mb-3">
-                  <label for="check_date" class="form-label">
-                     ચેક તારીખ
-                  </label>
+                <label for="check_date" class="form-label">
+                    ચેક તારીખ
+                </label>
 
-                  <div class="input-group">
-                     <span class="input-group-text">
+                <div class="input-group">
+                    <span class="input-group-text">
                         <i class="bx bx-calendar"></i>
-                     </span>
+                    </span>
 
-                     <input type="date" id="check_date" class="form-control">
-                  </div>
-               </div>
+                    <input type="date"
+                           id="check_date"
+                           name="check_date"
+                           class="form-control"
+                           min="{{ date('Y-m-d') }}">
+                </div>
+            </div>
 
             </div>
 

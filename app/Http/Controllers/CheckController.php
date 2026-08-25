@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\PurchasePayment;
 use App\Models\Suppliers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class CheckController extends Controller
 {
@@ -33,7 +35,7 @@ class CheckController extends Controller
                     $pq->where('supplier_id', $supplierId);
                 });
             })
-            ->orderBy('check_date', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -43,28 +45,69 @@ class CheckController extends Controller
     }
 
     // Update check status: pass / bounce / cancel
+    // Only "passed" is gated by check_date (must be today or earlier).
+    // "bounced" and "cancelled" are always allowed regardless of date.
+    // When a "pending" check is marked "passed", the linked purchase's
+    // paid_amount / balance_amount are updated here — this is the ONLY
+    // place a check payment's amount is ever applied to the purchase.
     public function updateStatus(Request $request, PurchasePayment $payment)
     {
         $validated = $request->validate([
             'status' => ['required', 'in:passed,bounced,cancelled'],
         ]);
 
+        // Server-side guard: block ONLY "passed" until the check's own
+        // date has arrived (today or already passed). Bounce/cancel skip this.
+        if ($validated['status'] === 'passed') {
+
+            $checkDate = $payment->check_date ? Carbon::parse($payment->check_date)->startOfDay() : null;
+
+            if (!$checkDate || $checkDate->gt(Carbon::today())) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'ચેકની તારીખ ' . ($checkDate ? $checkDate->format('d-m-Y') : '') . ' સુધી "ચેક પાસ" કરી શકાશે નહીં.',
+                    'reason'  => 'check_date_not_due',
+                ], 422);
+            }
+        }
+
         try {
 
-            $payment->update([
-                'status' => $validated['status'],
-            ]);
+            DB::transaction(function () use ($payment, $validated) {
+
+                // Only move money the first time a pending check is passed.
+                if ($validated['status'] === 'passed' && $payment->status === 'pending') {
+
+                    $purchase = $payment->purchase;
+
+                    if ($purchase) {
+                        $newPaid    = $purchase->paid_amount + $payment->amount;
+                        $newBalance = max($purchase->total_amount - $newPaid, 0);
+
+                        $purchase->update([
+                            'paid_amount'    => $newPaid,
+                            'balance_amount' => $newBalance,
+                        ]);
+                    }
+                }
+
+                // Bounced / Cancelled: nothing was ever deducted from the
+                // purchase, so there is nothing to reverse — just record status.
+                $payment->update([
+                    'status' => $validated['status'],
+                ]);
+            });
 
             $labels = [
-                'passed'    => 'ચેક પાસ થયો.',
+                'passed'    => 'ચેક પાસ થયો. ચૂકવેલ / બાકી રકમ અપડેટ થઈ ગઈ છે.',
                 'bounced'   => 'ચેક બાઉન્સ થયો.',
                 'cancelled' => 'ચેક રદ કરવામાં આવ્યો.',
             ];
 
             return response()->json([
-                'status'  => true,
-                'message' => $labels[$validated['status']],
-                'new_status' => $validated['status'],
+                'status'      => true,
+                'message'     => $labels[$validated['status']],
+                'new_status'  => $validated['status'],
             ]);
 
         } catch (\Exception $e) {

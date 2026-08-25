@@ -36,7 +36,6 @@ class PurchaseController extends Controller
         return view('purchase.purchase_detail', compact('purchase'));
     }
 
-
     // Purchase PDF / Print Page
     public function pdf(Purchase $purchase)
     {
@@ -45,8 +44,7 @@ class PurchaseController extends Controller
         return view('purchase.pdf', compact('purchase'));
     }
 
-
-    // Update Payment
+    // Update Payment (manual balance adjustment from purchase_detail page)
     public function updatePayment(Request $request, Purchase $purchase)
     {
         $validated = $request->validate([
@@ -90,7 +88,6 @@ class PurchaseController extends Controller
         }
     }
 
-
     // Delete Purchase
     public function destroy(Purchase $purchase)
     {
@@ -110,7 +107,6 @@ class PurchaseController extends Controller
             ], 500);
         }
     }
-
 
     // Save purchase header + all product lines in one go
     public function store(Request $request)
@@ -148,11 +144,30 @@ class PurchaseController extends Controller
             $totalAmount += $item['qty'] * $item['rate'];
         }
 
-        $paid    = $validated['paid_amount'];
-        $balance = max($totalAmount - $paid, 0);
+        $paymentMethod = $validated['payment_method'] ?? 'cash';
+        $requestedPaid = $validated['paid_amount'];
+
+        // IMPORTANT: A "check" payment is NOT applied to paid/balance right away.
+        // The entire amount stays "baki" (outstanding) until the check is marked
+        // "ચેક પાસ" on the Check List page — see CheckController::updateStatus().
+        if ($paymentMethod === 'check') {
+            $paid    = 0;
+            $balance = $totalAmount;
+        } else {
+            $paid    = $requestedPaid;
+            $balance = max($totalAmount - $paid, 0);
+        }
 
         try {
-            $purchase = DB::transaction(function () use ($validated, $totalQty, $totalAmount, $paid, $balance) {
+            $purchase = DB::transaction(function () use (
+                $validated,
+                $totalQty,
+                $totalAmount,
+                $paid,
+                $balance,
+                $paymentMethod,
+                $requestedPaid
+            ) {
 
                 $purchase = Purchase::create([
                     'billing_no'     => $validated['billing_no'],
@@ -178,13 +193,15 @@ class PurchaseController extends Controller
                 }
 
                 // Record how the paid amount was actually paid (cash / check / gpay)
-                if ($paid > 0) {
+                if ($requestedPaid > 0) {
                     PurchasePayment::create([
                         'purchase_id'    => $purchase->id,
-                        'payment_method' => $validated['payment_method'] ?? 'cash',
-                        'amount'         => $paid,
+                        'payment_method' => $paymentMethod,
+                        'amount'         => $requestedPaid,
                         'check_number'   => $validated['check_number'] ?? null,
                         'check_date'     => $validated['check_date'] ?? null,
+                        // cash/gpay = settled immediately, check = pending until passed
+                        'status'         => $paymentMethod === 'check' ? 'pending' : 'passed',
                         'created_by'     => session('admin_id'),
                     ]);
                 }
@@ -206,51 +223,81 @@ class PurchaseController extends Controller
         }
     }
 
-
     // Add a tracked payment (cash / check / gpay) to an existing purchase
     public function addPayment(Request $request, Purchase $purchase)
     {
         $validated = $request->validate([
+
             'payment_method' => ['required', 'in:cash,check,gpay'],
-            'amount'         => ['required', 'numeric', 'min:0.01', 'max:' . $purchase->balance_amount],
-            'check_number'   => ['required_if:payment_method,check', 'nullable', 'string', 'max:50'],
-            'check_date'     => ['required_if:payment_method,check', 'nullable', 'date'],
+
+            'amount' => [
+                'required',
+                'numeric',
+                'min:0.01',
+                'max:' . $purchase->balance_amount
+            ],
+
+            'check_number' => [
+                'required_if:payment_method,check',
+                'nullable',
+                'string',
+                'max:50'
+            ],
+
+            'check_date' => [
+                'required_if:payment_method,check',
+                'nullable',
+                'date',
+                'after_or_equal:today'
+            ],
+
         ], [
-            'amount.required'          => 'રકમ દાખલ કરો.',
-            'amount.max'               => 'બાકી રકમ કરતાં વધુ ચૂકવી શકાય નહીં.',
+
+            'amount.required' => 'રકમ દાખલ કરો.',
+            'amount.max' => 'બાકી રકમ કરતાં વધુ ચૂકવી શકાય નહીં.',
             'check_number.required_if' => 'ચેક નંબર દાખલ કરો.',
-            'check_date.required_if'   => 'ચેક તારીખ પસંદ કરો.',
+            'check_date.required_if' => 'ચેક તારીખ પસંદ કરો.',
+            'check_date.after_or_equal' => 'ચેક તારીખ આજની તારીખ કરતાં જૂની હોઈ શકે નહીં.',
+
         ]);
 
         try {
 
             $purchase = DB::transaction(function () use ($validated, $purchase) {
 
-                // Record the individual payment
+                $isCheck = $validated['payment_method'] === 'check';
+
+                // Record the individual payment.
+                // Check payments stay "pending" and do NOT move paid/balance yet.
                 PurchasePayment::create([
                     'purchase_id'    => $purchase->id,
                     'payment_method' => $validated['payment_method'],
                     'amount'         => $validated['amount'],
                     'check_number'   => $validated['check_number'] ?? null,
                     'check_date'     => $validated['check_date'] ?? null,
+                    'status'         => $isCheck ? 'pending' : 'passed',
                     'created_by'     => session('admin_id'),
                 ]);
 
-                // Update running totals on the purchase itself
-                $newPaid    = $purchase->paid_amount + $validated['amount'];
-                $newBalance = max($purchase->total_amount - $newPaid, 0);
+                if (!$isCheck) {
+                    // cash / gpay -> apply immediately
+                    $newPaid    = $purchase->paid_amount + $validated['amount'];
+                    $newBalance = max($purchase->total_amount - $newPaid, 0);
 
-                $purchase->update([
-                    'paid_amount'    => $newPaid,
-                    'balance_amount' => $newBalance,
-                ]);
+                    $purchase->update([
+                        'paid_amount'    => $newPaid,
+                        'balance_amount' => $newBalance,
+                    ]);
+                }
 
                 return $purchase->fresh();
             });
 
             return response()->json([
                 'status'         => true,
-                'message'        => 'ચુકવણી સફળતાપૂર્વક ઉમેરાઈ.',
+                'message'        => $validated['payment_method'] === 'check'
+                    ? 'ચેક ચુકવણી નોંધાઈ ગઈ. ચેક પાસ થયા પછી બાકી રકમ અપડેટ થશે.'
+                    : 'ચુકવણી સફળતાપૂર્વક ઉમેરાઈ.',
                 'paid_amount'    => (float) $purchase->paid_amount,
                 'balance_amount' => (float) $purchase->balance_amount,
                 'redirect'       => route('purchase'),

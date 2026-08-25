@@ -146,11 +146,15 @@
                   <input type="number" id="paid_due_amount" class="form-control" placeholder="રકમ દાખલ કરો">
                </div>
 
-               {{-- Check method: check number + amount --}}
+               {{-- Check method: check number + date + amount --}}
                <div id="dueCheckGroup" class="d-none">
                   <div class="mb-3">
                      <label class="form-label">ચેક નંબર</label>
                      <input type="text" id="due_check_number" class="form-control" placeholder="ચેક નંબર દાખલ કરો">
+                  </div>
+                  <div class="mb-3">
+                     <label class="form-label">ચેક તારીખ</label>
+                     <input type="date" id="due_check_date" class="form-control" min="{{ date('Y-m-d') }}">
                   </div>
                   <div class="mb-3">
                      <label class="form-label">ચેક ચુકવણી રકમ</label>
@@ -193,6 +197,7 @@
             $("#due_method_cash").prop('checked', true);
             $("#paid_due_amount").val('');
             $("#due_check_number").val('');
+            $("#due_check_date").val('');
             $("#due_check_amount").val('');
             $("#due_gpay_amount").val('');
 
@@ -230,14 +235,21 @@
             let selectedMethod = $('input[name="due_payment_method"]:checked').val() || 'cash';
             let paidAmount = 0;
             let checkNumber = null;
+            let checkDate = null;
 
             if (selectedMethod === 'check') {
 
                paidAmount = parseFloat($("#due_check_amount").val()) || 0;
                checkNumber = $("#due_check_number").val().trim();
+               checkDate = $("#due_check_date").val();
 
                if (checkNumber === '') {
                   GlassToast.warning("ચેક નંબર", "ચેક નંબર દાખલ કરો.");
+                  return;
+               }
+
+               if (!checkDate) {
+                  GlassToast.warning("ચેક તારીખ", "ચેક તારીખ પસંદ કરો.");
                   return;
                }
 
@@ -280,6 +292,7 @@
                         , paid_amount: paidAmount
                         , payment_method: selectedMethod
                         , check_number: checkNumber
+                        , check_date: checkDate
                      }
                      , success: function(res) {
                         if (res.success) {
@@ -294,14 +307,23 @@
 
                            setTimeout(function() {
                               window.location.reload();
-                           }, 500);
+                           }, 800);
 
                         } else {
                            GlassToast.warning("ભૂલ", res.message);
                         }
                      }
                      , error: function(xhr) {
-                        GlassToast.warning("ભૂલ", "કંઈક ખોટું થયું, ફરી પ્રયાસ કરો.");
+                        let msg = "કંઈક ખોટું થયું, ફરી પ્રયાસ કરો.";
+                        if (xhr.responseJSON) {
+                           if (xhr.responseJSON.message) {
+                              msg = xhr.responseJSON.message;
+                           } else if (xhr.responseJSON.errors) {
+                              const firstKey = Object.keys(xhr.responseJSON.errors)[0];
+                              msg = xhr.responseJSON.errors[firstKey][0];
+                           }
+                        }
+                        GlassToast.warning("ભૂલ", msg);
                      }
                   });
                }

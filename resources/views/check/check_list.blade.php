@@ -1,4 +1,7 @@
 @include('layout.sidebar')
+
+
+
 <!-- Content wrapper -->
 <div class="content-wrapper">
     <!-- Content -->
@@ -146,7 +149,7 @@
 
                     <th>ઇન્વૉઇસ નંબર</th>
 
-                    <th>સ્થિતિ</th>
+                    {{-- <th>સ્થિતિ</th> --}}
 
                     <th class="text-center">
                         કાર્યવાહી
@@ -160,6 +163,13 @@
             <tbody>
 
                 @forelse ($checks as $index => $check)
+
+                @php
+                    // Is the check's date today or already passed?
+                    // Only "ચેક પાસ" is gated by this — bounce/cancel are always allowed.
+                    $checkDateObj = $check->check_date ? \Carbon\Carbon::parse($check->check_date)->startOfDay() : null;
+                    $isCheckDue   = $checkDateObj ? $checkDateObj->lte(\Carbon\Carbon::today()) : false;
+                @endphp
 
                 <tr id="checkRow{{ $check->id }}">
 
@@ -178,7 +188,7 @@
                     </td>
 
                     <td>
-                        {{ $check->check_date ? \Carbon\Carbon::parse($check->check_date)->format('d-m-Y') : '-' }}
+                        {{ $checkDateObj ? $checkDateObj->format('d-m-Y') : '-' }}
                     </td>
 
                     <td>
@@ -189,7 +199,7 @@
                         {{ $check->purchase->billing_no ?? '-' }}
                     </td>
 
-                    <td id="checkStatus{{ $check->id }}">
+                    {{-- <td id="checkStatus{{ $check->id }}">
 
                         @if ($check->status === 'passed')
                             <span class="badge bg-success blink-badge">ચેક પાસ</span>
@@ -201,61 +211,111 @@
                             <span class="badge bg-warning">બાકી</span>
                         @endif
 
-                    </td>
+                    </td> --}}
 
                     <td class="text-center" id="checkActions{{ $check->id }}">
 
                         @if ($check->status === 'pending')
 
-                        <div class="d-flex justify-content-center gap-1 check-action-buttons">
+                            <div class="d-flex justify-content-center gap-1 check-action-buttons">
 
-                            {{-- ચેક બાઉન્સ --}}
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-danger check-status-btn"
-                                    data-id="{{ $check->id }}"
-                                    data-status="bounced"
-                                    data-label="ચેક બાઉન્સ"
-                                    title="ચેક બાઉન્સ">
+                                {{-- ચેક બાઉન્સ — always active, no date restriction --}}
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger check-status-btn"
+                                        data-id="{{ $check->id }}"
+                                        data-status="bounced"
+                                        data-label="ચેક બાઉન્સ"
+                                        title="ચેક બાઉન્સ">
 
-                                <i class="bx bx-x-circle"></i>
-                                ચેક બાઉન્સ
+                                    <i class="bx bx-x-circle"></i>
+                                    ચેક બાઉન્સ
 
-                            </button>
+                                </button>
 
+                                {{-- ચેક પાસ — only enabled once check_date is today or earlier --}}
+                                @if ($isCheckDue)
 
-                            {{-- ચેક પાસ --}}
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-success check-status-btn"
-                                    data-id="{{ $check->id }}"
-                                    data-status="passed"
-                                    data-label="ચેક પાસ"
-                                    title="ચેક પાસ">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-success check-status-btn blink-pass-btn"
+                                            data-id="{{ $check->id }}"
+                                            data-status="passed"
+                                            data-label="ચેક પાસ"
+                                            title="ચેક પાસ">
 
-                                <i class="bx bx-check-circle"></i>
-                                ચેક પાસ
+                                        <i class="bx bx-check-circle"></i>
+                                        ચેક પાસ
 
-                            </button>
+                                    </button>
 
+                                @else
 
-                            {{-- રદ કરો --}}
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-secondary check-status-btn"
-                                    data-id="{{ $check->id }}"
-                                    data-status="cancelled"
-                                    data-label="ચેક રદ કરો"
-                                    title="ચેક રદ કરો">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-success"
+                                            disabled
+                                            title="ચેકની તારીખ {{ $checkDateObj->format('d-m-Y') }} સુધી રાહ જુઓ">
 
-                                <i class="bx bx-block"></i>
-                                રદ કરો
+                                        <i class="bx bx-check-circle"></i>
+                                        ચેક પાસ
 
-                            </button>
+                                    </button>
 
-                        </div>
+                                @endif
+
+                                {{-- રદ કરો — always active, no date restriction --}}
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-secondary check-status-btn"
+                                        data-id="{{ $check->id }}"
+                                        data-status="cancelled"
+                                        data-label="ચેક રદ કરો"
+                                        title="ચેક રદ કરો">
+
+                                    <i class="bx bx-block"></i>
+                                    રદ કરો
+
+                                </button>
+
+                            </div>
+
+                            @if (!$isCheckDue)
+                                <small class="d-block text-muted mt-1">
+                                    <i class="bx bx-time"></i>
+                                    ચેક પાસ: {{ $checkDateObj->format('d-m-Y') }} સુધી રાહ જુઓ
+                                </small>
+                            @endif
+
+                        @else
+
+                            {{-- Status button after action --}}
+                            <div class="d-flex justify-content-center gap-1 check-action-buttons">
+
+                                @if ($check->status === 'passed')
+
+                                    <span class="btn btn-sm btn-success w-100 ">
+                                        <i class="bx bx-check-circle"></i>
+                                        ચેક પાસ
+                                    </span>
+
+                                @elseif ($check->status === 'bounced')
+
+                                    <span class="btn btn-sm btn-danger w-100  ">
+                                        <i class="bx bx-x-circle"></i>
+                                        ચેક બાઉન્સ
+                                    </span>
+
+                                @elseif ($check->status === 'cancelled')
+
+                                    <span class="btn btn-sm btn-secondary w-100  ">
+                                        <i class="bx bx-block"></i>
+                                        રદ થયેલ
+                                    </span>
+
+                                @endif
+
+                            </div>
 
                         @endif
 
                     </td>
-
                 </tr>
 
                 @empty
@@ -349,6 +409,16 @@
     .blink-badge {
         animation: blinkStatus 1s ease-in-out 3;
     }
+
+    /* Blink ONLY the ચેક પાસ button once its check_date has arrived */
+    @keyframes blinkPassButton {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.55; transform: scale(1.05); }
+    }
+
+    .blink-pass-btn {
+        animation: blinkPassButton 1.1s ease-in-out 4;
+    }
 </style>
 
 {{-- CHECK STATUS ACTIONS: pass / bounce / cancel --}}
@@ -358,6 +428,11 @@
         const btn = e.target.closest('.check-status-btn');
 
         if (!btn) {
+            return;
+        }
+
+        // Extra safety: ignore clicks on disabled buttons (shouldn't fire anyway)
+        if (btn.disabled) {
             return;
         }
 
@@ -392,38 +467,44 @@
 
                         GlassToast.success('સફળ', data.message);
 
-                        // Hide the 3 action buttons for this row
+                        // Replace the actions cell with the final status pill
                         const actionsCell = document.getElementById(`checkActions${paymentId}`);
                         if (actionsCell) {
-                            actionsCell.innerHTML = '';
-                        }
 
-                        // Update the status badge with blink animation
-                        const statusCell = document.getElementById(`checkStatus${paymentId}`);
-
-                        if (statusCell) {
-
-                            let badgeClass = 'bg-secondary';
-                            let badgeText = 'રદ થયેલ';
-                            let blink = '';
+                            let badgeClass = 'btn-secondary';
+                            let badgeText  = 'રદ થયેલ';
+                            let icon       = 'bx-block';
 
                             if (data.new_status === 'passed') {
-                                badgeClass = 'bg-success';
-                                badgeText = 'ચેક પાસ';
-                                blink = 'blink-badge';
+                                badgeClass = 'btn-success';
+                                badgeText  = 'ચેક પાસ';
+                                icon       = 'bx-check-circle';
                             } else if (data.new_status === 'bounced') {
-                                badgeClass = 'bg-danger';
-                                badgeText = 'ચેક બાઉન્સ';
-                                blink = 'blink-badge';
+                                badgeClass = 'btn-danger';
+                                badgeText  = 'ચેક બાઉન્સ';
+                                icon       = 'bx-x-circle';
                             }
 
-                            statusCell.innerHTML = `<span class="badge ${badgeClass} ${blink}">${badgeText}</span>`;
-
+                            actionsCell.innerHTML =
+                                `<div class="d-flex justify-content-center gap-1 check-action-buttons">
+                                    <span class="btn btn-sm ${badgeClass} w-100">
+                                        <i class="bx ${icon}"></i>
+                                        ${badgeText}
+                                    </span>
+                                 </div>`;
                         }
 
                     } else {
 
                         GlassToast.error('ભૂલ', data.message || 'કંઈક ખોટું થયું.');
+
+                        // If server rejected a premature "pass" attempt, reload
+                        // so the row correctly re-renders with the disabled button.
+                        if (data.reason === 'check_date_not_due') {
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1200);
+                        }
 
                     }
 
