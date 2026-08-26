@@ -165,8 +165,9 @@
                 @forelse ($checks as $index => $check)
 
                 @php
-                    // Is the check's date today or already passed?
-                    // Only "ચેક પાસ" is gated by this — bounce/cancel are always allowed.
+                    // Is the check's date today or already past? If so, the check
+                    // is "due" and BOTH ચેક પાસ and ચેક બાઉન્સ become available
+                    // (and blink continuously). Before that date, only રદ કરો works.
                     $checkDateObj = $check->check_date ? \Carbon\Carbon::parse($check->check_date)->startOfDay() : null;
                     $isCheckDue   = $checkDateObj ? $checkDateObj->lte(\Carbon\Carbon::today()) : false;
                 @endphp
@@ -217,26 +218,28 @@
 
                         @if ($check->status === 'pending')
 
-                            <div class="d-flex justify-content-center gap-1 check-action-buttons">
+                            <div class="d-flex justify-content-center gap-1 check-action-buttons {{ $isCheckDue ? 'blink-buttons-infinite' : '' }}">
 
-                                {{-- ચેક બાઉન્સ — always active, no date restriction --}}
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-danger check-status-btn"
-                                        data-id="{{ $check->id }}"
-                                        data-status="bounced"
-                                        data-label="ચેક બાઉન્સ"
-                                        title="ચેક બાઉન્સ">
-
-                                    <i class="bx bx-x-circle"></i>
-                                    ચેક બાઉન્સ
-
-                                </button>
-
-                                {{-- ચેક પાસ — only enabled once check_date is today or earlier --}}
                                 @if ($isCheckDue)
 
+                                    {{-- Check date has arrived: all 3 buttons active + blinking forever --}}
+
+                                    {{-- ચેક બાઉન્સ --}}
                                     <button type="button"
-                                            class="btn btn-sm btn-outline-success check-status-btn blink-pass-btn"
+                                            class="btn btn-sm btn-outline-danger check-status-btn"
+                                            data-id="{{ $check->id }}"
+                                            data-status="bounced"
+                                            data-label="ચેક બાઉન્સ"
+                                            title="ચેક બાઉન્સ">
+
+                                        <i class="bx bx-x-circle"></i>
+                                        ચેક બાઉન્સ
+
+                                    </button>
+
+                                    {{-- ચેક પાસ --}}
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-success check-status-btn"
                                             data-id="{{ $check->id }}"
                                             data-status="passed"
                                             data-label="ચેક પાસ"
@@ -247,39 +250,61 @@
 
                                     </button>
 
+                                    {{-- રદ કરો --}}
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-secondary check-status-btn"
+                                            data-id="{{ $check->id }}"
+                                            data-status="cancelled"
+                                            data-label="ચેક રદ કરો"
+                                            title="ચેક રદ કરો">
+
+                                        <i class="bx bx-block"></i>
+                                        રદ કરો
+
+                                    </button>
+
                                 @else
+
+                                    {{-- Check date is still in the future:
+                                         ચેક બાઉન્સ and ચેક પાસ are disabled — only રદ કરો works --}}
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            disabled
+                                            title="ચેકની તારીખ {{ $checkDateObj->format('d-m-Y') }} સુધી રાહ જુઓ">
+                                        <i class="bx bx-x-circle"></i>
+                                        ચેક બાઉન્સ
+                                    </button>
 
                                     <button type="button"
                                             class="btn btn-sm btn-outline-success"
                                             disabled
                                             title="ચેકની તારીખ {{ $checkDateObj->format('d-m-Y') }} સુધી રાહ જુઓ">
-
                                         <i class="bx bx-check-circle"></i>
                                         ચેક પાસ
+                                    </button>
+
+                                    {{-- રદ કરો — always active, no date restriction --}}
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-secondary check-status-btn"
+                                            data-id="{{ $check->id }}"
+                                            data-status="cancelled"
+                                            data-label="ચેક રદ કરો"
+                                            title="ચેક રદ કરો">
+
+                                        <i class="bx bx-block"></i>
+                                        રદ કરો
 
                                     </button>
 
                                 @endif
-
-                                {{-- રદ કરો — always active, no date restriction --}}
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-secondary check-status-btn"
-                                        data-id="{{ $check->id }}"
-                                        data-status="cancelled"
-                                        data-label="ચેક રદ કરો"
-                                        title="ચેક રદ કરો">
-
-                                    <i class="bx bx-block"></i>
-                                    રદ કરો
-
-                                </button>
 
                             </div>
 
                             @if (!$isCheckDue)
                                 <small class="d-block text-muted mt-1">
                                     <i class="bx bx-time"></i>
-                                    ચેક પાસ: {{ $checkDateObj->format('d-m-Y') }} સુધી રાહ જુઓ
+                                    {{ $checkDateObj->format('d-m-Y') }} સુધી ફક્ત "રદ કરો" જ શક્ય છે.
                                 </small>
                             @endif
 
@@ -410,14 +435,14 @@
         animation: blinkStatus 1s ease-in-out 3;
     }
 
-    /* Blink ONLY the ચેક પાસ button once its check_date has arrived */
-    @keyframes blinkPassButton {
+    /* Blink ALL 3 buttons CONTINUOUSLY (infinite) once check_date has arrived */
+    @keyframes blinkButtonsInfinite {
         0%, 100% { opacity: 1; transform: scale(1); }
         50% { opacity: 0.55; transform: scale(1.05); }
     }
 
-    .blink-pass-btn {
-        animation: blinkPassButton 1.1s ease-in-out 4;
+    .blink-buttons-infinite .btn:not(:disabled) {
+        animation: blinkButtonsInfinite 1.2s ease-in-out infinite;
     }
 </style>
 
@@ -498,8 +523,8 @@
 
                         GlassToast.error('ભૂલ', data.message || 'કંઈક ખોટું થયું.');
 
-                        // If server rejected a premature "pass" attempt, reload
-                        // so the row correctly re-renders with the disabled button.
+                        // If server rejected a premature pass/bounce attempt, reload
+                        // so the row correctly re-renders with the disabled buttons.
                         if (data.reason === 'check_date_not_due') {
                             setTimeout(function() {
                                 window.location.reload();

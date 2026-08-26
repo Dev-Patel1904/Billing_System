@@ -42,6 +42,20 @@
 
          <div class="card-body">
 
+            @php
+               // Total of all CHECK payments on this purchase that are still "pending"
+               // (i.e. not yet passed / bounced / cancelled). This amount is already
+               // "promised" to a check and must NOT be payable again from the manual
+               // "ચુકવણી અપડેટ કરો" box below — until the check is cancelled or bounced.
+               $pendingCheckTotal = $purchase->payments
+                  ->where('payment_method', 'check')
+                  ->where('status', 'pending')
+                  ->sum('amount');
+
+               // What's actually available to pay manually right now.
+               $payableNow = max($purchase->balance_amount - $pendingCheckTotal, 0);
+            @endphp
+
             <!-- Supplier Information -->
             <div class="row g-3 mb-5 mt-5">
 
@@ -107,6 +121,15 @@
 
                                     <h6 class="fw-bold mb-1">
                                         Check
+                                        @if($payment->status === 'pending')
+                                            <span class="badge bg-warning text-dark ms-1" style="font-size: 10px;">પેન્ડિંગ</span>
+                                        @elseif($payment->status === 'passed')
+                                            <span class="badge bg-success ms-1" style="font-size: 10px;">પાસ</span>
+                                        @elseif($payment->status === 'bounced')
+                                            <span class="badge bg-danger ms-1" style="font-size: 10px;">બાઉન્સ</span>
+                                        @elseif($payment->status === 'cancelled')
+                                            <span class="badge bg-secondary ms-1" style="font-size: 10px;">રદ</span>
+                                        @endif
                                         <i class="bx bx-link-external text-muted" style="font-size: 13px;"></i>
                                     </h6>
                                     <small class="d-block">
@@ -175,13 +198,26 @@
                            બાકી ચૂકવવાની રકમ
                         </label>
 
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-2">
                            <span class="input-group-text">₹</span>
 
-                           <input type="number" class="form-control" id="edit_paid_amount" value="{{ $purchase->balance_amount }}" min="0" max="{{ $purchase->balance_amount }}">
+                           <input type="number"
+                                  class="form-control"
+                                  id="edit_paid_amount"
+                                  value="{{ $payableNow }}"
+                                  min="0"
+                                  max="{{ $payableNow }}">
                         </div>
 
-                        <button class="btn btn-info w-100" id="updatePaymentBtn" data-id="{{ $purchase->id }}" @if($purchase->balance_amount <= 0) disabled @endif>
+                        {{-- Small note: pending check amount is excluded from this box --}}
+                        @if($pendingCheckTotal > 0)
+                           <small class="d-block text-warning mb-2" id="pendingCheckNote">
+                              <i class="bx bx-info-circle"></i>
+                              ₹{{ number_format($pendingCheckTotal, 2) }} ચેક દ્વારા ચૂકવવાપાત્ર (પેન્ડિંગ) — અહીં ઉમેરાશે નહીં જ્યાં સુધી ચેક રદ/બાઉન્સ ન થાય.
+                           </small>
+                        @endif
+
+                        <button class="btn btn-info w-100" id="updatePaymentBtn" data-id="{{ $purchase->id }}" @if($payableNow <= 0) disabled @endif>
                               <i class="bx bx-save me-1"></i>
                               ચુકવણી અપડેટ કરો
                         </button>
@@ -324,6 +360,11 @@
 
    {{-- UPDATE PAYMENT --}}
 <script>
+    // Pending-check amount is excluded from what this box can pay.
+    // If that check later gets cancelled/bounced, reload will show the
+    // freed-up amount here (since balance_amount already included it).
+    const pendingCheckTotal = {{ (float) $pendingCheckTotal }};
+
     document.getElementById('updatePaymentBtn').addEventListener('click', function() {
 
        const btn = this;
@@ -362,11 +403,14 @@
                 document.getElementById('display_balance_amount').innerText = '₹' + data.balance_amount;
                 document.getElementById('display_paid_amount').innerText = '₹' + data.paid_amount;
 
-                // Refresh the input + its max to show the NEW remaining balance
-                amountInput.value = data.balance_amount;
-                amountInput.max = data.balance_amount;
+                // New payable amount = new balance_amount minus the same
+                // pending-check total (that part hasn't changed by this action).
+                const newPayable = Math.max(Number(data.balance_amount) - pendingCheckTotal, 0);
 
-                if (Number(data.balance_amount) <= 0) {
+                amountInput.value = newPayable;
+                amountInput.max = newPayable;
+
+                if (newPayable <= 0) {
                    btn.disabled = true;
                 }
 

@@ -8,6 +8,8 @@
 
          @php
          $totalBalanceDue = $purchases->sum('balance_amount');
+
+         $payableNow = max($totalBalanceDue - $pendingCheckTotal, 0);
          @endphp
 
          <!-- Header -->
@@ -109,10 +111,16 @@
             </div>
 
             <div class="modal-body">
-               <div class="mb-3">
-                  <label class="form-label">આગળની બાકી રકમ</label>
-                  <input type="number" id="modal_previous_due" class="form-control" value="{{ $totalBalanceDue }}" readonly>
+               <div class="mb-2">
+                  <label class="form-label">ચૂકવવાપાત્ર બાકી રકમ</label>
+                  <input type="number" id="modal_previous_due" class="form-control" value="{{ $payableNow }}" readonly>
                </div>
+
+               {{-- Small note: pending check amount excluded from payable due --}}
+               <small class="d-block text-warning mb-3" id="pendingCheckNote" style="{{ $pendingCheckTotal <= 0 ? 'display:none;' : '' }}">
+                  <i class="bx bx-info-circle"></i>
+                  ₹<span id="pendingCheckAmountText">{{ number_format($pendingCheckTotal, 2) }}</span> ચેક દ્વારા પેન્ડિંગ છે — તે અહીં ચૂકવવાપાત્ર રકમમાં ઉમેરાયેલ નથી. ચેક રદ અથવા બાઉન્સ થાય તો આ રકમ ફરી ચૂકવવાપાત્ર બનશે.
+               </small>
 
                {{-- Payment method radio buttons --}}
                <div class="mb-3">
@@ -143,7 +151,7 @@
                {{-- Cash method (default): plain amount field --}}
                <div class="mb-3" id="dueDefaultAmountGroup">
                   <label class="form-label">બાકી ચૂકવણી રકમ</label>
-                  <input type="number" id="paid_due_amount" class="form-control" placeholder="રકમ દાખલ કરો">
+                  <input type="number" id="paid_due_amount" class="form-control" placeholder="રકમ દાખલ કરો" max="{{ $payableNow }}">
                </div>
 
                {{-- Check method: check number + date + amount --}}
@@ -158,7 +166,7 @@
                   </div>
                   <div class="mb-3">
                      <label class="form-label">ચેક ચુકવણી રકમ</label>
-                     <input type="number" id="due_check_amount" class="form-control" placeholder="રકમ દાખલ કરો">
+                     <input type="number" id="due_check_amount" class="form-control" placeholder="રકમ દાખલ કરો" max="{{ $payableNow }}">
                   </div>
                </div>
 
@@ -166,7 +174,7 @@
                <div id="dueGpayGroup" class="d-none">
                   <div class="mb-3">
                      <label class="form-label">ગૂગલ પે ચુકવણી રકમ</label>
-                     <input type="number" id="due_gpay_amount" class="form-control" placeholder="રકમ દાખલ કરો">
+                     <input type="number" id="due_gpay_amount" class="form-control" placeholder="રકમ દાખલ કરો" max="{{ $payableNow }}">
                   </div>
                </div>
 
@@ -186,24 +194,35 @@
    <!-- jQuery & AJAX Script for Modal functionality -->
    <script>
       $(document).ready(function() {
-         let currentBalanceDue = {{ $totalBalanceDue }};
+
+         // currentPayable = what's actually payable right now, excluding
+         // amounts already committed to pending checks.
+         let currentPayable = {{ $payableNow }};
+         let currentPendingCheckTotal = {{ $pendingCheckTotal }};
          let supplierId = "{{ $supplier->id }}";
 
          // Open Modal
          $("#openDueModalBtn").on("click", function() {
-            $("#modal_previous_due").val(currentBalanceDue.toFixed(2));
+            $("#modal_previous_due").val(currentPayable.toFixed(2));
 
             // Reset all fields, default to રોકડ selected
             $("#due_method_cash").prop('checked', true);
-            $("#paid_due_amount").val('');
+            $("#paid_due_amount").val('').attr('max', currentPayable);
             $("#due_check_number").val('');
             $("#due_check_date").val('');
-            $("#due_check_amount").val('');
-            $("#due_gpay_amount").val('');
+            $("#due_check_amount").val('').attr('max', currentPayable);
+            $("#due_gpay_amount").val('').attr('max', currentPayable);
 
             $("#dueDefaultAmountGroup").removeClass('d-none');
             $("#dueCheckGroup").addClass('d-none');
             $("#dueGpayGroup").addClass('d-none');
+
+            if (currentPendingCheckTotal > 0) {
+               $("#pendingCheckAmountText").text(currentPendingCheckTotal.toFixed(2));
+               $("#pendingCheckNote").show();
+            } else {
+               $("#pendingCheckNote").hide();
+            }
 
             let modal = new bootstrap.Modal(document.getElementById('duePaymentModal'));
             modal.show();
@@ -269,8 +288,13 @@
                return;
             }
 
-            if (paidAmount > currentBalanceDue) {
-               GlassToast.warning("રકમ", "ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.");
+            // Validate against the PAYABLE amount (excludes pending checks),
+            // not the full balance due.
+            if (paidAmount > currentPayable) {
+               let msg = currentPendingCheckTotal > 0
+                  ? "ચૂકવણી રકમ ચૂકવવાપાત્ર રકમ (₹" + currentPayable.toFixed(2) + ") કરતાં વધુ હોઈ શકે નહીં. ₹" + currentPendingCheckTotal.toFixed(2) + " ચેક દ્વારા પેન્ડિંગ છે."
+                  : "ચૂકવણી રકમ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.";
+               GlassToast.warning("રકમ", msg);
                return;
             }
 
@@ -296,12 +320,12 @@
                      }
                      , success: function(res) {
                         if (res.success) {
-                           currentBalanceDue = parseFloat(res.remaining_due);
-                           $("#footerBalanceDue").text("₹" + currentBalanceDue.toFixed(2));
+
+                           $("#footerBalanceDue").text("₹" + parseFloat(res.remaining_due).toFixed(2));
 
                            GlassToast.success("સફળ", res.message);
 
-                           if (currentBalanceDue <= 0) {
+                           if (parseFloat(res.remaining_due) <= 0) {
                               $("#openDueModalBtn").fadeOut();
                            }
 

@@ -45,8 +45,11 @@ class CheckController extends Controller
     }
 
     // Update check status: pass / bounce / cancel
-    // Only "passed" is gated by check_date (must be today or earlier).
-    // "bounced" and "cancelled" are always allowed regardless of date.
+    //
+    // - "passed"  -> blocked until check_date is today or earlier.
+    // - "bounced" -> blocked until check_date is today or earlier.
+    // - "cancelled" -> ALWAYS allowed, regardless of date.
+    //
     // When a "pending" check is marked "passed", the linked purchase's
     // paid_amount / balance_amount are updated here — this is the ONLY
     // place a check payment's amount is ever applied to the purchase.
@@ -56,16 +59,19 @@ class CheckController extends Controller
             'status' => ['required', 'in:passed,bounced,cancelled'],
         ]);
 
-        // Server-side guard: block ONLY "passed" until the check's own
-        // date has arrived (today or already passed). Bounce/cancel skip this.
-        if ($validated['status'] === 'passed') {
+        // Server-side guard: block "passed" AND "bounced" until the check's
+        // own date has arrived (today or already passed). "cancelled" skips this.
+        if (in_array($validated['status'], ['passed', 'bounced'], true)) {
 
             $checkDate = $payment->check_date ? Carbon::parse($payment->check_date)->startOfDay() : null;
 
             if (!$checkDate || $checkDate->gt(Carbon::today())) {
+
+                $actionLabel = $validated['status'] === 'passed' ? 'ચેક પાસ' : 'ચેક બાઉન્સ';
+
                 return response()->json([
                     'status'  => false,
-                    'message' => 'ચેકની તારીખ ' . ($checkDate ? $checkDate->format('d-m-Y') : '') . ' સુધી "ચેક પાસ" કરી શકાશે નહીં.',
+                    'message' => 'ચેકની તારીખ ' . ($checkDate ? $checkDate->format('d-m-Y') : '') . ' સુધી "' . $actionLabel . '" કરી શકાશે નહીં. ત્યાં સુધી ફક્ત "રદ કરો" જ શક્ય છે.',
                     'reason'  => 'check_date_not_due',
                 ], 422);
             }

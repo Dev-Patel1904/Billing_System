@@ -47,18 +47,27 @@ class PurchaseController extends Controller
     // Update Payment (manual balance adjustment from purchase_detail page)
     public function updatePayment(Request $request, Purchase $purchase)
     {
+        $pendingCheckTotal = $purchase->payments()
+            ->where('payment_method', 'check')
+            ->where('status', 'pending')
+            ->sum('amount');
+
+        $payableNow = max($purchase->balance_amount - $pendingCheckTotal, 0);
+
         $validated = $request->validate([
             'amount' => [
                 'required',
                 'numeric',
                 'min:0.01',
-                'max:' . $purchase->balance_amount,
+                'max:' . $payableNow,
             ],
         ], [
             'amount.required' => 'રકમ દાખલ કરો.',
             'amount.numeric'  => 'રકમ યોગ્ય નંબર હોવી જોઈએ.',
             'amount.min'      => 'રકમ 0 કરતાં વધુ હોવી જોઈએ.',
-            'amount.max'      => 'બાકી રકમ કરતાં વધુ ચૂકવી શકાય નહીં.',
+            'amount.max'      => $pendingCheckTotal > 0
+                ? 'ચેક દ્વારા પેન્ડિંગ રકમ (₹' . number_format($pendingCheckTotal, 2) . ') સિવાયની બાકી રકમ કરતાં વધુ ચૂકવી શકાય નહીં.'
+                : 'બાકી રકમ કરતાં વધુ ચૂકવી શકાય નહીં.',
         ]);
 
         try {

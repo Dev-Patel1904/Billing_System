@@ -92,16 +92,29 @@ class SpllierlistController extends Controller
     }
 
     // View all purchases of one particular supplier
+    // Also computes how much of the total "baki" is already committed to
+    // pending checks, so the due-payment modal can exclude it.
     public function supplierPurchases(Suppliers $supplier)
     {
         $purchases = $supplier->purchases()
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('list.supplier_purchases', compact('supplier', 'purchases'));
+        $purchaseIds = $purchases->pluck('id');
+
+        // Sum of all still-pending check payments across this supplier's purchases.
+        // (bounced / cancelled checks are excluded here automatically, which is
+        // exactly what makes their amount "payable again".)
+        $pendingCheckTotal = PurchasePayment::whereIn('purchase_id', $purchaseIds)
+            ->where('payment_method', 'check')
+            ->where('status', 'pending')
+            ->sum('amount');
+
+        return view('list.supplier_purchases', compact('supplier', 'purchases', 'pendingCheckTotal'));
     }
 
-    // (Pay Due) — cash/gpay apply immediately, check stays "baki" until passed
+    // (Pay Due) — cash/gpay apply immediately, check stays "baki" until passed.
+    // The payable ceiling here excludes amounts already committed to pending checks.
     public function payDue(Request $request)
     {
         $validated = $request->validate([
@@ -130,10 +143,20 @@ class SpllierlistController extends Controller
 
         $totalBalanceDue = $purchases->sum('balance_amount');
 
-        if ($paidAmount > $totalBalanceDue) {
+        // Exclude amounts already committed to pending checks from what's payable.
+        $pendingCheckTotal = PurchasePayment::whereIn('purchase_id', $purchases->pluck('id'))
+            ->where('payment_method', 'check')
+            ->where('status', 'pending')
+            ->sum('amount');
+
+        $payableNow = max($totalBalanceDue - $pendingCheckTotal, 0);
+
+        if ($paidAmount > $payableNow) {
             return response()->json([
                 'success' => false,
-                'message' => 'ચૂકવણી રકમ કુલ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.',
+                'message' => $pendingCheckTotal > 0
+                    ? 'ચૂકવણી રકમ ચૂકવવાપાત્ર રકમ (₹' . number_format($payableNow, 2) . ') કરતાં વધુ હોઈ શકે નહીં. ₹' . number_format($pendingCheckTotal, 2) . ' ચેક દ્વારા પેન્ડિંગ છે.'
+                    : 'ચૂકવણી રકમ કુલ બાકી રકમ કરતાં વધુ હોઈ શકે નહીં.',
             ], 422);
         }
 
@@ -184,15 +207,21 @@ class SpllierlistController extends Controller
 
         $newRemainingDue = $supplier->purchases()->sum('balance_amount');
 
+        $newPendingCheckTotal = PurchasePayment::whereIn('purchase_id', $supplier->purchases()->pluck('id'))
+            ->where('payment_method', 'check')
+            ->where('status', 'pending')
+            ->sum('amount');
+
         $message = $paymentMethod === 'check'
             ? 'ચેક ચુકવણી નોંધાઈ ગઈ છે. ચેક પાસ થયા પછી બાકી રકમ અપડેટ થશે.'
             : 'બાકી રકમ સફળતાપૂર્વક જમા થઈ ગઈ છે.';
 
         return response()->json([
-            'success'        => true,
-            'message'        => $message,
-            'remaining_due'  => $newRemainingDue,
-            'payment_method' => $paymentMethod,
+            'success'             => true,
+            'message'             => $message,
+            'remaining_due'       => $newRemainingDue,
+            'pending_check_total' => $newPendingCheckTotal,
+            'payment_method'      => $paymentMethod,
         ]);
     }
 }
