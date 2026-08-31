@@ -149,8 +149,6 @@
 
                     <th>ઇન્વૉઇસ નંબર</th>
 
-                    {{-- <th>સ્થિતિ</th> --}}
-
                     <th class="text-center">
                         કાર્યવાહી
                     </th>
@@ -165,14 +163,19 @@
                 @forelse ($checks as $index => $check)
 
                 @php
-                    // Is the check's date today or already past? If so, the check
-                    // is "due" and BOTH ચેક પાસ and ચેક બાઉન્સ become available
-                    // (and blink continuously). Before that date, only રદ કરો works.
+                    // $check here is a merged "group" object (see CheckController::index):
+                    // group_key, payment_ids[], check_number, check_date, amount,
+                    // status, supplier_name, billing_nos.
+                    //
+                    // Is the check's date today or already past? If so, BOTH ચેક પાસ
+                    // and ચેક બાઉન્સ become available (and blink continuously).
+                    // Before that date, only રદ કરો works.
                     $checkDateObj = $check->check_date ? \Carbon\Carbon::parse($check->check_date)->startOfDay() : null;
                     $isCheckDue   = $checkDateObj ? $checkDateObj->lte(\Carbon\Carbon::today()) : false;
+                    $idsJson      = json_encode($check->payment_ids);
                 @endphp
 
-                <tr id="checkRow{{ $check->id }}">
+                <tr id="checkRow{{ $check->group_key }}">
 
                     <td>
                         {{ $checks->firstItem() + $index }}
@@ -193,28 +196,14 @@
                     </td>
 
                     <td>
-                        {{ $check->purchase->supplier->name ?? '-' }}
+                        {{ $check->supplier_name }}
                     </td>
 
                     <td>
-                        {{ $check->purchase->billing_no ?? '-' }}
+                        {{ $check->billing_nos ?: '-' }}
                     </td>
 
-                    {{-- <td id="checkStatus{{ $check->id }}">
-
-                        @if ($check->status === 'passed')
-                            <span class="badge bg-success blink-badge">ચેક પાસ</span>
-                        @elseif ($check->status === 'bounced')
-                            <span class="badge bg-danger blink-badge">ચેક બાઉન્સ</span>
-                        @elseif ($check->status === 'cancelled')
-                            <span class="badge bg-secondary">રદ થયેલ</span>
-                        @else
-                            <span class="badge bg-warning">બાકી</span>
-                        @endif
-
-                    </td> --}}
-
-                    <td class="text-center" id="checkActions{{ $check->id }}">
+                    <td class="text-center" id="checkActions{{ $check->group_key }}">
 
                         @if ($check->status === 'pending')
 
@@ -227,7 +216,7 @@
                                     {{-- ચેક બાઉન્સ --}}
                                     <button type="button"
                                             class="btn btn-sm btn-outline-danger check-status-btn"
-                                            data-id="{{ $check->id }}"
+                                            data-ids='{{ $idsJson }}'
                                             data-status="bounced"
                                             data-label="ચેક બાઉન્સ"
                                             title="ચેક બાઉન્સ">
@@ -240,7 +229,7 @@
                                     {{-- ચેક પાસ --}}
                                     <button type="button"
                                             class="btn btn-sm btn-outline-success check-status-btn"
-                                            data-id="{{ $check->id }}"
+                                            data-ids='{{ $idsJson }}'
                                             data-status="passed"
                                             data-label="ચેક પાસ"
                                             title="ચેક પાસ">
@@ -253,7 +242,7 @@
                                     {{-- રદ કરો --}}
                                     <button type="button"
                                             class="btn btn-sm btn-outline-secondary check-status-btn"
-                                            data-id="{{ $check->id }}"
+                                            data-ids='{{ $idsJson }}'
                                             data-status="cancelled"
                                             data-label="ચેક રદ કરો"
                                             title="ચેક રદ કરો">
@@ -287,7 +276,7 @@
                                     {{-- રદ કરો — always active, no date restriction --}}
                                     <button type="button"
                                             class="btn btn-sm btn-outline-secondary check-status-btn"
-                                            data-id="{{ $check->id }}"
+                                            data-ids='{{ $idsJson }}'
                                             data-status="cancelled"
                                             data-label="ચેક રદ કરો"
                                             title="ચેક રદ કરો">
@@ -346,7 +335,7 @@
                 @empty
 
                 <tr>
-                    <td colspan="8" class="text-center">
+                    <td colspan="7" class="text-center">
                         કોઈ ચેક મળ્યો નથી.
                     </td>
                 </tr>
@@ -446,7 +435,8 @@
     }
 </style>
 
-{{-- CHECK STATUS ACTIONS: pass / bounce / cancel --}}
+{{-- CHECK STATUS ACTIONS: pass / bounce / cancel — acts on the WHOLE group
+     of underlying rows behind one displayed check entry --}}
 <script>
     document.addEventListener('click', function(e) {
 
@@ -456,14 +446,21 @@
             return;
         }
 
-        // Extra safety: ignore clicks on disabled buttons (shouldn't fire anyway)
         if (btn.disabled) {
             return;
         }
 
-        const paymentId = btn.dataset.id;
+        let paymentIds;
+        try {
+            paymentIds = JSON.parse(btn.dataset.ids);
+        } catch (err) {
+            console.error('Invalid payment ids on button:', err);
+            return;
+        }
+
         const newStatus = btn.dataset.status;
         const label = btn.dataset.label;
+        const groupKey = btn.closest('[id^="checkActions"]').id.replace('checkActions', '');
 
         GlassToast.confirm(
             label,
@@ -472,7 +469,7 @@
 
                 try {
 
-                    const response = await fetch(`/checks/${paymentId}/status`, {
+                    const response = await fetch(`/checks/status`, {
 
                         method: 'POST',
 
@@ -482,7 +479,10 @@
                             'Accept': 'application/json',
                         },
 
-                        body: JSON.stringify({ status: newStatus }),
+                        body: JSON.stringify({
+                            payment_ids: paymentIds,
+                            status: newStatus,
+                        }),
 
                     });
 
@@ -493,7 +493,7 @@
                         GlassToast.success('સફળ', data.message);
 
                         // Replace the actions cell with the final status pill
-                        const actionsCell = document.getElementById(`checkActions${paymentId}`);
+                        const actionsCell = document.getElementById(`checkActions${groupKey}`);
                         if (actionsCell) {
 
                             let badgeClass = 'btn-secondary';
@@ -523,8 +523,6 @@
 
                         GlassToast.error('ભૂલ', data.message || 'કંઈક ખોટું થયું.');
 
-                        // If server rejected a premature pass/bounce attempt, reload
-                        // so the row correctly re-renders with the disabled buttons.
                         if (data.reason === 'check_date_not_due') {
                             setTimeout(function() {
                                 window.location.reload();

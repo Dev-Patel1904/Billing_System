@@ -60,10 +60,9 @@ Route::middleware('admin.auth')->group(function () {
     //payment
     Route::post('/purchases/{purchase}/pay', [PurchaseController::class, 'addPayment'])->name('purchases.add_payment');
 
-
     //check
     Route::get('/checks', [CheckController::class, 'index'])->name('checks.index');
-    Route::post('/checks/{payment}/status', [CheckController::class, 'updateStatus'])->name('checks.update_status');
+    Route::post('/checks/status', [CheckController::class, 'updateStatus'])->name('checks.update_status');
 
     //supplier-list
     Route::get('/supplier_list', [SpllierlistController::class, 'supplier_list'])->name('supplier_list');

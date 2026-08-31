@@ -6,6 +6,7 @@ use App\Models\Suppliers;
 use App\Models\PurchasePayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class SpllierlistController extends Controller
@@ -92,8 +93,6 @@ class SpllierlistController extends Controller
     }
 
     // View all purchases of one particular supplier
-    // Also computes how much of the total "baki" is already committed to
-    // pending checks, so the due-payment modal can exclude it.
     public function supplierPurchases(Suppliers $supplier)
     {
         $purchases = $supplier->purchases()
@@ -103,8 +102,6 @@ class SpllierlistController extends Controller
         $purchaseIds = $purchases->pluck('id');
 
         // Sum of all still-pending check payments across this supplier's purchases.
-        // (bounced / cancelled checks are excluded here automatically, which is
-        // exactly what makes their amount "payable again".)
         $pendingCheckTotal = PurchasePayment::whereIn('purchase_id', $purchaseIds)
             ->where('payment_method', 'check')
             ->where('status', 'pending')
@@ -114,7 +111,11 @@ class SpllierlistController extends Controller
     }
 
     // (Pay Due) — cash/gpay apply immediately, check stays "baki" until passed.
-    // The payable ceiling here excludes amounts already committed to pending checks.
+    // A single physical check that covers MULTIPLE bills is still split into one
+    // PurchasePayment row per bill (needed for correct paid/balance math per
+    // purchase), but all those rows share one "check_group_id" so the Check
+    // List page can display them as ONE row with the full amount and all bill
+    // numbers together, instead of one row per bill.
     public function payDue(Request $request)
     {
         $validated = $request->validate([
@@ -162,7 +163,11 @@ class SpllierlistController extends Controller
 
         $remainingPaid = $paidAmount;
 
-        DB::transaction(function () use ($purchases, &$remainingPaid, $paymentMethod, $checkNumber, $checkDate) {
+        // One shared id per physical check — same value on every row created
+        // below, so the Check List page can merge them into a single entry.
+        $checkGroupId = $paymentMethod === 'check' ? (string) Str::uuid() : null;
+
+        DB::transaction(function () use ($purchases, &$remainingPaid, $paymentMethod, $checkNumber, $checkDate, $checkGroupId) {
 
             foreach ($purchases as $purchase) {
 
@@ -175,16 +180,18 @@ class SpllierlistController extends Controller
 
                 if ($paymentMethod === 'check') {
 
-                    // Just record it as a pending check — it will ALSO show up
-                    // on the Check List page. Balance is untouched until passed.
+                    // Just record it as a pending check — balance is untouched
+                    // until passed. check_group_id ties this row to the same
+                    // physical check as the other bills it was applied to.
                     PurchasePayment::create([
-                        'purchase_id'    => $purchase->id,
-                        'payment_method' => 'check',
-                        'amount'         => $allocated,
-                        'check_number'   => $checkNumber,
-                        'check_date'     => $checkDate,
-                        'status'         => 'pending',
-                        'created_by'     => session('admin_id'),
+                        'purchase_id'     => $purchase->id,
+                        'payment_method'  => 'check',
+                        'amount'          => $allocated,
+                        'check_number'    => $checkNumber,
+                        'check_date'      => $checkDate,
+                        'check_group_id'  => $checkGroupId,
+                        'status'          => 'pending',
+                        'created_by'      => session('admin_id'),
                     ]);
 
                 } else {

@@ -896,7 +896,7 @@
 
             {{-- PAYMENT STATUS --}}
 
-            <div class="status-section">
+            {{-- <div class="status-section">
 
                 <span class="status-label">ચુકવણીની સ્થિતિ</span>
 
@@ -912,7 +912,7 @@
                     </span>
                 @endif
 
-            </div>
+            </div> --}}
         </div>
     </div>
 
